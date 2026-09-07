@@ -3,46 +3,68 @@
   <DataTemplate x:Key="FloodTab">
     <Grid>
       <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="360"/>
+        <ColumnDefinition Width="380"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
       <Border Style="{StaticResource Panel}" Margin="0,0,10,0">
-        <StackPanel>
-          <TextBlock FontWeight="SemiBold" Text="Composer"/>
-          <TextBlock Style="{StaticResource Caption}" Text="LEVEL"/>
-          <ComboBox ItemsSource="{Binding Levels}" SelectedItem="{Binding SelectedLevel}"/>
-          <TextBlock Style="{StaticResource Caption}" Text="STATUS"/>
-          <ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedStatus}"/>
-          <TextBlock Style="{StaticResource Caption}" Text="CATEGORY"/>
-          <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"/>
-          <TextBlock Style="{StaticResource Caption}" Text="SUBCATEGORY"/>
-          <ComboBox ItemsSource="{Binding Subcategories}" SelectedItem="{Binding SelectedSubcategory}"/>
-          <TextBlock Style="{StaticResource Caption}" Text="MESSAGE"/>
-          <TextBox Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" Height="64"/>
-          <TextBlock Style="{StaticResource Caption}" Text="{Binding BurstCount, StringFormat=Burst count = {0}}"/>
-          <Slider Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding BurstCount}"/>
-          <WrapPanel>
-            <Button Content="Write one" Command="{Binding WriteOneCommand}"/>
-            <Button Content="Write burst" Command="{Binding WriteBurstCommand}"/>
-          </WrapPanel>
-          <WrapPanel>
-            <Button Content="Stack trace" Command="{Binding WriteStackTraceCommand}"/>
-            <Button Content="Unregistered" Command="{Binding WriteUnregisteredCommand}"/>
-          </WrapPanel>
-          <Button Content="PingIQ + TraceIQ Timeout" Command="{Binding WritePingAndTraceTimeoutCommand}"/>
-          <TextBlock Margin="0,12,0,0" Opacity="0.7" TextWrapping="Wrap"
-                     Text="Identity key is (APPID, CATEGORY, LEVEL, MESSAGE). STATUS and SUBCATEGORY do not join the flood counter."/>
-        </StackPanel>
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel>
+            <TextBlock FontWeight="SemiBold" Text="Composer"/>
+            <TextBlock Style="{StaticResource Caption}" Text="LEVEL"/>
+            <ComboBox ItemsSource="{Binding Levels}" SelectedItem="{Binding SelectedLevel}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="STATUS"/>
+            <ComboBox ItemsSource="{Binding Statuses}" SelectedItem="{Binding SelectedStatus}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="CATEGORY"/>
+            <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="SUBCATEGORY"/>
+            <ComboBox ItemsSource="{Binding Subcategories}" SelectedItem="{Binding SelectedSubcategory}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="MESSAGE"/>
+            <TextBox Text="{Binding MessageText, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" Height="64"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding BurstCountCaption}"/>
+            <Slider Minimum="1" Maximum="100" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding BurstCount}"/>
+            <WrapPanel>
+              <Button Content="Write one" Command="{Binding WriteOneCommand}"/>
+              <Button Content="Write burst" Command="{Binding WriteBurstCommand}" Style="{StaticResource PrimaryButton}"/>
+            </WrapPanel>
+            <TextBlock Style="{StaticResource Caption}" Text="SCENARIOS"/>
+            <WrapPanel>
+              <Button Content="Stack trace" Command="{Binding WriteStackTraceCommand}"/>
+              <Button Content="Unregistered" Command="{Binding WriteUnregisteredCommand}"/>
+            </WrapPanel>
+            <Button Content="PingIQ + TraceIQ Timeout" Command="{Binding WritePingAndTraceTimeoutCommand}"/>
+            <Button Content="Run suite tour" Command="{Binding RunSuiteTourCommand}"/>
+            <TextBlock Margin="0,12,0,0" Opacity="0.7" TextWrapping="Wrap"
+                       Text="Identity key is (APPID, CATEGORY, LEVEL, MESSAGE). STATUS and SUBCATEGORY do not join the flood counter."/>
+          </StackPanel>
+        </ScrollViewer>
       </Border>
       <Border Style="{StaticResource Panel}" Grid.Column="1">
-        <StackPanel>
-          <TextBlock FontWeight="SemiBold" Text="Counters"/>
-          <TextBlock FontSize="28" FontFamily="Cascadia Mono, Consolas" Text="{Binding WrittenCount, StringFormat=Written {0}}"/>
-          <TextBlock FontSize="22" FontFamily="Cascadia Mono, Consolas" Opacity="0.8" Text="{Binding SuppressedCount, StringFormat=Suppressed {0}}"/>
-          <TextBlock Margin="0,16,0,0" Opacity="0.7" TextWrapping="Wrap"
-                     Text="Worked example: 22 identical PingIQ Information lines in one window produce 5 full records. The remaining 17 wait for the aggregation summary when the window expires or DrainExpired runs."/>
-          <TextBlock Opacity="0.7" Text="{Binding StatusText}" TextWrapping="Wrap" Margin="0,12,0,0"/>
-        </StackPanel>
+        <DockPanel>
+          <StackPanel DockPanel.Dock="Top">
+            <TextBlock FontWeight="SemiBold" Text="Counters"/>
+            <TextBlock FontSize="32" FontFamily="Cascadia Mono, Consolas" Text="{Binding WrittenCaption}"/>
+            <TextBlock FontSize="22" FontFamily="Cascadia Mono, Consolas" Opacity="0.8" Text="{Binding SuppressedCaption}"/>
+            <TextBlock Margin="0,12,0,8" Opacity="0.7" TextWrapping="Wrap"
+                       Text="Worked example: 22 identical PingIQ Information lines in one window produce 5 full records. The remaining 17 wait for the aggregation summary when the window expires."/>
+            <TextBlock Opacity="0.7" Text="{Binding StatusText}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+          </StackPanel>
+          <ListView ItemsSource="{Binding Entries}" FontFamily="Cascadia Mono, Consolas" FontSize="12">
+            <ListView.View>
+              <GridView>
+                <GridViewColumn Header="Time" Width="96" DisplayMemberBinding="{Binding Time}"/>
+                <GridViewColumn Header="LEVEL" Width="110">
+                  <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding Level}" Foreground="{Binding Level, Converter={StaticResource LevelBrush}}" FontWeight="SemiBold"/>
+                    </DataTemplate>
+                  </GridViewColumn.CellTemplate>
+                </GridViewColumn>
+                <GridViewColumn Header="APPID" Width="100" DisplayMemberBinding="{Binding AppId}"/>
+                <GridViewColumn Header="MESSAGE" Width="360" DisplayMemberBinding="{Binding Message}"/>
+              </GridView>
+            </ListView.View>
+          </ListView>
+        </DockPanel>
       </Border>
     </Grid>
   </DataTemplate>

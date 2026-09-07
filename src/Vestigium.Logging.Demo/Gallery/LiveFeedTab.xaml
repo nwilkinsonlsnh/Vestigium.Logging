@@ -9,15 +9,22 @@
       <DockPanel LastChildFill="False" Margin="0,0,0,8">
         <TextBlock FontWeight="SemiBold" Text="Subscriber feed" VerticalAlignment="Center"/>
         <Button DockPanel.Dock="Right" Content="Clear" Command="{Binding ClearFeedCommand}"/>
+        <Button DockPanel.Dock="Right" Content="Suite tour" Command="{Binding RunSuiteTourCommand}"/>
         <ComboBox DockPanel.Dock="Right" Width="160" Margin="0,0,8,8"
                   ItemsSource="{Binding FilterLevels}" SelectedItem="{Binding FilterLevel}"/>
         <TextBlock DockPanel.Dock="Right" Style="{StaticResource Caption}" Text="Filter LEVEL" VerticalAlignment="Center" Margin="0,0,8,0"/>
       </DockPanel>
-      <ListView Grid.Row="1" ItemsSource="{Binding Entries}" Background="#0A1628" BorderThickness="0" FontFamily="Cascadia Mono, Consolas" FontSize="12">
+      <ListView Grid.Row="1" ItemsSource="{Binding Entries}" FontFamily="Cascadia Mono, Consolas" FontSize="12">
         <ListView.View>
           <GridView>
             <GridViewColumn Header="Time" Width="110" DisplayMemberBinding="{Binding Time}"/>
-            <GridViewColumn Header="LEVEL" Width="110" DisplayMemberBinding="{Binding Level}"/>
+            <GridViewColumn Header="LEVEL" Width="120">
+              <GridViewColumn.CellTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Level}" Foreground="{Binding Level, Converter={StaticResource LevelBrush}}" FontWeight="SemiBold"/>
+                </DataTemplate>
+              </GridViewColumn.CellTemplate>
+            </GridViewColumn>
             <GridViewColumn Header="STATUS" Width="90" DisplayMemberBinding="{Binding Status}"/>
             <GridViewColumn Header="APPID" Width="110" DisplayMemberBinding="{Binding AppId}"/>
             <GridViewColumn Header="CATEGORY" Width="160" DisplayMemberBinding="{Binding Category}"/>

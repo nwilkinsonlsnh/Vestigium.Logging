@@ -25,10 +25,9 @@
           <Border Style="{StaticResource Card}" Width="280">
             <StackPanel>
               <TextBlock Style="{StaticResource Caption}" Text="ROLLING FILES"/>
-              <TextBlock FontWeight="SemiBold" Text="{Binding FileSizeMb, StringFormat={}{0} MB files}"/>
-              <TextBlock Opacity="0.7" TextWrapping="Wrap"
-                         Text="{Binding RetainDays, StringFormat=Retain {0} days, fallback='14 days'}"/>
-              <TextBlock Opacity="0.7" Text="{Binding FileCap, StringFormat={}{0} file cap per APPID}"/>
+              <TextBlock FontWeight="SemiBold" Text="{Binding FileSizeHeading}"/>
+              <TextBlock Opacity="0.7" TextWrapping="Wrap" Text="{Binding RetainDaysLine}"/>
+              <TextBlock Opacity="0.7" Text="{Binding FileCapLine}"/>
             </StackPanel>
           </Border>
           <Border Style="{StaticResource Card}" Width="280">
@@ -43,8 +42,12 @@
           <StackPanel>
             <TextBlock Style="{StaticResource Caption}" Text="HOST STARTUP"/>
             <TextBlock FontFamily="Cascadia Mono, Consolas" FontSize="12" TextWrapping="Wrap"
-                       Text="VestigiumLogger.Initialize(cfg => { cfg.AppId = "PingIQ"; cfg.RegisterTaxonomy(VestigiumTaxonomy.Defaults); });"/>
-            <TextBlock Opacity="0.55" Margin="0,8,0,0" Text="{Binding LogDirectory, StringFormat=Log directory: {0}}"/>
+                       Text="{Binding StartupSnippet}"/>
+            <TextBlock Opacity="0.55" Margin="0,8,0,0" Text="{Binding LogDirectoryCaption}"/>
+            <WrapPanel Margin="0,12,0,0">
+              <Button Content="Run suite tour" Command="{Binding RunSuiteTourCommand}" Style="{StaticResource PrimaryButton}"/>
+              <Button Content="Copy log directory" Command="{Binding CopyLogDirectoryCommand}"/>
+            </WrapPanel>
             <TextBlock Opacity="0.7" Text="{Binding StatusText}"/>
           </StackPanel>
         </Border>

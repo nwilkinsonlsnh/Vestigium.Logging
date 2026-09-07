@@ -12,9 +12,9 @@
             <TextBlock FontWeight="SemiBold" Text="Identity and flood"/>
             <TextBlock Style="{StaticResource Caption}" Text="APPID"/>
             <TextBox Text="{Binding AppId, UpdateSourceTrigger=PropertyChanged}"/>
-            <TextBlock Style="{StaticResource Caption}" Text="{Binding FloodThreshold, StringFormat=FloodThresholdCount = {0}}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding FloodThresholdCaption}"/>
             <Slider Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding FloodThreshold}"/>
-            <TextBlock Style="{StaticResource Caption}" Text="{Binding FloodWindowMs, StringFormat=FloodWindowMs = {0}}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding FloodWindowCaption}"/>
             <Slider Minimum="1000" Maximum="120000" TickFrequency="1000" IsSnapToTickEnabled="True" Value="{Binding FloodWindowMs}"/>
             <TextBlock Style="{StaticResource Caption}" Text="Minimum disk LEVEL"/>
             <ComboBox ItemsSource="{Binding Levels}" SelectedItem="{Binding MinimumDiskLevel}"/>
@@ -24,18 +24,20 @@
         <Border Style="{StaticResource Panel}" Grid.Column="1">
           <StackPanel>
             <TextBlock FontWeight="SemiBold" Text="Retention and disk tripwire"/>
-            <TextBlock Style="{StaticResource Caption}" Text="{Binding FileSizeMb, StringFormat=File size cap = {0} MB}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding FileSizeCaption}"/>
             <Slider Minimum="5" Maximum="50" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding FileSizeMb}"/>
-            <TextBlock Style="{StaticResource Caption}" Text="{Binding RetainDays, StringFormat=Time retention = {0} days}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding RetainDaysCaption}"/>
             <Slider Minimum="1" Maximum="31" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding RetainDays}"/>
-            <TextBlock Style="{StaticResource Caption}" Text="{Binding FileCap, StringFormat=Retained file cap = {0}}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding FileCapCaption}"/>
             <Slider Minimum="10" Maximum="200" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding FileCap}"/>
-            <TextBlock Style="{StaticResource Caption}" Text="{Binding DiskPercent, StringFormat=Free-space percent floor = {0}%}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding DiskPercentCaption}"/>
             <Slider Minimum="1" Maximum="25" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding DiskPercent}"/>
-            <TextBlock Style="{StaticResource Caption}" Text="{Binding DiskFloorGb, StringFormat=Hard floor = {0} GB}"/>
+            <TextBlock Style="{StaticResource Caption}" Text="{Binding DiskFloorCaption}"/>
             <Slider Minimum="1" Maximum="20" TickFrequency="1" IsSnapToTickEnabled="True" Value="{Binding DiskFloorGb}"/>
-            <Button Content="Apply configuration" Command="{Binding ApplyConfigurationCommand}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
+            <Button Content="Apply configuration" Command="{Binding ApplyConfigurationCommand}"
+                    Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" Margin="0,12,0,0"/>
             <TextBlock Opacity="0.65" TextWrapping="Wrap" Text="{Binding StatusText}"/>
+            <TextBlock Opacity="0.5" Margin="0,8,0,0" Text="{Binding RollingSummary}"/>
           </StackPanel>
         </Border>
       </Grid>

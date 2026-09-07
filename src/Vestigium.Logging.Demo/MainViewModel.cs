@@ -18,17 +18,40 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
         Entries = [];
         JsonPreview = string.Join(Environment.NewLine, VestigiumLogger.RecentJsonLines);
         _pump = Task.Run(() => PumpAsync(_cts.Token));
+        SeedWelcome();
         RefreshCounters();
     }
 
+
     [ObservableProperty] private string appId = "PingIQ";
-    [ObservableProperty] private int floodThreshold = 5;
-    [ObservableProperty] private int floodWindowMs = 30_000;
-    [ObservableProperty] private int fileSizeMb = 20;
-    [ObservableProperty] private int retainDays = 14;
-    [ObservableProperty] private int fileCap = 90;
-    [ObservableProperty] private int diskPercent = 10;
-    [ObservableProperty] private int diskFloorGb = 5;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FloodThresholdCaption))]
+    private int floodThreshold = 5;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FloodWindowCaption))]
+    private int floodWindowMs = 30_000;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FileSizeCaption))]
+    [NotifyPropertyChangedFor(nameof(FileSizeHeading))]
+    [NotifyPropertyChangedFor(nameof(RollingSummary))]
+    private int fileSizeMb = 20;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(RetainDaysCaption))]
+    [NotifyPropertyChangedFor(nameof(RetainDaysLine))]
+    [NotifyPropertyChangedFor(nameof(RollingSummary))]
+    private int retainDays = 14;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(FileCapCaption))]
+    [NotifyPropertyChangedFor(nameof(FileCapLine))]
+    [NotifyPropertyChangedFor(nameof(RollingSummary))]
+    private int fileCap = 90;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DiskPercentCaption))]
+    private int diskPercent = 10;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(DiskFloorCaption))]
+    private int diskFloorGb = 5;
     [ObservableProperty] private string minimumDiskLevel = "Information";
     [ObservableProperty] private bool simulateLowDisk;
     [ObservableProperty] private string selectedLevel = "Information";
@@ -36,15 +59,41 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
     [ObservableProperty] private string selectedCategory = "Network";
     [ObservableProperty] private string selectedSubcategory = "ICMP";
     [ObservableProperty] private string messageText = "Echo request to 8.8.8.8 timed out after 1000 ms";
-    [ObservableProperty] private int burstCount = 22;
-    [ObservableProperty] private int writtenCount;
-    [ObservableProperty] private int suppressedCount;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(BurstCountCaption))]
+    private int burstCount = 22;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(WrittenCaption))]
+    private int writtenCount;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SuppressedCaption))]
+    private int suppressedCount;
     [ObservableProperty] private string jsonPreview = "";
     [ObservableProperty] private string filterLevel = "All";
     [ObservableProperty] private string statusText = "Logger initialized · APPID PingIQ";
-    [ObservableProperty] private string logDirectory = VestigiumLogger.IsInitialized
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(LogDirectoryCaption))]
+    private string logDirectory = VestigiumLogger.IsInitialized
         ? VestigiumLogger.Options.ResolveLogDirectory()
         : "";
+
+    public string FloodThresholdCaption => $"FloodThresholdCount = {FloodThreshold}";
+    public string FloodWindowCaption => $"FloodWindowMs = {FloodWindowMs}";
+    public string FileSizeCaption => $"File size cap = {FileSizeMb} MB";
+    public string RetainDaysCaption => $"Time retention = {RetainDays} days";
+    public string FileCapCaption => $"Retained file cap = {FileCap}";
+    public string DiskPercentCaption => $"Free-space percent floor = {DiskPercent}%";
+    public string DiskFloorCaption => $"Hard floor = {DiskFloorGb} GB";
+    public string BurstCountCaption => $"Burst count = {BurstCount}";
+    public string WrittenCaption => $"Written {WrittenCount}";
+    public string SuppressedCaption => $"Suppressed {SuppressedCount}";
+    public string LogDirectoryCaption => string.IsNullOrWhiteSpace(LogDirectory) ? "" : $"Log directory: {LogDirectory}";
+    public string RollingSummary => $"{FileSizeMb} MB files · {RetainDays} days · {FileCap} file cap";
+    public string FileSizeHeading => $"{FileSizeMb} MB files";
+    public string RetainDaysLine => $"Retain {RetainDays} days";
+    public string FileCapLine => $"{FileCap} file cap per APPID";
+    public string StartupSnippet =>
+        "VestigiumLogger.Initialize(cfg => { cfg.AppId = \"PingIQ\"; cfg.RegisterTaxonomy(VestigiumTaxonomy.Defaults); });";
 
     public ObservableCollection<LogRow> Entries { get; }
 
@@ -168,6 +217,52 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
         StatusText = "PingIQ Timeout and TraceIQ Timeout use independent flood keys";
         RefreshCounters();
     }
+
+    [RelayCommand]
+    private void CopyLogDirectory()
+    {
+        if (string.IsNullOrWhiteSpace(LogDirectory)) return;
+        try
+        {
+            Clipboard.SetText(LogDirectory);
+            StatusText = "Log directory copied to clipboard";
+        }
+        catch
+        {
+            StatusText = LogDirectory;
+        }
+    }
+
+    [RelayCommand]
+    private void RunSuiteTour()
+    {
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "Echo reply from 1.1.1.1 in 12 ms");
+        VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP", "Echo request to 8.8.8.8 timed out after 1000 ms");
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "DNS", "edge.vestigium.local resolved to 10.4.12.8");
+        VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "Routing", "Hop 8 timed out", appId: "TraceIQ");
+        try
+        {
+            throw new HttpRequestException("502 Bad Gateway from https://edge/api/health");
+        }
+        catch (Exception ex)
+        {
+            VestigiumLog.Error(VestigiumStatus.Failed, "Network", "HTTP", "HttpIQ probe threw", ex);
+        }
+        VestigiumLog.Warning(VestigiumStatus.None, "Widgets", "Thing", "Operator used an unknown category");
+        for (var i = 0; i < 8; i++)
+            VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP", "Echo request to 8.8.8.8 timed out after 1000 ms");
+        StatusText = "Suite tour: PingIQ success + timeout, DNS, TraceIQ hop, HTTP 502, unregistered Widgets, then a flood remainder";
+        RefreshCounters();
+    }
+
+    private void SeedWelcome()
+    {
+        if (!VestigiumLogger.IsInitialized) return;
+        VestigiumLog.Information(VestigiumStatus.Success, "UI", "Lifecycle", "Vestigium.Logging.Demo started");
+        VestigiumLog.Information(VestigiumStatus.Success, "System", "Configuration", "Host initialized with APPID PingIQ");
+        RefreshCounters();
+    }
+
 
     [RelayCommand]
     private void ClearFeed()
