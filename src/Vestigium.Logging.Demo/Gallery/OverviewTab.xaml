@@ -1,0 +1,54 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <DataTemplate x:Key="OverviewTab">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+      <StackPanel>
+        <TextBlock Style="{StaticResource Id}" Text="VEST-LOG  ·  SRS v1.3"/>
+        <TextBlock FontSize="18" FontWeight="SemiBold" Text="What this module does"/>
+        <TextBlock Opacity="0.75" TextWrapping="Wrap" Margin="0,0,0,16"
+                   Text="Vestigium.Logging is the suite-wide Serilog host. Every PingIQ / TraceIQ / DnsIQ / HttpIQ event is offloaded from the calling thread, flood-protected, written as one JSON object per line, and batched to WPF subscribers so the dispatcher never sees a firehose."/>
+        <WrapPanel>
+          <Border Style="{StaticResource Card}" Width="280">
+            <StackPanel>
+              <TextBlock Style="{StaticResource Caption}" Text="ON DISK"/>
+              <TextBlock FontWeight="SemiBold" Text="JSON Lines, not pipes"/>
+              <TextBlock Opacity="0.7" TextWrapping="Wrap" Text="Stack traces and HTTP bodies stay inside MESSAGE. PowerBI gets one row per event."/>
+            </StackPanel>
+          </Border>
+          <Border Style="{StaticResource Card}" Width="280">
+            <StackPanel>
+              <TextBlock Style="{StaticResource Caption}" Text="LEVEL VS STATUS"/>
+              <TextBlock FontWeight="SemiBold" Text="Severity is not outcome"/>
+              <TextBlock Opacity="0.7" TextWrapping="Wrap" Text="A failed ICMP echo is Information + Timeout. A failed DB write is Error + Failed."/>
+            </StackPanel>
+          </Border>
+          <Border Style="{StaticResource Card}" Width="280">
+            <StackPanel>
+              <TextBlock Style="{StaticResource Caption}" Text="ROLLING FILES"/>
+              <TextBlock FontWeight="SemiBold" Text="{Binding FileSizeMb, StringFormat={}{0} MB files}"/>
+              <TextBlock Opacity="0.7" TextWrapping="Wrap"
+                         Text="{Binding RetainDays, StringFormat=Retain {0} days, fallback='14 days'}"/>
+              <TextBlock Opacity="0.7" Text="{Binding FileCap, StringFormat={}{0} file cap per APPID}"/>
+            </StackPanel>
+          </Border>
+          <Border Style="{StaticResource Card}" Width="280">
+            <StackPanel>
+              <TextBlock Style="{StaticResource Caption}" Text="WPF SAFE"/>
+              <TextBlock FontWeight="SemiBold" Text="Batched channel"/>
+              <TextBlock Opacity="0.7" TextWrapping="Wrap" Text="50 events or 100 ms, then WeakReferenceMessenger. No per-line Dispatcher.Invoke."/>
+            </StackPanel>
+          </Border>
+        </WrapPanel>
+        <Border Style="{StaticResource Panel}" Margin="0,8,0,0">
+          <StackPanel>
+            <TextBlock Style="{StaticResource Caption}" Text="HOST STARTUP"/>
+            <TextBlock FontFamily="Cascadia Mono, Consolas" FontSize="12" TextWrapping="Wrap"
+                       Text="VestigiumLogger.Initialize(cfg => { cfg.AppId = "PingIQ"; cfg.RegisterTaxonomy(VestigiumTaxonomy.Defaults); });"/>
+            <TextBlock Opacity="0.55" Margin="0,8,0,0" Text="{Binding LogDirectory, StringFormat=Log directory: {0}}"/>
+            <TextBlock Opacity="0.7" Text="{Binding StatusText}"/>
+          </StackPanel>
+        </Border>
+      </StackPanel>
+    </ScrollViewer>
+  </DataTemplate>
+</ResourceDictionary>

@@ -1,0 +1,30 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <DataTemplate x:Key="LiveFeedTab">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <DockPanel LastChildFill="False" Margin="0,0,0,8">
+        <TextBlock FontWeight="SemiBold" Text="Subscriber feed" VerticalAlignment="Center"/>
+        <Button DockPanel.Dock="Right" Content="Clear" Command="{Binding ClearFeedCommand}"/>
+        <ComboBox DockPanel.Dock="Right" Width="160" Margin="0,0,8,8"
+                  ItemsSource="{Binding FilterLevels}" SelectedItem="{Binding FilterLevel}"/>
+        <TextBlock DockPanel.Dock="Right" Style="{StaticResource Caption}" Text="Filter LEVEL" VerticalAlignment="Center" Margin="0,0,8,0"/>
+      </DockPanel>
+      <ListView Grid.Row="1" ItemsSource="{Binding Entries}" Background="#0A1628" BorderThickness="0" FontFamily="Cascadia Mono, Consolas" FontSize="12">
+        <ListView.View>
+          <GridView>
+            <GridViewColumn Header="Time" Width="110" DisplayMemberBinding="{Binding Time}"/>
+            <GridViewColumn Header="LEVEL" Width="110" DisplayMemberBinding="{Binding Level}"/>
+            <GridViewColumn Header="STATUS" Width="90" DisplayMemberBinding="{Binding Status}"/>
+            <GridViewColumn Header="APPID" Width="110" DisplayMemberBinding="{Binding AppId}"/>
+            <GridViewColumn Header="CATEGORY" Width="160" DisplayMemberBinding="{Binding Category}"/>
+            <GridViewColumn Header="MESSAGE" Width="520" DisplayMemberBinding="{Binding Message}"/>
+          </GridView>
+        </ListView.View>
+      </ListView>
+    </Grid>
+  </DataTemplate>
+</ResourceDictionary>

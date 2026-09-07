@@ -1,0 +1,10 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+  </Configurations>
+  <Project Path="src/Vestigium.Logging/Vestigium.Logging.csproj" />
+  <Project Path="src/Vestigium.Logging.Tests/Vestigium.Logging.Tests.csproj" />
+  <Project Path="src/Vestigium.Logging.Demo/Vestigium.Logging.Demo.csproj" />
+</Solution>

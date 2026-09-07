@@ -1,0 +1,33 @@
+<Window x:Class="Vestigium.Logging.Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Vestigium.Logging gallery"
+        Height="860" Width="1280"
+        MinHeight="640" MinWidth="960"
+        Background="#0B1A30" Foreground="#E2E8F0"
+        FontFamily="Segoe UI" FontSize="13">
+  <Grid Margin="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+    <DockPanel LastChildFill="False" Margin="0,0,0,12">
+      <StackPanel>
+        <TextBlock FontSize="22" FontWeight="SemiBold" Text="Vestigium.Logging gallery"/>
+        <TextBlock Opacity="0.7" Text="Serilog JSON Lines for PowerBI · flood protection · WPF-safe subscribers"/>
+      </StackPanel>
+      <StackPanel DockPanel.Dock="Right" VerticalAlignment="Center" HorizontalAlignment="Right">
+        <TextBlock Opacity="0.55" Text="{Binding WrittenCount, StringFormat=Written {0}}" HorizontalAlignment="Right"/>
+        <TextBlock Opacity="0.55" Text="{Binding SuppressedCount, StringFormat=Suppressed {0}}" HorizontalAlignment="Right"/>
+      </StackPanel>
+    </DockPanel>
+    <TabControl Grid.Row="1">
+      <TabItem Header="Overview"><ContentControl Content="{Binding}" ContentTemplate="{StaticResource OverviewTab}"/></TabItem>
+      <TabItem Header="Configuration"><ContentControl Content="{Binding}" ContentTemplate="{StaticResource ConfigurationTab}"/></TabItem>
+      <TabItem Header="Flood"><ContentControl Content="{Binding}" ContentTemplate="{StaticResource FloodTab}"/></TabItem>
+      <TabItem Header="Live feed"><ContentControl Content="{Binding}" ContentTemplate="{StaticResource LiveFeedTab}"/></TabItem>
+      <TabItem Header="Schema"><ContentControl Content="{Binding}" ContentTemplate="{StaticResource SchemaTab}"/></TabItem>
+      <TabItem Header="Taxonomy"><ContentControl Content="{Binding}" ContentTemplate="{StaticResource TaxonomyTab}"/></TabItem>
+    </TabControl>
+  </Grid>
+</Window>

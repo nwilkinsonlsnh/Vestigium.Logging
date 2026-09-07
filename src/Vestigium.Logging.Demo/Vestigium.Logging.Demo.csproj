@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <RootNamespace>Vestigium.Logging.Demo</RootNamespace>
+    <AssemblyName>Vestigium.Logging.Demo</AssemblyName>
+    <ApplicationTitle>Vestigium.Logging Demo</ApplicationTitle>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Vestigium.Logging\Vestigium.Logging.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,32 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <DataTemplate x:Key="SchemaTab">
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="360"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Border Style="{StaticResource Panel}" Margin="0,0,10,0">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Text="Canonical fields"/>
+          <ItemsControl ItemsSource="{Binding SchemaRows}" Margin="0,8,0,0">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,0,0,8" Opacity="0.85"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </DockPanel>
+      </Border>
+      <Border Style="{StaticResource Panel}" Grid.Column="1">
+        <DockPanel>
+          <TextBlock DockPanel.Dock="Top" FontWeight="SemiBold" Text="Recent JSON Lines"/>
+          <TextBox Margin="0,8,0,0" Text="{Binding JsonPreview, Mode=OneWay}"
+                   IsReadOnly="True" TextWrapping="Wrap" AcceptsReturn="True"
+                   VerticalScrollBarVisibility="Auto" FontFamily="Cascadia Mono, Consolas" FontSize="11"
+                   Background="#0A1628" Foreground="#E2E8F0" BorderThickness="0"/>
+        </DockPanel>
+      </Border>
+    </Grid>
+  </DataTemplate>
+</ResourceDictionary>
