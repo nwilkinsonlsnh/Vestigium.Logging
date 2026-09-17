@@ -73,9 +73,9 @@ public static class VestigiumLogger
     internal static void Emit(VestigiumLogLevel level, VestigiumStatus status, string category, string subcategory, string message, Exception? exception, string? appId = null)
         => Require().Emit(level, status, category, subcategory, message, exception, appId);
 
-    private static void OnProcessExit(object? sender, EventArgs e) => Flush();
+    internal static void OnProcessExit(object? sender, EventArgs e) => Flush();
 
-    private static void OnCancel(object? sender, ConsoleCancelEventArgs e) => Flush();
+    internal static void OnCancel(object? sender, ConsoleCancelEventArgs e) => Flush();
 
     internal sealed class Host : IDisposable
     {
