@@ -29,10 +29,19 @@ public sealed class VestigiumLoggerOptions
 
     public int SubscriberChannelCapacity { get; set; } = 10_000;
 
+    /// <summary>
+    /// Host/UI hint for ViewModel drain cadence. Not used by the logging engine.
+    /// </summary>
     public TimeSpan UiBatchInterval { get; set; } = TimeSpan.FromMilliseconds(100);
 
+    /// <summary>
+    /// Host/UI hint for ViewModel drain batch size. Not used by the logging engine.
+    /// </summary>
     public int UiBatchSize { get; set; } = 50;
 
+    /// <summary>
+    /// Maximum time <see cref="VestigiumLogger.Flush"/> waits for the Serilog async buffer to close. Default 5 seconds. Zero means do not wait on a worker thread (flush runs inline).
+    /// </summary>
     public TimeSpan FlushTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
     public VestigiumLogLevel MinimumDiskLevel { get; set; } = VestigiumLogLevel.Information;
