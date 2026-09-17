@@ -95,7 +95,8 @@ public static class VestigiumLogger
         string message,
         Exception? exception,
         string? appId = null,
-        string? correlationId = null)
+        string? correlationId = null,
+        IReadOnlyDictionary<string, string?>? properties = null)
     {
         var host = _host;
         if (host is null)
@@ -105,7 +106,7 @@ public static class VestigiumLogger
             throw new InvalidOperationException("VestigiumLogger.Initialize must run during application startup.");
         }
 
-        host.Emit(level, status, category, subcategory, message, exception, appId, correlationId);
+        host.Emit(level, status, category, subcategory, message, exception, appId, correlationId, properties);
     }
 
     private static void OnProcessExit(object? sender, EventArgs e) => Shutdown();
@@ -182,7 +183,8 @@ public static class VestigiumLogger
             string message,
             Exception? exception,
             string? appId,
-            string? correlationId = null)
+            string? correlationId = null,
+            IReadOnlyDictionary<string, string?>? properties = null)
         {
             if (Volatile.Read(ref _accepting) == 0)
                 return;
@@ -225,7 +227,10 @@ public static class VestigiumLogger
 
             WriteEvent(new VestigiumLogEvent(
                 now, _pid, Environment.CurrentManagedThreadId, level, status,
-                app, cat, sub, message, exception?.ToString(), correlationId));
+                app, cat, sub, message,
+                VestigiumExceptionFormatter.Format(exception, Options.ExceptionDetail, Options.ExceptionMaxChars),
+                correlationId,
+                VestigiumPropertyBag.Sanitize(properties)));
         }
 
         private void WriteEvent(VestigiumLogEvent evt)

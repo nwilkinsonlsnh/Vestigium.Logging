@@ -54,6 +54,7 @@ flowchart LR
 | `VestigiumLogger` | Process singleton host |
 | `VestigiumLog` | Call-site API |
 | `VestigiumUninitializedBehavior` | Throw (default) or NoOp writes before Initialize |
+| `VestigiumExceptionDetail` | Full / TypeAndMessage / None |
 
 ## 5. Flood algorithm
 

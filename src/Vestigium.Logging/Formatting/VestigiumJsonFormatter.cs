@@ -17,6 +17,7 @@ internal sealed class VestigiumJsonRecord
     public string MESSAGE { get; set; } = "";
     public string? EXCEPTION { get; set; }
     public string? CORRELATIONID { get; set; }
+    public Dictionary<string, string>? PROPERTIES { get; set; }
 }
 
 public static class VestigiumJsonFormatter
@@ -41,7 +42,8 @@ public static class VestigiumJsonFormatter
             SUBCATEGORY = e.Subcategory,
             MESSAGE = e.Message,
             EXCEPTION = e.Exception,
-            CORRELATIONID = e.CorrelationId
+            CORRELATIONID = e.CorrelationId,
+            PROPERTIES = e.Properties is { Count: > 0 } ? new Dictionary<string, string>(e.Properties) : null
         };
         return JsonSerializer.Serialize(record, Options);
     }

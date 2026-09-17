@@ -35,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="_Documentation\Reports\Exports\" />
+		<InternalsVisibleTo Include="Vestigium.Logging.Tests" />
 	</ItemGroup>
 
 </Project>

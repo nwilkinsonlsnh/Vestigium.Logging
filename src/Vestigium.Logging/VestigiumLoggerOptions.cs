@@ -51,6 +51,11 @@ public sealed class VestigiumLoggerOptions
 
     public int RecentJsonLineCap { get; set; } = 200;
 
+    public VestigiumExceptionDetail ExceptionDetail { get; set; } = VestigiumExceptionDetail.Full;
+
+    /// <summary>Soft cap on EXCEPTION text. 0 means unlimited, still clipped at 64 KiB.</summary>
+    public int ExceptionMaxChars { get; set; } = 8_192;
+
     public VestigiumTaxonomy Taxonomy { get; } = new();
 
     public string ResolveLogDirectory()

@@ -26,6 +26,7 @@ public sealed class JsonAndTaxonomyTests
         Assert.Contains("stack", root.GetProperty("MESSAGE").GetString());
         Assert.Contains("InvalidOperationException", root.GetProperty("EXCEPTION").GetString());
         Assert.Equal(JsonValueKind.Null, root.GetProperty("CORRELATIONID").ValueKind);
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("PROPERTIES").ValueKind);
     }
 
     [Fact]

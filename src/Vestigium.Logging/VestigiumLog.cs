@@ -11,24 +11,25 @@ public static class VestigiumLog
         string message,
         Exception? exception = null,
         string? appId = null,
-        string? correlationId = null) =>
-        VestigiumLogger.Emit(level, status, category, subcategory, message, exception, appId, correlationId);
+        string? correlationId = null,
+        IReadOnlyDictionary<string, string?>? properties = null) =>
+        VestigiumLogger.Emit(level, status, category, subcategory, message, exception, appId, correlationId, properties);
 
-    public static void Verbose(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null) =>
-        Write(VestigiumLogLevel.Verbose, status, category, subcategory, message, exception, correlationId: correlationId);
+    public static void Verbose(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null, IReadOnlyDictionary<string, string?>? properties = null) =>
+        Write(VestigiumLogLevel.Verbose, status, category, subcategory, message, exception, correlationId: correlationId, properties: properties);
 
-    public static void Debug(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null) =>
-        Write(VestigiumLogLevel.Debug, status, category, subcategory, message, exception, correlationId: correlationId);
+    public static void Debug(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null, IReadOnlyDictionary<string, string?>? properties = null) =>
+        Write(VestigiumLogLevel.Debug, status, category, subcategory, message, exception, correlationId: correlationId, properties: properties);
 
-    public static void Information(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null) =>
-        Write(VestigiumLogLevel.Information, status, category, subcategory, message, exception, correlationId: correlationId);
+    public static void Information(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null, IReadOnlyDictionary<string, string?>? properties = null) =>
+        Write(VestigiumLogLevel.Information, status, category, subcategory, message, exception, correlationId: correlationId, properties: properties);
 
-    public static void Warning(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null) =>
-        Write(VestigiumLogLevel.Warning, status, category, subcategory, message, exception, correlationId: correlationId);
+    public static void Warning(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null, IReadOnlyDictionary<string, string?>? properties = null) =>
+        Write(VestigiumLogLevel.Warning, status, category, subcategory, message, exception, correlationId: correlationId, properties: properties);
 
-    public static void Error(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null) =>
-        Write(VestigiumLogLevel.Error, status, category, subcategory, message, exception, correlationId: correlationId);
+    public static void Error(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null, IReadOnlyDictionary<string, string?>? properties = null) =>
+        Write(VestigiumLogLevel.Error, status, category, subcategory, message, exception, correlationId: correlationId, properties: properties);
 
-    public static void Fatal(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null) =>
-        Write(VestigiumLogLevel.Fatal, status, category, subcategory, message, exception, correlationId: correlationId);
+    public static void Fatal(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null, IReadOnlyDictionary<string, string?>? properties = null) =>
+        Write(VestigiumLogLevel.Fatal, status, category, subcategory, message, exception, correlationId: correlationId, properties: properties);
 }

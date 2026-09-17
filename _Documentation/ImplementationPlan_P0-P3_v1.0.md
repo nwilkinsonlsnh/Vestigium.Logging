@@ -496,7 +496,7 @@ New tests listed under each slice. Keep the test project serial if any test uses
 
 **P3**
 
-- [ ] P3.1 PROPERTIES bag with key/value caps
-- [ ] P3.2 ExceptionDetail + ExceptionMaxChars
+- [x] P3.1 PROPERTIES bag with key/value caps
+- [x] P3.2 ExceptionDetail + ExceptionMaxChars
 
 Stop after P0 if you want a behavior-only patch with no schema change (still version 1.0.x). Start 1.1.0 at P1.2.

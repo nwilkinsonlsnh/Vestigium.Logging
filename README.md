@@ -51,10 +51,20 @@ Call sites always pass STATUS:
 
 ```csharp
 VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP",
-    $"Echo request to {host} timed out after {ms} ms",
-    correlationId: probeId);
+    "Echo request timed out",
+    correlationId: probeId,
+    properties: new Dictionary<string, string?> { ["host"] = host, ["rttMs"] = ms.ToString() });
 
 VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
+```
+
+Keep MESSAGE stable so flood aggregation still works. Put varying values in `PROPERTIES`. In Power BI, expand the `PROPERTIES` record after the JSON folder source.
+
+Exception text:
+
+```csharp
+cfg.ExceptionDetail = VestigiumExceptionDetail.TypeAndMessage; // no stacks
+cfg.ExceptionMaxChars = 4096;
 ```
 
 Libraries that must compile without a host:
@@ -80,7 +90,7 @@ VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
 | UI batch | 50 events / 100 ms |
 | FlushTimeout | 5 s (`Flush` does not stop writes) |
 
-Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)` — a value tuple, never a concatenated string.
+Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)` — a value tuple, never a concatenated string. `CORRELATIONID` and `PROPERTIES` are extras.
 
 ## Projects
 

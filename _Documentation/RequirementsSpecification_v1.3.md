@@ -49,8 +49,9 @@ One JSON object per line (JSON Lines). Property names and casing are mandatory.
 | CATEGORY | string | Registered catalog, else Uncategorized |
 | SUBCATEGORY | string | Linked to category, else Unregistered |
 | MESSAGE | string | JSON-escaped. Never split across output lines. |
-| EXCEPTION | string or null | `Exception.ToString()` including inners, or JSON null |
+| EXCEPTION | string or null | Formatted per `ExceptionDetail`. JSON null when none or `None` |
 | CORRELATIONID | string or null | Opaque host-supplied id. JSON null when omitted. Not part of flood identity. |
+| PROPERTIES | object or null | Flat string map. JSON null when empty. Keys `[A-Za-z][A-Za-z0-9_]*`, max 16, values ≤ 256 chars. Illegal keys dropped. Not part of flood identity. |
 
 Do not emit Info, Warn, INFO, or ERROR.
 
@@ -74,7 +75,7 @@ Every public log call returns after enqueue. Disk I/O runs on Serilog’s Async 
 
 | Parameter | Value |
 |---|---|
-| Identity | `(APPID, CATEGORY, LEVEL, MESSAGE)` ordinal, case-sensitive. STATUS and SUBCATEGORY are not part of identity. |
+| Identity | `(APPID, CATEGORY, LEVEL, MESSAGE)` ordinal, case-sensitive. STATUS, SUBCATEGORY, CORRELATIONID, and PROPERTIES are not part of identity. |
 | FloodThresholdCount | 5 |
 | FloodWindowMs | 30,000 |
 | FloodIdentityCap | 4,096 distinct identities. Expired keys are removed. Idle keys evicted first; pending suppressed is flushed then dropped. |
@@ -141,6 +142,16 @@ VestigiumLog.Write(
 
 Libraries that log without a host set `VestigiumLogger.UninitializedBehavior = NoOp`. Default remains `Throw`. Only writes are soft; `Events` / `EventReader` / `Options` still require `Initialize`.
 
+### 3.10 Exception redaction
+
+| `ExceptionDetail` | EXCEPTION field |
+|---|---|
+| `Full` (default) | `Exception.ToString()` including stacks, then truncated |
+| `TypeAndMessage` | `{Type}: {Message}` plus inner chain (` ---> `), no stacks |
+| `None` | JSON null even if an exception was passed |
+
+`ExceptionMaxChars` default 8,192. 0 = unlimited, still clipped at 64 KiB. No PII regex pack in v1.1 — hosts sanitize MESSAGE before `Write` if needed.
+
 ## 4. Acceptance criteria
 
 1. A MESSAGE containing pipes, tabs, quotes, and a four-line stack trace writes as one JSON object.
@@ -171,3 +182,4 @@ Libraries that log without a host set `VestigiumLogger.UninitializedBehavior = N
 | 1.4 | P0: Flush ≠ Shutdown; WPF Exit via reflection; flood identity cap 4096 | Implementation plan P0, 17 Sep 2026 |
 | 1.5 | P1: Uninitialized NoOp, CORRELATIONID, STATUS=Warning documented | Implementation plan P1, 17 Sep 2026 |
 | 1.6 | P2: ignore-case taxonomy, DiskStatus, VestigiumLogPump | Implementation plan P2, 17 Sep 2026 |
+| 1.7 | P3: PROPERTIES bag, ExceptionDetail redaction | Implementation plan P3, 17 Sep 2026 |

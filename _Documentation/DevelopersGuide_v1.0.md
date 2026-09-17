@@ -22,9 +22,15 @@ VestigiumLogger.BindLifetime(Application.Current);
 3. Log with an explicit status:
 
 ```csharp
-VestigiumLog.Information(VestigiumStatus.Success, "Network", "DNS", $"{name} resolved to {ip}", correlationId: sessionId);
+VestigiumLog.Information(
+    VestigiumStatus.Timeout, "Network", "ICMP",
+    "Echo request timed out",
+    correlationId: sessionId,
+    properties: new Dictionary<string, string?> { ["host"] = name, ["rttMs"] = "12" });
 VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
 ```
+
+Do not put STATUS, LEVEL, or MESSAGE into PROPERTIES. Power BI: expand the `PROPERTIES` record on the JSON folder source.
 
 Libraries that log before a host starts:
 
@@ -43,6 +49,11 @@ cfg.DiskBytesFloorEnabled = false; // percent threshold only
 ```
 
 `VestigiumLogger.DiskStatus` is safe to read before `Initialize` (empty, not tripped).
+
+```csharp
+cfg.ExceptionDetail = VestigiumExceptionDetail.TypeAndMessage;
+cfg.ExceptionMaxChars = 4096;
+```
 
 ## Taxonomy
 
