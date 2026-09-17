@@ -7,41 +7,55 @@ public sealed class VestigiumTaxonomy
     public const string Unregistered = "Unregistered";
     public const string InternalAppId = "Vestigium.Logging";
 
+    private readonly object _gate = new();
     private readonly Dictionary<string, HashSet<string>> _map =
         new(StringComparer.Ordinal);
 
     public static VestigiumTaxonomy Defaults { get; } = CreateDefaults();
 
-    public IReadOnlyDictionary<string, IReadOnlyList<string>> Snapshot =>
-        _map.ToDictionary(
-            static p => p.Key,
-            static p => (IReadOnlyList<string>)p.Value.OrderBy(static s => s, StringComparer.Ordinal).ToArray(),
-            StringComparer.Ordinal);
+    public IReadOnlyDictionary<string, IReadOnlyList<string>> Snapshot
+    {
+        get
+        {
+            lock (_gate)
+            {
+                return _map.ToDictionary(
+                    static p => p.Key,
+                    static p => (IReadOnlyList<string>)p.Value.OrderBy(static s => s, StringComparer.Ordinal).ToArray(),
+                    StringComparer.Ordinal);
+            }
+        }
+    }
 
     public void Register(string category, params string[] subcategories)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(category);
-        if (!_map.TryGetValue(category, out var set))
+        lock (_gate)
         {
-            set = new HashSet<string>(StringComparer.Ordinal);
-            _map[category] = set;
-        }
+            if (!_map.TryGetValue(category, out var set))
+            {
+                set = new HashSet<string>(StringComparer.Ordinal);
+                _map[category] = set;
+            }
 
-        foreach (var sub in subcategories)
-        {
-            if (!string.IsNullOrWhiteSpace(sub))
-                set.Add(sub);
+            foreach (var sub in subcategories)
+            {
+                if (!string.IsNullOrWhiteSpace(sub))
+                    set.Add(sub);
+            }
         }
     }
 
-    public bool IsCategoryRegistered(string category) =>
-        _map.ContainsKey(category);
+    public bool IsCategoryRegistered(string category)
+    {
+        lock (_gate)
+            return _map.ContainsKey(category);
+    }
 
     public bool IsSubcategoryRegistered(string category, string subcategory)
     {
-        if (!_map.TryGetValue(category, out var set))
-            return false;
-        return set.Contains(subcategory);
+        lock (_gate)
+            return _map.TryGetValue(category, out var set) && set.Contains(subcategory);
     }
 
     public (string Category, string Subcategory, bool Rewritten) Normalize(string category, string subcategory)
