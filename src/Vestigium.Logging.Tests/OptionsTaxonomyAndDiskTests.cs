@@ -19,6 +19,20 @@ public sealed class OptionsTaxonomyAndDiskTests
     }
 
     [Fact]
+    public void ResolveLogDirectoryFallsBackWhenCommonAppDataIsEmpty()
+    {
+        var options = new VestigiumLoggerOptions { AppId = "PingIQ", LogDirectory = null };
+        options.GetCommonApplicationData = static () => "";
+        var resolved = options.ResolveLogDirectory();
+        Assert.Contains(Path.GetTempPath().TrimEnd(Path.DirectorySeparatorChar), resolved);
+        Assert.Contains(Path.Combine("Vestigium", "Logs", "PingIQ"), resolved);
+
+        options.GetCommonApplicationData = static () => "   ";
+        resolved = options.ResolveLogDirectory();
+        Assert.Contains("Vestigium", resolved, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
     public void RegisterTaxonomyRejectsNull()
     {
         var options = new VestigiumLoggerOptions();
@@ -33,6 +47,7 @@ public sealed class OptionsTaxonomyAndDiskTests
         Assert.True(t.IsSubcategoryRegistered("Network", "ICMP"));
         Assert.False(t.IsCategoryRegistered("Widgets"));
         Assert.False(t.IsSubcategoryRegistered("Network", "SMTP"));
+        Assert.False(t.IsSubcategoryRegistered("Widgets", "Thing"));
 
         var empty = t.Normalize(" ", " ");
         Assert.False(empty.Rewritten);
