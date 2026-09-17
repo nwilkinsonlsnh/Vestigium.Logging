@@ -37,8 +37,12 @@ public sealed class VestigiumTaxonomy
     public bool IsCategoryRegistered(string category) =>
         _map.ContainsKey(category);
 
-    public bool IsSubcategoryRegistered(string category, string subcategory) =>
-        _map.TryGetValue(category, out var set) && set.Contains(subcategory);
+    public bool IsSubcategoryRegistered(string category, string subcategory)
+    {
+        if (!_map.TryGetValue(category, out var set))
+            return false;
+        return set.Contains(subcategory);
+    }
 
     public (string Category, string Subcategory, bool Rewritten) Normalize(string category, string subcategory)
     {
@@ -54,8 +58,6 @@ public sealed class VestigiumTaxonomy
 
         if (!IsSubcategoryRegistered(cat, sub))
         {
-            if (cat != Uncategorized && !IsCategoryRegistered(category))
-                cat = Uncategorized;
             sub = Unregistered;
             rewritten = true;
         }
