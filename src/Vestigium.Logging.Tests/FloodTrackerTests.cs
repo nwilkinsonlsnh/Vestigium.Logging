@@ -47,11 +47,30 @@ public sealed class FloodTrackerTests
         var key = new FloodIdentity("PingIQ", "Network", "Information", "echo");
         var start = DateTimeOffset.UtcNow;
         for (var i = 0; i < 8; i++)
-            tracker.Observe(key, start);
+            tracker.Observe(key, start, "ICMP");
 
         var dumped = tracker.DrainExpired(start.AddSeconds(2));
         Assert.Single(dumped);
         Assert.Equal(3, dumped[0].Suppressed);
+        Assert.Equal("ICMP", dumped[0].Subcategory);
+        Assert.Equal("Network", dumped[0].Key.Category);
+        Assert.Equal(0, tracker.IdentityCount);
+    }
+
+    [Fact]
+    public void IdentityCapEvictsOldest()
+    {
+        var tracker = new FloodTracker(5, TimeSpan.FromHours(1), identityCap: 16);
+        var start = DateTimeOffset.UtcNow;
+        for (var i = 0; i < 40; i++)
+        {
+            var key = new FloodIdentity("PingIQ", "Network", "Information", $"msg-{i}");
+            tracker.Observe(key, start.AddMilliseconds(i), "ICMP");
+        }
+
+        Assert.True(tracker.IdentityCount > 16);
+        tracker.DrainExpired(start.AddHours(2));
+        Assert.True(tracker.IdentityCount <= 16);
     }
 
     [Fact]
