@@ -1,6 +1,4 @@
 using System.Text.Json;
-using Serilog.Events;
-using Serilog.Formatting;
 
 namespace Vestigium.Logging;
 
@@ -46,17 +44,5 @@ public static class VestigiumJsonFormatter
             PROPERTIES = e.Properties is { Count: > 0 } ? new Dictionary<string, string>(e.Properties) : null
         };
         return JsonSerializer.Serialize(record, Options);
-    }
-}
-
-internal sealed class VestigiumSerilogFormatter : ITextFormatter
-{
-    public void Format(LogEvent logEvent, TextWriter output)
-    {
-        if (!logEvent.Properties.TryGetValue("VestigiumJson", out var value))
-            return;
-
-        var json = value is ScalarValue { Value: string s } ? s : value.ToString().Trim('"');
-        output.WriteLine(json);
     }
 }
