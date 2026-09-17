@@ -4,6 +4,13 @@
     <BuildType Name="Release" />
     <Platform Name="Any CPU" />
   </Configurations>
+  <Folder Name="/_Documentation/">
+    <File Path="src/Vestigium.Logging/_Documentation/RequirementsSpecification_v1.3.md" />
+    <File Path="src/Vestigium.Logging/_Documentation/DesignDocument_v1.0.md" />
+    <File Path="src/Vestigium.Logging/_Documentation/DevelopersGuide_v1.0.md" />
+    <File Path="src/Vestigium.Logging/_Documentation/ImplementationPlan_P0-P3_v1.0.md" />
+    <File Path="src/Vestigium.Logging/_Documentation/ImplementationPlan_OwnedJsonlWriter_v1.0.md" />
+  </Folder>
   <Project Path="src/Vestigium.Logging/Vestigium.Logging.csproj" />
   <Project Path="src/Vestigium.Logging.Tests/Vestigium.Logging.Tests.csproj" />
   <Project Path="src/Vestigium.Logging.Demo/Vestigium.Logging.Demo.csproj" />
