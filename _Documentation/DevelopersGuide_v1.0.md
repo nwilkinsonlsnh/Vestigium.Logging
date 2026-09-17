@@ -34,7 +34,15 @@ VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
 
 Only writes no-op. `VestigiumLogger.Events` still throws until `Initialize`.
 
-4. In a diagnostic console ViewModel, drain `VestigiumLogger.EventReader` off the UI thread and send batches through `WeakReferenceMessenger`. Do not subscribe `IObservable` (`VestigiumLogger.Events`) directly on a View.
+4. In a diagnostic console ViewModel, drain `VestigiumLogger.EventReader` with `VestigiumLogPump.RunAsync` off the UI thread and send batches through `WeakReferenceMessenger`. Do not subscribe `IObservable` (`VestigiumLogger.Events`) directly on a View.
+
+Small lab disks can disable the 5 GB floor:
+
+```csharp
+cfg.DiskBytesFloorEnabled = false; // percent threshold only
+```
+
+`VestigiumLogger.DiskStatus` is safe to read before `Initialize` (empty, not tripped).
 
 ## Taxonomy
 
@@ -44,7 +52,17 @@ Register extra categories at initialize time:
 cfg.Taxonomy.Register("Probe", "Schedule", "Result", "Cancel");
 ```
 
-Unknown pairs are rewritten. Do not catch that as an exception — it is a Warning from `APPID=Vestigium.Logging`.
+Unknown pairs are rewritten. Do not catch that as an exception — it is a Warning from `APPID=Vestigium.Logging`. Matching is ordinal-ignore-case; PowerBI sees the **first registered spelling** (`ICMP`, not `icmp`). Blank category/subcategory also rewrite and warn.
+
+Suite catalogs (Helpers, ClosedXml, …) stay in those libraries. Combine at host init:
+
+```csharp
+cfg.RegisterTaxonomy(HelperLog.Taxonomy);
+// or
+var catalog = VestigiumTaxonomy.Combine(VestigiumTaxonomy.Defaults, HelperLog.Taxonomy);
+```
+
+Do not add product names to `Vestigium.Logging` itself.
 
 ## Flood
 

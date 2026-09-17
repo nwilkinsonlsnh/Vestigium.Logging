@@ -68,7 +68,7 @@ Do not emit Info, Warn, INFO, or ERROR.
 
 ### 3.3 Asynchronous queueing
 
-Every public log call returns after enqueue. Disk I/O runs on Serilog’s Async sink (`bufferSize` 10,000, `blockWhenFull: false`). Subscriber fan-out uses a bounded channel of 10,000 with `FullMode = DropOldest`. UI drain: every 100 ms or 50 events, whichever first.
+Every public log call returns after enqueue. Disk I/O runs on Serilog’s Async sink (`bufferSize` 10,000, `blockWhenFull: false`). Subscriber fan-out uses a bounded channel of 10,000 with `FullMode = DropOldest`. UI drain: `VestigiumLogPump` every 100 ms or 50 events, whichever first.
 
 ### 3.4 Flood protection
 
@@ -101,7 +101,7 @@ Subscribe to `Application.Current.Exit` when running under WPF (`VestigiumLogger
 
 ### 3.6 Disk space tripwire
 
-Poll every 30 seconds. Trip when `AvailableFreeSpace < 10% of TotalSize` **OR** `AvailableFreeSpace < 5 GB`. While tripped, drop Verbose and Debug. Information and above still flow. Next poll above both thresholds lifts the throttle.
+Poll every 30 seconds. Trip when `AvailableFreeSpace < 10% of TotalSize` **OR** (when `DiskBytesFloorEnabled`, default true) `AvailableFreeSpace < 5 GB`. While tripped, drop Verbose and Debug. Information and above still flow. Next poll above both thresholds lifts the throttle. Hosts on small volumes set `DiskBytesFloorEnabled = false`. `VestigiumLogger.DiskStatus` exposes the last snapshot without throwing when uninitialized.
 
 ### 3.7 Initialization and taxonomy
 
@@ -115,7 +115,9 @@ Default taxonomy:
 | System | IO, Memory, Threading, Configuration |
 | UI | Navigation, Binding, Input, Lifecycle |
 
-Unknown CATEGORY → Uncategorized. Unknown SUBCATEGORY → Unregistered. One internal Warning is written (`APPID=Vestigium.Logging`, `CATEGORY=System`, `SUBCATEGORY=Configuration`) and is itself flood-protected.
+Unknown CATEGORY → Uncategorized. Unknown SUBCATEGORY → Unregistered. Matching is ordinal-ignore-case; stored values use the first registered spelling. Blank CATEGORY or SUBCATEGORY also rewrite. One internal Warning is written (`APPID=Vestigium.Logging`, `CATEGORY=System`, `SUBCATEGORY=Configuration`) and is itself flood-protected.
+
+Product/helper catalogs are registered by the host (`cfg.RegisterTaxonomy(...)` or `VestigiumTaxonomy.Combine`). This library does not enumerate ClosedXml / FileIo / Kql.
 
 ### 3.8 Public log API
 
@@ -168,3 +170,4 @@ Libraries that log without a host set `VestigiumLogger.UninitializedBehavior = N
 | 1.3 | Rolling files: 20 MB, 14-day retention, 90-file cap | Stakeholder request, 6 Sep 2026 |
 | 1.4 | P0: Flush ≠ Shutdown; WPF Exit via reflection; flood identity cap 4096 | Implementation plan P0, 17 Sep 2026 |
 | 1.5 | P1: Uninitialized NoOp, CORRELATIONID, STATUS=Warning documented | Implementation plan P1, 17 Sep 2026 |
+| 1.6 | P2: ignore-case taxonomy, DiskStatus, VestigiumLogPump | Implementation plan P2, 17 Sep 2026 |

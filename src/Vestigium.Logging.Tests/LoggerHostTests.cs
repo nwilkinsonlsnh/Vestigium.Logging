@@ -215,6 +215,38 @@ public sealed class LoggerIntegrationTests : IDisposable
             l => l.Contains("[Aggregated]") && l.Contains("\"SUBCATEGORY\":\"ICMP\""));
     }
 
+    [Fact]
+    public void DiskStatusEmptyWhenNotInitialized()
+    {
+        VestigiumLogger.Shutdown();
+        var status = VestigiumLogger.DiskStatus;
+        Assert.False(status.IsTripped);
+        Assert.False(status.IsOverridden);
+        Assert.Null(status.Drive);
+        Assert.Null(status.AvailableBytes);
+    }
+
+    [Fact]
+    public void DiskStatusReflectsOverride()
+    {
+        VestigiumLogger.Initialize(cfg =>
+        {
+            cfg.AppId = "PingIQ";
+            cfg.LogDirectory = _dir;
+            cfg.DiskBytesFloorEnabled = false;
+        });
+
+        Assert.False(VestigiumLogger.DiskStatus.IsOverridden);
+        VestigiumLogger.OverrideDiskPressure(true);
+        Assert.True(VestigiumLogger.IsDiskTripped);
+        Assert.True(VestigiumLogger.DiskStatus.IsTripped);
+        Assert.True(VestigiumLogger.DiskStatus.IsOverridden);
+        Assert.Equal(0, VestigiumLogger.DiskStatus.BytesFloor);
+
+        VestigiumLogger.OverrideDiskPressure(null);
+        Assert.False(VestigiumLogger.DiskStatus.IsOverridden);
+    }
+
     public void Dispose()
     {
         VestigiumLogger.Shutdown();

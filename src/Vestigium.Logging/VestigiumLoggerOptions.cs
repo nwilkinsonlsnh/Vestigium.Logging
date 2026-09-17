@@ -28,6 +28,12 @@ public sealed class VestigiumLoggerOptions
 
     public long DiskFreeBytesFloor { get; set; } = 5L * 1024 * 1024 * 1024;
 
+    /// <summary>
+    /// When false, only the percent threshold trips the disk gate (for small CI / lab volumes).
+    /// Default true (SRS: 10% or 5 GB).
+    /// </summary>
+    public bool DiskBytesFloorEnabled { get; set; } = true;
+
     public TimeSpan DiskPollInterval { get; set; } = TimeSpan.FromSeconds(30);
 
     public int SubscriberChannelCapacity { get; set; } = 10_000;

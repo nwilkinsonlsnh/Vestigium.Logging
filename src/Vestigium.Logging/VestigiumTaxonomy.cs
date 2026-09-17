@@ -8,22 +8,22 @@ public sealed class VestigiumTaxonomy
     public const string InternalAppId = "Vestigium.Logging";
 
     private readonly Dictionary<string, HashSet<string>> _map =
-        new(StringComparer.Ordinal);
+        new(StringComparer.OrdinalIgnoreCase);
 
     public static VestigiumTaxonomy Defaults { get; } = CreateDefaults();
 
     public IReadOnlyDictionary<string, IReadOnlyList<string>> Snapshot =>
         _map.ToDictionary(
             static p => p.Key,
-            static p => (IReadOnlyList<string>)p.Value.OrderBy(static s => s, StringComparer.Ordinal).ToArray(),
-            StringComparer.Ordinal);
+            static p => (IReadOnlyList<string>)p.Value.OrderBy(static s => s, StringComparer.OrdinalIgnoreCase).ToArray(),
+            StringComparer.OrdinalIgnoreCase);
 
     public void Register(string category, params string[] subcategories)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(category);
         if (!_map.TryGetValue(category, out var set))
         {
-            set = new HashSet<string>(StringComparer.Ordinal);
+            set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             _map[category] = set;
         }
 
@@ -34,33 +34,97 @@ public sealed class VestigiumTaxonomy
         }
     }
 
+    public static VestigiumTaxonomy Combine(params VestigiumTaxonomy[] sources)
+    {
+        var combined = new VestigiumTaxonomy();
+        foreach (var source in sources)
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            foreach (var pair in source.Snapshot)
+                combined.Register(pair.Key, pair.Value.ToArray());
+        }
+
+        return combined;
+    }
+
     public bool IsCategoryRegistered(string category) =>
-        _map.ContainsKey(category);
+        !string.IsNullOrWhiteSpace(category) && _map.ContainsKey(category);
 
     public bool IsSubcategoryRegistered(string category, string subcategory) =>
         _map.TryGetValue(category, out var set) && set.Contains(subcategory);
 
     public (string Category, string Subcategory, bool Rewritten) Normalize(string category, string subcategory)
     {
-        var cat = string.IsNullOrWhiteSpace(category) ? Uncategorized : category;
-        var sub = string.IsNullOrWhiteSpace(subcategory) ? Unregistered : subcategory;
         var rewritten = false;
 
-        if (!IsCategoryRegistered(cat))
+        string cat;
+        if (string.IsNullOrWhiteSpace(category))
+        {
+            cat = Uncategorized;
+            rewritten = true;
+        }
+        else if (TryCanonicalCategory(category, out var canonicalCat, out _))
+        {
+            cat = canonicalCat;
+        }
+        else
         {
             cat = Uncategorized;
             rewritten = true;
         }
 
-        if (!IsSubcategoryRegistered(cat, sub))
+        string sub;
+        if (string.IsNullOrWhiteSpace(subcategory))
         {
-            if (cat != Uncategorized && !IsCategoryRegistered(category))
-                cat = Uncategorized;
+            sub = Unregistered;
+            rewritten = true;
+        }
+        else if (TryCanonicalCategory(cat, out _, out var set) && set.Contains(subcategory))
+        {
+            sub = CanonicalMember(set, subcategory);
+        }
+        else
+        {
             sub = Unregistered;
             rewritten = true;
         }
 
         return (cat, sub, rewritten);
+    }
+
+    private bool TryCanonicalCategory(string category, out string canonical, out HashSet<string> set)
+    {
+        if (_map.TryGetValue(category, out set!))
+        {
+            canonical = CanonicalKey(category);
+            return true;
+        }
+
+        canonical = category;
+        set = null!;
+        return false;
+    }
+
+    private string CanonicalKey(string category)
+    {
+        foreach (var key in _map.Keys)
+        {
+            if (_map.Comparer.Equals(key, category))
+                return key;
+        }
+
+        return category;
+    }
+
+    private static string CanonicalMember(HashSet<string> set, string value)
+    {
+        foreach (var item in set)
+        {
+            if (set.Comparer.Equals(item, value))
+                return item;
+        }
+
+        return value;
     }
 
     private static VestigiumTaxonomy CreateDefaults()

@@ -491,8 +491,8 @@ New tests listed under each slice. Keep the test project serial if any test uses
 
 **P2**
 
-- [ ] P2.1 Taxonomy ignore-case + blank warning + Combine
-- [ ] P2.2 DiskStatus + DiskBytesFloorEnabled + VestigiumLogPump
+- [x] P2.1 Taxonomy ignore-case + blank warning + Combine
+- [x] P2.2 DiskStatus + DiskBytesFloorEnabled + VestigiumLogPump
 
 **P3**
 

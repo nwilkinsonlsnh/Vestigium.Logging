@@ -63,4 +63,39 @@ public sealed class JsonAndTaxonomyTests
         Assert.Equal("Network", cat);
         Assert.Equal("ICMP", sub);
     }
+
+    [Fact]
+    public void CaseInsensitiveCanonicalSpelling()
+    {
+        var (cat, sub, rewritten) = VestigiumTaxonomy.Defaults.Normalize("network", "icmp");
+        Assert.False(rewritten);
+        Assert.Equal("Network", cat);
+        Assert.Equal("ICMP", sub);
+    }
+
+    [Fact]
+    public void BlankCategoryAndSubcategoryAreRewritten()
+    {
+        var (cat, sub, rewritten) = VestigiumTaxonomy.Defaults.Normalize("  ", "");
+        Assert.True(rewritten);
+        Assert.Equal(VestigiumTaxonomy.Uncategorized, cat);
+        Assert.Equal(VestigiumTaxonomy.Unregistered, sub);
+    }
+
+    [Fact]
+    public void CombineMergesCatalogsFirstCasingWins()
+    {
+        var extra = new VestigiumTaxonomy();
+        extra.Register("Helpers", "Session", "Guard");
+        extra.Register("network", "icmp");
+        var combined = VestigiumTaxonomy.Combine(VestigiumTaxonomy.Defaults, extra);
+        Assert.True(combined.IsCategoryRegistered("Helpers"));
+        var (cat, sub, rewritten) = combined.Normalize("helpers", "session");
+        Assert.False(rewritten);
+        Assert.Equal("Helpers", cat);
+        Assert.Equal("Session", sub);
+        var network = combined.Normalize("NETWORK", "HTTP");
+        Assert.False(network.Rewritten);
+        Assert.Equal("Network", network.Category);
+    }
 }

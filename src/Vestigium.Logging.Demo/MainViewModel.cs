@@ -318,7 +318,6 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
 
     private async Task PumpAsync(CancellationToken token)
     {
-        var buffer = new List<VestigiumLogEvent>(50);
         while (!token.IsCancellationRequested)
         {
             try
@@ -329,34 +328,11 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
                     continue;
                 }
 
-                var reader = VestigiumLogger.EventReader;
-                var interval = VestigiumLogger.Options.UiBatchInterval;
-                var size = VestigiumLogger.Options.UiBatchSize;
-                using var timer = new CancellationTokenSource(interval);
-                using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, timer.Token);
-
-                buffer.Clear();
-                try
-                {
-                    while (buffer.Count < size && await reader.WaitToReadAsync(linked.Token).ConfigureAwait(false))
-                    {
-                        while (buffer.Count < size && reader.TryRead(out var evt))
-                            buffer.Add(evt);
-                    }
-                }
-                catch (OperationCanceledException) when (!token.IsCancellationRequested)
-                {
-                    // batch interval elapsed
-                }
-
-                if (buffer.Count > 0)
-                {
-                    WeakReferenceMessenger.Default.Send(new LogBatchMessage { Events = buffer.ToArray() });
-                }
-                else
-                {
-                    await Task.Delay(20, token).ConfigureAwait(false);
-                }
+                await VestigiumLogPump.RunAsync(
+                    VestigiumLogger.EventReader,
+                    batch => WeakReferenceMessenger.Default.Send(new LogBatchMessage { Events = [.. batch] }),
+                    VestigiumLogger.Options,
+                    token).ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (token.IsCancellationRequested)
             {

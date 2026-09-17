@@ -63,7 +63,7 @@ Libraries that must compile without a host:
 VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
 ```
 
-`Events` / `EventReader` still require `Initialize`. UI hosts drain `VestigiumLogger.EventReader`; `IObservable` is for tests and tools.
+`Events` / `EventReader` still require `Initialize`. UI hosts drain `VestigiumLogger.EventReader` with `VestigiumLogPump`; `IObservable` is for tests and tools.
 
 ## Defaults (SRS v1.3)
 
@@ -75,7 +75,7 @@ VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
 | FloodThresholdCount | 5 |
 | FloodWindowMs | 30,000 |
 | FloodIdentityCap | 4,096 |
-| Disk tripwire | 10% free **or** 5 GB |
+| Disk tripwire | 10% free **or** 5 GB (`DiskBytesFloorEnabled`) |
 | Subscriber channel | 10,000, DropOldest |
 | UI batch | 50 events / 100 ms |
 | FlushTimeout | 5 s (`Flush` does not stop writes) |

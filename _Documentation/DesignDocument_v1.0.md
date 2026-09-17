@@ -34,7 +34,7 @@ flowchart LR
   Emit --> Serilog[Serilog Async File JSONL]
   Emit --> Channel[Bounded Channel 10k DropOldest]
   Emit --> Subject[IObservable]
-  Channel --> Pump[Demo batch pump 50 / 100ms]
+  Channel --> Pump[VestigiumLogPump 50 / 100ms]
   Pump --> Messenger[WeakReferenceMessenger]
   Messenger --> ListView[Live feed]
 ```
@@ -89,7 +89,7 @@ Rolling: daily interval **and** 20 MB size, retain 90 files and 14 days, `shared
 
 - `App.OnStartup` initializes the logger and `BindLifetime(Current)`.
 - `MainViewModel : ObservableRecipient` owns configuration, composer, and counters.
-- A background `PumpAsync` reads `EventReader`, batches 50 / 100 ms, and `WeakReferenceMessenger.Default.Send(new LogBatchMessage …)`.
+- A background `PumpAsync` calls `VestigiumLogPump.RunAsync` and `WeakReferenceMessenger.Default.Send(new LogBatchMessage …)`.
 - The ViewModel handler marshals onto `Application.Current.Dispatcher` once per batch and prepends `LogRow` items (cap 400).
 - Gallery tabs are `DataTemplate` resources (same pattern as `Vestigium.Converters.Demo`).
 
@@ -97,7 +97,7 @@ Configuration Apply tears down the host and calls `Initialize` again so sliders 
 
 ## 8. Disk tripwire
 
-`DriveInfo` on the volume that holds `LogDirectory`. Trip = free < 10% of total **or** free < 5 GB. Demo checkbox calls `VestigiumLogger.OverrideDiskPressure(true)` so the gallery can show the throttle without filling a disk.
+`DriveInfo` on the volume that holds `LogDirectory`. Trip = free < 10% of total **or** (if `DiskBytesFloorEnabled`) free < 5 GB. `VestigiumLogger.DiskStatus` is the snapshot. Demo checkbox calls `VestigiumLogger.OverrideDiskPressure(true)` so the gallery can show the throttle without filling a disk.
 
 ## 9. Failure policy
 

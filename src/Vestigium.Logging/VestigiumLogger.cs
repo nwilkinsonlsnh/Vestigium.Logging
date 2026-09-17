@@ -29,6 +29,9 @@ public static class VestigiumLogger
 
     public static bool IsDiskTripped => _host?.Disk.IsTripped ?? false;
 
+    /// <summary>Log-volume tripwire. Empty (not tripped) when the host is not initialized.</summary>
+    public static VestigiumDiskStatus DiskStatus => _host?.Disk.Snapshot() ?? VestigiumDiskStatus.Empty;
+
     public static IReadOnlyList<string> RecentJsonLines => _host?.RecentSnapshot() ?? [];
 
     public static int WrittenCount => _host?.WrittenCount ?? 0;

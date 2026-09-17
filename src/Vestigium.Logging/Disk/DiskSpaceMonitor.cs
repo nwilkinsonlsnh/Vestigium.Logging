@@ -33,6 +33,20 @@ internal sealed class DiskSpaceMonitor : IDisposable
             _override = tripped;
     }
 
+    public VestigiumDiskStatus Snapshot()
+    {
+        lock (_gate)
+        {
+            return new VestigiumDiskStatus(
+                IsTripped: _override ?? _tripped,
+                IsOverridden: _override is not null,
+                Drive: LastDrive,
+                AvailableBytes: LastAvailableBytes,
+                PercentThreshold: _options.DiskFreePercentThreshold,
+                BytesFloor: _options.DiskBytesFloorEnabled ? _options.DiskFreeBytesFloor : 0);
+        }
+    }
+
     public void Poll()
     {
         try
@@ -53,7 +67,8 @@ internal sealed class DiskSpaceMonitor : IDisposable
                 ? drive.TotalSize * _options.DiskFreePercentThreshold / 100
                 : 0;
             var tripped = drive.AvailableFreeSpace < percentFloor
-                          || drive.AvailableFreeSpace < _options.DiskFreeBytesFloor;
+                          || (_options.DiskBytesFloorEnabled
+                              && drive.AvailableFreeSpace < _options.DiskFreeBytesFloor);
 
             lock (_gate)
                 _tripped = tripped;
