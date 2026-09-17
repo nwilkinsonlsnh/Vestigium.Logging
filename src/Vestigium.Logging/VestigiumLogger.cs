@@ -165,7 +165,7 @@ public static class VestigiumLogger
         public Host(VestigiumLoggerOptions options)
         {
             Options = options;
-            Flood = new FloodTracker(options.FloodThresholdCount, options.FloodWindow);
+            Flood = new FloodTracker(options.FloodThresholdCount, options.FloodWindow, options.FloodIdentityCap);
             Disk = new DiskSpaceMonitor(options);
             Channel = System.Threading.Channels.Channel.CreateBounded<VestigiumLogEvent>(new BoundedChannelOptions(options.SubscriberChannelCapacity)
             {
@@ -232,7 +232,7 @@ public static class VestigiumLogger
                 return;
 
             var identity = new FloodIdentity(app, cat, level.ToString(), message);
-            var (writeFull, flushCount) = Flood.Observe(identity, now);
+            var (writeFull, flushCount) = Flood.Observe(identity, now, sub);
             if (flushCount > 0)
             {
                 WriteEvent(new VestigiumLogEvent(
@@ -270,12 +270,12 @@ public static class VestigiumLogger
 
         public void Drain()
         {
-            foreach (var (key, suppressed) in Flood.DrainExpired(DateTimeOffset.UtcNow))
+            foreach (var (key, suppressed, sub) in Flood.DrainExpired(DateTimeOffset.UtcNow))
             {
                 WriteEvent(new VestigiumLogEvent(
                     DateTimeOffset.UtcNow, _pid, Environment.CurrentManagedThreadId,
                     Enum.TryParse<VestigiumLogLevel>(key.Level, out var lvl) ? lvl : VestigiumLogLevel.Information,
-                    VestigiumStatus.None, key.AppId, key.Category, VestigiumTaxonomy.Unregistered,
+                    VestigiumStatus.None, key.AppId, key.Category, sub,
                     $"[Aggregated] Previous message repeated {suppressed} additional times",
                     null));
             }
