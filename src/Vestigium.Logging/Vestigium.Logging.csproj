@@ -34,4 +34,8 @@
 		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="_Documentation\Reports\Exports\" />
+	</ItemGroup>
+
 </Project>
