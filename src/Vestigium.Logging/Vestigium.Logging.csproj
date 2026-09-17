@@ -15,8 +15,8 @@
 		<Authors>Vestigium</Authors>
 		<Company>Wilkinson Business</Company>
 		<Copyright>Copyright (c) 2026 Nathaniel Wilkinson / LSNH</Copyright>
-		<Description>Centralized, subscribable Serilog logging module for the Vestigium suite — flat JSON for PowerBI, flood protection, WPF-safe subscribers.</Description>
-		<PackageTags>logging;serilog;wpf;mvvm;powerbi;vestigium</PackageTags>
+		<Description>Centralized, subscribable logging module for the Vestigium suite — flat JSON Lines for PowerBI, flood protection, WPF-safe subscribers.</Description>
+		<PackageTags>logging;wpf;mvvm;powerbi;vestigium;jsonl</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/nwilkinsonlsnh/Vestigium.Logging</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/nwilkinsonlsnh/Vestigium.Logging</RepositoryUrl>
@@ -26,12 +26,6 @@
 
 	<ItemGroup>
 		<None Include="..\..\README.md" Pack="true" PackagePath="README.md" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Serilog" Version="4.3.0" />
-		<PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
-		<PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

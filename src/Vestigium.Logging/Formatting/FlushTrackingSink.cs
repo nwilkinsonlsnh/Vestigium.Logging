@@ -1,12 +1,8 @@
-using Serilog;
-using Serilog.Core;
-using Serilog.Events;
-
 namespace Vestigium.Logging;
 
 /// <summary>
-/// Counts events issued on the call path versus completed on the file sink so
-/// <see cref="VestigiumLogger.Flush()"/> can wait without disposing Serilog.
+/// Issued/completed counter used by tests. The host flush path is now
+/// <see cref="VestigiumJsonlWriter.Flush"/>.
 /// </summary>
 internal sealed class FlushGate
 {
@@ -35,33 +31,4 @@ internal sealed class FlushGate
     }
 
     public void Dispose() => _idle.Dispose();
-}
-
-internal sealed class CompletingSink : ILogEventSink, IDisposable
-{
-    private readonly ILogger _inner;
-    private readonly FlushGate _gate;
-
-    public CompletingSink(ILogger inner, FlushGate gate)
-    {
-        _inner = inner;
-        _gate = gate;
-    }
-
-    public void Emit(LogEvent logEvent)
-    {
-        try
-        {
-            _inner.Write(logEvent);
-        }
-        finally
-        {
-            _gate.Completed();
-        }
-    }
-
-    public void Dispose()
-    {
-        // Host owns the inner file logger.
-    }
 }
