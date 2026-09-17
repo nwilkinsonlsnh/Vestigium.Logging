@@ -1,5 +1,6 @@
 namespace Vestigium.Logging.Tests;
 
+[Collection("VestigiumLogger")]
 public sealed class VestigiumLogFacadeTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "vestigium-log-tests", Guid.NewGuid().ToString("N"));
@@ -13,6 +14,7 @@ public sealed class VestigiumLogFacadeTests : IDisposable
             cfg.LogDirectory = _dir;
             cfg.FloodThresholdCount = 10_000;
             cfg.MinimumDiskLevel = VestigiumLogLevel.Verbose;
+            cfg.RecentJsonLineCap = 200;
             cfg.RegisterTaxonomy(VestigiumTaxonomy.Defaults);
         });
     }
@@ -28,9 +30,8 @@ public sealed class VestigiumLogFacadeTests : IDisposable
         VestigiumLog.Fatal(VestigiumStatus.Failed, "System", "Memory", "f");
         VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Success, "UI", "Lifecycle", "direct", appId: "TraceIQ");
 
-        VestigiumLogger.Flush();
         var lines = VestigiumLogger.RecentJsonLines;
-        Assert.True(lines.Count >= 7);
+        Assert.True(lines.Count >= 7, $"expected >= 7 recent lines, got {lines.Count}");
         Assert.Contains(lines, l => l.Contains("\"LEVEL\":\"Verbose\""));
         Assert.Contains(lines, l => l.Contains("\"LEVEL\":\"Debug\""));
         Assert.Contains(lines, l => l.Contains("\"LEVEL\":\"Information\""));

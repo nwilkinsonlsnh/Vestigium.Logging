@@ -47,6 +47,7 @@ public sealed class JsonAndTaxonomyTests
     }
 }
 
+[Collection("VestigiumLogger")]
 public sealed class LoggerIntegrationTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "vestigium-log-tests", Guid.NewGuid().ToString("N"));

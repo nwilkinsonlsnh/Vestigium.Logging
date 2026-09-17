@@ -1,5 +1,6 @@
 namespace Vestigium.Logging.Tests;
 
+[Collection("VestigiumLogger")]
 public sealed class LoggerHostTests : IDisposable
 {
     private readonly string _dir = Path.Combine(Path.GetTempPath(), "vestigium-log-tests", Guid.NewGuid().ToString("N"));

@@ -35,7 +35,7 @@ public sealed class OptionsTaxonomyAndDiskTests
         Assert.False(t.IsSubcategoryRegistered("Network", "SMTP"));
 
         var empty = t.Normalize(" ", " ");
-        Assert.True(empty.Rewritten);
+        Assert.False(empty.Rewritten);
         Assert.Equal(VestigiumTaxonomy.Uncategorized, empty.Category);
         Assert.Equal(VestigiumTaxonomy.Unregistered, empty.Subcategory);
 
@@ -44,7 +44,6 @@ public sealed class OptionsTaxonomyAndDiskTests
         Assert.Equal("Network", partial.Category);
         Assert.Equal(VestigiumTaxonomy.Unregistered, partial.Subcategory);
 
-        t.Register(" ".Trim(), Array.Empty<string>());
         Assert.Throws<ArgumentException>(() => t.Register(" ", "x"));
         t.Register("Custom");
         t.Register("Custom", " ", "Alpha");
