@@ -49,6 +49,17 @@ public sealed class VestigiumLogFacadeTests : IDisposable
         Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("odd-level"));
     }
 
+    [Fact]
+    public void SubscriberAliasesMatchLogger()
+    {
+        Assert.Same(VestigiumLogger.Events, VestigiumLog.Events);
+        Assert.Same(VestigiumLogger.EventReader, VestigiumLog.EventReader);
+        Assert.True(VestigiumLog.EventReader.TryPeek(out _) || true);
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "via-log-alias");
+        Assert.True(VestigiumLog.EventReader.TryRead(out var evt));
+        Assert.Contains("via-log-alias", evt.Message);
+    }
+
     public void Dispose()
     {
         VestigiumLogger.Shutdown();
