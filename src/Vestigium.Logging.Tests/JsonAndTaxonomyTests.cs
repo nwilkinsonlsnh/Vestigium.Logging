@@ -25,6 +25,24 @@ public sealed class JsonAndTaxonomyTests
         Assert.Contains("payload | tabs", root.GetProperty("MESSAGE").GetString());
         Assert.Contains("stack", root.GetProperty("MESSAGE").GetString());
         Assert.Contains("InvalidOperationException", root.GetProperty("EXCEPTION").GetString());
+        Assert.Equal(JsonValueKind.Null, root.GetProperty("CORRELATIONID").ValueKind);
+    }
+
+    [Fact]
+    public void JsonIncludesCorrelationId()
+    {
+        var evt = new VestigiumLogEvent(
+            DateTimeOffset.Parse("2026-09-06T20:20:00.123Z"),
+            1, 2,
+            VestigiumLogLevel.Information, VestigiumStatus.Success,
+            "PingIQ", "Network", "ICMP",
+            "echo",
+            null,
+            "abc123ef");
+
+        using var doc = JsonDocument.Parse(evt.ToJsonLine());
+        Assert.Equal("abc123ef", doc.RootElement.GetProperty("CORRELATIONID").GetString());
+        Assert.Equal("Warning", VestigiumStatus.Warning.ToString());
     }
 
     [Fact]

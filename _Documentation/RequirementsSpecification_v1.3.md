@@ -44,12 +44,13 @@ One JSON object per line (JSON Lines). Property names and casing are mandatory.
 | PID | number | `Process.GetCurrentProcess().Id` |
 | TID | number | `Environment.CurrentManagedThreadId` |
 | LEVEL | string | Verbose, Debug, Information, Warning, Error, Fatal |
-| STATUS | string | None, Pending, Success, Timeout, Failed |
+| STATUS | string | None, Pending, Success, Timeout, Failed, Warning |
 | APPID | string | PingIQ, TraceIQ, DnsIQ, HttpIQ, or Vestigium.Logging |
 | CATEGORY | string | Registered catalog, else Uncategorized |
 | SUBCATEGORY | string | Linked to category, else Unregistered |
 | MESSAGE | string | JSON-escaped. Never split across output lines. |
 | EXCEPTION | string or null | `Exception.ToString()` including inners, or JSON null |
+| CORRELATIONID | string or null | Opaque host-supplied id. JSON null when omitted. Not part of flood identity. |
 
 Do not emit Info, Warn, INFO, or ERROR.
 
@@ -131,10 +132,12 @@ VestigiumLog.Write(
 
 ### 3.9 Subscribability
 
-- `IObservable<VestigiumLogEvent> VestigiumLog.Events`
-- `ChannelReader<VestigiumLogEvent> VestigiumLog.EventReader`
+- `IObservable<VestigiumLogEvent> VestigiumLogger.Events` — tests and tools. Do not subscribe on a WPF View.
+- `ChannelReader<VestigiumLogEvent> VestigiumLogger.EventReader` — UI hosts drain this off the dispatcher.
 - Structured object, never a pre-rendered string only
 - WPF ViewModels subscribe with `WeakReferenceMessenger` after draining the channel on a background Task
+
+Libraries that log without a host set `VestigiumLogger.UninitializedBehavior = NoOp`. Default remains `Throw`. Only writes are soft; `Events` / `EventReader` / `Options` still require `Initialize`.
 
 ## 4. Acceptance criteria
 
@@ -164,3 +167,4 @@ VestigiumLog.Write(
 | 1.2 | Placeholders filled | Grok, 6 Sep 2026 |
 | 1.3 | Rolling files: 20 MB, 14-day retention, 90-file cap | Stakeholder request, 6 Sep 2026 |
 | 1.4 | P0: Flush ≠ Shutdown; WPF Exit via reflection; flood identity cap 4096 | Implementation plan P0, 17 Sep 2026 |
+| 1.5 | P1: Uninitialized NoOp, CORRELATIONID, STATUS=Warning documented | Implementation plan P1, 17 Sep 2026 |

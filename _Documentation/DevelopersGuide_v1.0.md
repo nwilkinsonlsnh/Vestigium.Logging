@@ -1,6 +1,6 @@
 # Vestigium.Logging — Developer’s Guide
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Target:** Visual Studio 2026 / .NET 10 LTS
 
 ## Add the package to a host
@@ -22,11 +22,19 @@ VestigiumLogger.BindLifetime(Application.Current);
 3. Log with an explicit status:
 
 ```csharp
-VestigiumLog.Information(VestigiumStatus.Success, "Network", "DNS", $"{name} resolved to {ip}");
+VestigiumLog.Information(VestigiumStatus.Success, "Network", "DNS", $"{name} resolved to {ip}", correlationId: sessionId);
 VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
 ```
 
-4. In a diagnostic console ViewModel, drain `VestigiumLogger.EventReader` off the UI thread and send batches through `WeakReferenceMessenger`. Do not subscribe `IObservable` directly on a View.
+Libraries that log before a host starts:
+
+```csharp
+VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
+```
+
+Only writes no-op. `VestigiumLogger.Events` still throws until `Initialize`.
+
+4. In a diagnostic console ViewModel, drain `VestigiumLogger.EventReader` off the UI thread and send batches through `WeakReferenceMessenger`. Do not subscribe `IObservable` (`VestigiumLogger.Events`) directly on a View.
 
 ## Taxonomy
 

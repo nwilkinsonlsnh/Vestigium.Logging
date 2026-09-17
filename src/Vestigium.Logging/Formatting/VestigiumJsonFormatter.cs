@@ -16,6 +16,7 @@ internal sealed class VestigiumJsonRecord
     public string SUBCATEGORY { get; set; } = "";
     public string MESSAGE { get; set; } = "";
     public string? EXCEPTION { get; set; }
+    public string? CORRELATIONID { get; set; }
 }
 
 public static class VestigiumJsonFormatter
@@ -39,7 +40,8 @@ public static class VestigiumJsonFormatter
             CATEGORY = e.Category,
             SUBCATEGORY = e.Subcategory,
             MESSAGE = e.Message,
-            EXCEPTION = e.Exception
+            EXCEPTION = e.Exception,
+            CORRELATIONID = e.CorrelationId
         };
         return JsonSerializer.Serialize(record, Options);
     }

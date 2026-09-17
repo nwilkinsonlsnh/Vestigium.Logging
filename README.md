@@ -51,10 +51,19 @@ Call sites always pass STATUS:
 
 ```csharp
 VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP",
-    $"Echo request to {host} timed out after {ms} ms");
+    $"Echo request to {host} timed out after {ms} ms",
+    correlationId: probeId);
 
 VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
 ```
+
+Libraries that must compile without a host:
+
+```csharp
+VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
+```
+
+`Events` / `EventReader` still require `Initialize`. UI hosts drain `VestigiumLogger.EventReader`; `IObservable` is for tests and tools.
 
 ## Defaults (SRS v1.3)
 
@@ -87,4 +96,4 @@ Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)` — a value tuple, never a c
 - LEVEL is never Success / Failed / Timeout.
 - Unregistered taxonomy becomes `Uncategorized` / `Unregistered` plus an internal Warning.
 - Process exit calls `Shutdown`, which flushes the async buffer.
-- Subscribers receive the structured `VestigiumLogEvent`, not a pre-rendered string.
+- Subscribers receive the structured `VestigiumLogEvent` (`VestigiumLogger.Events` / `EventReader`), not a pre-rendered string.

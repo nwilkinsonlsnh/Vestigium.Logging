@@ -11,7 +11,8 @@ public sealed record VestigiumLogEvent(
     string Category,
     string Subcategory,
     string Message,
-    string? Exception)
+    string? Exception,
+    string? CorrelationId = null)
 {
     public string ToJsonLine() => VestigiumJsonFormatter.Serialize(this);
 }

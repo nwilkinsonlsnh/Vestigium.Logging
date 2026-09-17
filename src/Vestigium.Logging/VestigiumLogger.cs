@@ -14,6 +14,13 @@ public static class VestigiumLogger
 
     public static bool IsInitialized => _host is not null;
 
+    /// <summary>
+    /// What writes do before <see cref="Initialize"/>. Default <see cref="VestigiumUninitializedBehavior.Throw"/>.
+    /// <see cref="Events"/>, <see cref="EventReader"/>, and <see cref="Options"/> always require a host.
+    /// </summary>
+    public static VestigiumUninitializedBehavior UninitializedBehavior { get; set; } =
+        VestigiumUninitializedBehavior.Throw;
+
     public static VestigiumLoggerOptions Options => Require().Options;
 
     public static IObservable<VestigiumLogEvent> Events => Require().Subject;
@@ -77,8 +84,26 @@ public static class VestigiumLogger
     internal static Host Require() =>
         _host ?? throw new InvalidOperationException("VestigiumLogger.Initialize must run during application startup.");
 
-    internal static void Emit(VestigiumLogLevel level, VestigiumStatus status, string category, string subcategory, string message, Exception? exception, string? appId = null)
-        => Require().Emit(level, status, category, subcategory, message, exception, appId);
+    internal static void Emit(
+        VestigiumLogLevel level,
+        VestigiumStatus status,
+        string category,
+        string subcategory,
+        string message,
+        Exception? exception,
+        string? appId = null,
+        string? correlationId = null)
+    {
+        var host = _host;
+        if (host is null)
+        {
+            if (UninitializedBehavior == VestigiumUninitializedBehavior.NoOp)
+                return;
+            throw new InvalidOperationException("VestigiumLogger.Initialize must run during application startup.");
+        }
+
+        host.Emit(level, status, category, subcategory, message, exception, appId, correlationId);
+    }
 
     private static void OnProcessExit(object? sender, EventArgs e) => Shutdown();
 
@@ -153,7 +178,8 @@ public static class VestigiumLogger
             string subcategory,
             string message,
             Exception? exception,
-            string? appId)
+            string? appId,
+            string? correlationId = null)
         {
             if (Volatile.Read(ref _accepting) == 0)
                 return;
@@ -188,7 +214,7 @@ public static class VestigiumLogger
                     now, _pid, Environment.CurrentManagedThreadId, level, VestigiumStatus.None,
                     app, cat, sub,
                     $"[Aggregated] Previous message repeated {flushCount} additional times",
-                    null));
+                    null, correlationId));
             }
 
             if (!writeFull)
@@ -196,7 +222,7 @@ public static class VestigiumLogger
 
             WriteEvent(new VestigiumLogEvent(
                 now, _pid, Environment.CurrentManagedThreadId, level, status,
-                app, cat, sub, message, exception?.ToString()));
+                app, cat, sub, message, exception?.ToString(), correlationId));
         }
 
         private void WriteEvent(VestigiumLogEvent evt)

@@ -53,6 +53,7 @@ flowchart LR
 | `VestigiumJsonFormatter` | Canonical JSON Lines |
 | `VestigiumLogger` | Process singleton host |
 | `VestigiumLog` | Call-site API |
+| `VestigiumUninitializedBehavior` | Throw (default) or NoOp writes before Initialize |
 
 ## 5. Flood algorithm
 

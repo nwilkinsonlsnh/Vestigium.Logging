@@ -484,10 +484,10 @@ New tests listed under each slice. Keep the test project serial if any test uses
 
 **P1**
 
-- [ ] P1.1 UninitializedBehavior
-- [ ] P1.2 CORRELATIONID + package 1.1.0
-- [ ] P1.3 Drain uses LastSubcategory; SRS STATUS includes Warning
-- [ ] P1.4 README/SRS API names
+- [x] P1.1 UninitializedBehavior
+- [x] P1.2 CORRELATIONID + package 1.1.0
+- [x] P1.3 Drain uses LastSubcategory; SRS STATUS includes Warning
+- [x] P1.4 README/SRS API names
 
 **P2**
 

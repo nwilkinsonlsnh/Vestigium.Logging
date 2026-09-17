@@ -136,6 +136,85 @@ public sealed class LoggerIntegrationTests : IDisposable
         Assert.False(VestigiumLogger.IsInitialized);
     }
 
+    [Fact]
+    public void ThrowStillDefault()
+    {
+        VestigiumLogger.Shutdown();
+        Assert.Equal(VestigiumUninitializedBehavior.Throw, VestigiumLogger.UninitializedBehavior);
+        Assert.Throws<InvalidOperationException>(() =>
+            VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "hello"));
+        Assert.Throws<InvalidOperationException>(() => _ = VestigiumLogger.Events);
+        Assert.Throws<InvalidOperationException>(() => _ = VestigiumLogger.Options);
+    }
+
+    [Fact]
+    public void NoOpSwallowsWrite()
+    {
+        VestigiumLogger.Shutdown();
+        var previous = VestigiumLogger.UninitializedBehavior;
+        try
+        {
+            VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
+            VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "library-safe");
+            Assert.Throws<InvalidOperationException>(() => _ = VestigiumLogger.EventReader);
+        }
+        finally
+        {
+            VestigiumLogger.UninitializedBehavior = previous;
+        }
+    }
+
+    [Fact]
+    public void CorrelationIdIsWrittenAndIgnoredByFlood()
+    {
+        VestigiumLogger.Initialize(cfg =>
+        {
+            cfg.AppId = "PingIQ";
+            cfg.LogDirectory = _dir;
+            cfg.FloodThresholdCount = 5;
+            cfg.FloodWindow = TimeSpan.FromSeconds(30);
+            cfg.MinimumDiskLevel = VestigiumLogLevel.Verbose;
+        });
+
+        for (var i = 0; i < 8; i++)
+        {
+            VestigiumLog.Information(
+                VestigiumStatus.Timeout, "Network", "ICMP",
+                "Echo request timed out",
+                correlationId: $"id-{i}");
+        }
+
+        Assert.Equal(5, VestigiumLogger.WrittenCount);
+        Assert.Equal(3, VestigiumLogger.SuppressedCount);
+        Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("\"CORRELATIONID\":\"id-0\""));
+    }
+
+    [Fact]
+    public void DrainAggregationKeepsSubcategory()
+    {
+        VestigiumLogger.Initialize(cfg =>
+        {
+            cfg.AppId = "PingIQ";
+            cfg.LogDirectory = _dir;
+            cfg.FloodThresholdCount = 5;
+            cfg.FloodWindow = TimeSpan.FromMilliseconds(50);
+            cfg.MinimumDiskLevel = VestigiumLogLevel.Verbose;
+        });
+
+        for (var i = 0; i < 8; i++)
+        {
+            VestigiumLog.Information(
+                VestigiumStatus.Timeout, "Network", "ICMP",
+                "Echo request timed out");
+        }
+
+        Thread.Sleep(80);
+        VestigiumLogger.Flush();
+        Assert.Contains(
+            VestigiumLogger.RecentJsonLines,
+            l => l.Contains("[Aggregated]") && l.Contains("\"SUBCATEGORY\":\"ICMP\""));
+    }
+
     public void Dispose()
     {
         VestigiumLogger.Shutdown();
