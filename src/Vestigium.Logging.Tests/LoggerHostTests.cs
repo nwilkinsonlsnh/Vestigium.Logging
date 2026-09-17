@@ -45,6 +45,9 @@ public sealed class LoggerHostTests : IDisposable
         Assert.Empty(VestigiumLogger.RecentJsonLines);
         Assert.Equal(0, VestigiumLogger.WrittenCount);
         Assert.Equal(0, VestigiumLogger.SuppressedCount);
+        Assert.Equal(0, VestigiumLogger.RejectedAfterFlush);
+        Assert.Equal(0, VestigiumLogger.DroppedDebugUnderPressure);
+        Assert.Equal(0, VestigiumLogger.DroppedCount);
         VestigiumLogger.Flush();
         VestigiumLogger.OverrideDiskPressure(true);
         Assert.Throws<InvalidOperationException>(() => _ = VestigiumLogger.Options);
@@ -98,6 +101,8 @@ public sealed class LoggerHostTests : IDisposable
         var count = VestigiumLogger.WrittenCount;
         VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "after-wpf-exit");
         Assert.Equal(count, VestigiumLogger.WrittenCount);
+        Assert.Equal(1, VestigiumLogger.RejectedAfterFlush);
+        Assert.Equal(1, VestigiumLogger.DroppedCount);
         Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("before-wpf-exit"));
         Assert.DoesNotContain(VestigiumLogger.RecentJsonLines, l => l.Contains("after-wpf-exit"));
     }
@@ -145,7 +150,25 @@ public sealed class LoggerHostTests : IDisposable
         var lines = VestigiumLogger.RecentJsonLines;
         Assert.DoesNotContain(lines, l => l.Contains("dropped-debug"));
         Assert.Contains(lines, l => l.Contains("kept-error"));
+        Assert.Equal(1, VestigiumLogger.DroppedDebugUnderPressure);
+        Assert.Equal(0, VestigiumLogger.RejectedAfterFlush);
+        Assert.Equal(1, VestigiumLogger.DroppedCount);
         VestigiumLogger.OverrideDiskPressure(null);
+    }
+
+    [Fact]
+    public void DropCountersResetOnInitialize()
+    {
+        Start();
+        VestigiumLogger.OverrideDiskPressure(true);
+        VestigiumLog.Verbose(VestigiumStatus.None, "Network", "ICMP", "v-drop");
+        VestigiumLogger.Flush();
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "after-flush");
+        Assert.True(VestigiumLogger.DroppedCount >= 2);
+        Start();
+        Assert.Equal(0, VestigiumLogger.RejectedAfterFlush);
+        Assert.Equal(0, VestigiumLogger.DroppedDebugUnderPressure);
+        Assert.Equal(0, VestigiumLogger.DroppedCount);
     }
 
     [Fact]
