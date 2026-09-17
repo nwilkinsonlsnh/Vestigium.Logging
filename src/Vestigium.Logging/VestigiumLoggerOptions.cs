@@ -21,6 +21,9 @@ public sealed class VestigiumLoggerOptions
 
     public TimeSpan FloodWindow { get; set; } = TimeSpan.FromMilliseconds(30_000);
 
+    /// <summary>Maximum distinct flood identities retained. Oldest entries are evicted in <c>DrainExpired</c>.</summary>
+    public int FloodIdentityCap { get; set; } = 10_000;
+
     public int DiskFreePercentThreshold { get; set; } = 10;
 
     public long DiskFreeBytesFloor { get; set; } = 5L * 1024 * 1024 * 1024;
