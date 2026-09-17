@@ -58,7 +58,7 @@ public sealed class FloodTrackerTests
     }
 
     [Fact]
-    public void IdentityCapEvictsOldest()
+    public void IdentityCapEvictsOldestWhileStillInWindow()
     {
         var tracker = new FloodTracker(5, TimeSpan.FromHours(1), identityCap: 16);
         var start = DateTimeOffset.UtcNow;
@@ -68,9 +68,9 @@ public sealed class FloodTrackerTests
             tracker.Observe(key, start.AddMilliseconds(i), "ICMP");
         }
 
-        Assert.True(tracker.IdentityCount > 16);
-        tracker.DrainExpired(start.AddHours(2));
-        Assert.True(tracker.IdentityCount <= 16);
+        Assert.Equal(40, tracker.IdentityCount);
+        tracker.DrainExpired(start);
+        Assert.Equal(16, tracker.IdentityCount);
     }
 
     [Fact]
