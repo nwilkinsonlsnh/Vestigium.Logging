@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 
 namespace Vestigium.Logging.Tests;
@@ -22,6 +23,7 @@ public sealed class LoggerHostTests : IDisposable
             cfg.FloodWindow = TimeSpan.FromSeconds(30);
             cfg.MinimumDiskLevel = VestigiumLogLevel.Information;
             cfg.RecentJsonLineCap = 3;
+            cfg.FlushTimeout = TimeSpan.FromSeconds(2);
             cfg.RegisterTaxonomy(VestigiumTaxonomy.Defaults);
             extra?.Invoke(cfg);
         });
@@ -85,6 +87,54 @@ public sealed class LoggerHostTests : IDisposable
     }
 
     [Fact]
+    public void WpfExitEventFlushesAndRejectsFurtherWrites()
+    {
+        Start();
+        var app = new FakeWpfApplication();
+        VestigiumLogger.BindLifetime(app);
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "before-wpf-exit");
+        app.RaiseExit();
+        Assert.False(VestigiumLogger.Require().IsAccepting);
+        var count = VestigiumLogger.WrittenCount;
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "after-wpf-exit");
+        Assert.Equal(count, VestigiumLogger.WrittenCount);
+        Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("before-wpf-exit"));
+        Assert.DoesNotContain(VestigiumLogger.RecentJsonLines, l => l.Contains("after-wpf-exit"));
+    }
+
+    [Fact]
+    public void BindLifetimeIgnoresObjectWithoutExit()
+    {
+        Start();
+        VestigiumLogger.BindLifetime(new object());
+        Assert.True(VestigiumLogger.Require().IsAccepting);
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "still-open");
+        Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("still-open"));
+    }
+
+    [Fact]
+    public void FlushTimeoutZeroRunsInlineAndStopsAccepting()
+    {
+        Start(cfg => cfg.FlushTimeout = TimeSpan.Zero);
+        var sw = Stopwatch.StartNew();
+        VestigiumLogger.Flush();
+        sw.Stop();
+        Assert.True(sw.Elapsed < TimeSpan.FromSeconds(2));
+        Assert.False(VestigiumLogger.Require().IsAccepting);
+    }
+
+    [Fact]
+    public void ShutdownUnhooksWpfExit()
+    {
+        Start();
+        var app = new FakeWpfApplication();
+        VestigiumLogger.BindLifetime(app);
+        VestigiumLogger.Shutdown();
+        app.RaiseExit();
+        Assert.False(VestigiumLogger.IsInitialized);
+    }
+
+    [Fact]
     public void DiskTripDropsDebugAndKeepsError()
     {
         Start();
@@ -139,6 +189,13 @@ public sealed class LoggerHostTests : IDisposable
     {
         VestigiumLogger.Shutdown();
         try { Directory.Delete(_dir, true); } catch { /* ignore */ }
+    }
+
+    private sealed class FakeWpfApplication
+    {
+        public event EventHandler? Exit;
+
+        public void RaiseExit() => Exit?.Invoke(this, EventArgs.Empty);
     }
 
     private sealed class DelegateObserver(
