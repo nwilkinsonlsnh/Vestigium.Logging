@@ -24,7 +24,7 @@ VestigiumLog.Information(VestigiumStatus.Success, "Network", "DNS", $"{name} res
 VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
 ```
 
-4. In a diagnostic console ViewModel, drain `VestigiumLogger.EventReader` off the UI thread and send batches through `WeakReferenceMessenger`. Do not subscribe `IObservable` directly on a View.
+4. In a diagnostic console ViewModel, drain `VestigiumLog.EventReader` (same instance as `VestigiumLogger.EventReader`) off the UI thread and send batches through `WeakReferenceMessenger`. Do not subscribe `IObservable` (`VestigiumLog.Events`) directly on a View.
 
 ## Taxonomy
 
