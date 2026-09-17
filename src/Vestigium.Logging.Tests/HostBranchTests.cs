@@ -39,6 +39,8 @@ public sealed class HostBranchTests
         host.Flush();
         host.Emit(VestigiumLogLevel.Error, VestigiumStatus.Failed, "Network", "ICMP", "after-flush", null, null);
         Assert.Equal(1, host.WrittenCount);
+        Assert.Equal(1, host.RejectedAfterFlush);
+        Assert.Equal(0, host.DroppedDebugUnderPressure);
         host.Dispose();
         host.Dispose();
     }
