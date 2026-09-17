@@ -125,4 +125,64 @@ public sealed class FloodTrackerTests
         Assert.Equal(3, dumped[0].Suppressed);
         Assert.Equal("ICMP", dumped[0].Subcategory);
     }
+
+    [Fact]
+    public void DifferentCategoryAndLevelDoNotShareCounters()
+    {
+        var tracker = new FloodTracker(5, TimeSpan.FromSeconds(30));
+        var now = DateTimeOffset.UtcNow;
+        var net = new FloodIdentity("PingIQ", "Network", "Information", "echo");
+        var sys = new FloodIdentity("PingIQ", "System", "Information", "echo");
+        var warn = new FloodIdentity("PingIQ", "Network", "Warning", "echo");
+
+        for (var i = 0; i < 5; i++)
+        {
+            Assert.True(tracker.Observe(net, now).WriteFull);
+            Assert.True(tracker.Observe(sys, now).WriteFull);
+            Assert.True(tracker.Observe(warn, now).WriteFull);
+        }
+
+        Assert.False(tracker.Observe(net, now).WriteFull);
+        Assert.True(tracker.Observe(new FloodIdentity("PingIQ", "Network", "Information", "other"), now).WriteFull);
+    }
+
+    [Fact]
+    public void SubcategoryIsNotPartOfIdentity()
+    {
+        var tracker = new FloodTracker(2, TimeSpan.FromSeconds(30));
+        var key = new FloodIdentity("PingIQ", "Network", "Information", "echo");
+        var now = DateTimeOffset.UtcNow;
+        Assert.True(tracker.Observe(key, now, "ICMP").WriteFull);
+        Assert.True(tracker.Observe(key, now, "TCP").WriteFull);
+        Assert.False(tracker.Observe(key, now, "DNS").WriteFull);
+    }
+
+    [Fact]
+    public void ObserveAfterWindowReturnsFlushedCount()
+    {
+        var tracker = new FloodTracker(5, TimeSpan.FromSeconds(1));
+        var key = new FloodIdentity("PingIQ", "Network", "Information", "echo");
+        var start = DateTimeOffset.Parse("2026-09-17T00:00:00Z");
+        for (var i = 0; i < 8; i++)
+            tracker.Observe(key, start, "ICMP");
+
+        var (write, flushed) = tracker.Observe(key, start.AddSeconds(2), "ICMP");
+        Assert.True(write);
+        Assert.Equal(3, flushed);
+        Assert.Equal(0, tracker.PendingSuppressed);
+    }
+
+    [Fact]
+    public void ZeroThresholdAndWindowAreClamped()
+    {
+        var tracker = new FloodTracker(0, TimeSpan.Zero, identityCap: 0);
+        Assert.Equal(1, tracker.Threshold);
+        Assert.Equal(TimeSpan.FromSeconds(30), tracker.Window);
+        Assert.Equal(FloodTracker.DefaultIdentityCap, tracker.IdentityCap);
+
+        var key = new FloodIdentity("PingIQ", "Network", "Information", "echo");
+        var now = DateTimeOffset.UtcNow;
+        Assert.True(tracker.Observe(key, now).WriteFull);
+        Assert.False(tracker.Observe(key, now).WriteFull);
+    }
 }
