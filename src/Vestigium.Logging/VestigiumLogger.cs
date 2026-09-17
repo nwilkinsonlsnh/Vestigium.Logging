@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading.Channels;
 using Serilog;
 using Serilog.Events;
@@ -9,7 +11,11 @@ namespace Vestigium.Logging;
 public static class VestigiumLogger
 {
     private static readonly object Gate = new();
+    private static readonly object LifetimeGate = new();
     private static Host? _host;
+    private static object? _wpfApp;
+    private static EventInfo? _wpfExitEvent;
+    private static Delegate? _wpfExitHandler;
 
     public static bool IsInitialized => _host is not null;
 
@@ -44,6 +50,7 @@ public static class VestigiumLogger
 
     public static void Shutdown()
     {
+        UnhookWpfExit();
         lock (Gate)
         {
             _host?.Dispose();
@@ -53,16 +60,24 @@ public static class VestigiumLogger
 
     public static void Flush() => _host?.Flush();
 
-    /// <summary>Hook process-exit and Ctrl+C. WPF hosts should also flush from Application.Exit (the Demo does).</summary>
+    /// <summary>
+    /// Hook process-exit, Ctrl+C, and (when <paramref name="wpfApplication"/> exposes a public <c>Exit</c> event) WPF Application.Exit.
+    /// The library stays net10.0; WPF is bound by reflection so no Windows TFM is required.
+    /// </summary>
     public static void BindLifetime(object? wpfApplication)
     {
         AppDomain.CurrentDomain.ProcessExit -= OnProcessExit;
         AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
         Console.CancelKeyPress -= OnCancel;
         Console.CancelKeyPress += OnCancel;
-        _ = wpfApplication;
-    }
 
+        lock (LifetimeGate)
+        {
+            UnhookWpfExitNoLock();
+            if (wpfApplication is not null)
+                TryHookWpfExitNoLock(wpfApplication);
+        }
+    }
 
     /// <summary>Demo / test hook. Pass <c>true</c> to force the low-disk throttle, <c>null</c> to use the real poller.</summary>
     public static void OverrideDiskPressure(bool? tripped) => _host?.Disk.Override(tripped);
@@ -76,6 +91,57 @@ public static class VestigiumLogger
     internal static void OnProcessExit(object? sender, EventArgs e) => Flush();
 
     internal static void OnCancel(object? sender, ConsoleCancelEventArgs e) => Flush();
+
+    internal static void OnWpfExit() => Flush();
+
+    internal static void UnhookWpfExit()
+    {
+        lock (LifetimeGate)
+            UnhookWpfExitNoLock();
+    }
+
+    private static void UnhookWpfExitNoLock()
+    {
+        if (_wpfApp is not null && _wpfExitEvent is not null && _wpfExitHandler is not null)
+        {
+            try { _wpfExitEvent.RemoveEventHandler(_wpfApp, _wpfExitHandler); }
+            catch { /* never throw from unbind */ }
+        }
+
+        _wpfApp = null;
+        _wpfExitEvent = null;
+        _wpfExitHandler = null;
+    }
+
+    private static void TryHookWpfExitNoLock(object app)
+    {
+        try
+        {
+            var evt = app.GetType().GetEvent("Exit", BindingFlags.Instance | BindingFlags.Public);
+            if (evt?.EventHandlerType is null)
+                return;
+
+            var invoke = evt.EventHandlerType.GetMethod("Invoke");
+            if (invoke is null)
+                return;
+            var parameters = invoke.GetParameters();
+            if (parameters.Length != 2)
+                return;
+
+            var p0 = Expression.Parameter(parameters[0].ParameterType, "sender");
+            var p1 = Expression.Parameter(parameters[1].ParameterType, "e");
+            var call = Expression.Call(typeof(VestigiumLogger).GetMethod(nameof(OnWpfExit), BindingFlags.NonPublic | BindingFlags.Static)!);
+            var handler = Expression.Lambda(evt.EventHandlerType, call, p0, p1).Compile();
+            evt.AddEventHandler(app, handler);
+            _wpfApp = app;
+            _wpfExitEvent = evt;
+            _wpfExitHandler = handler;
+        }
+        catch
+        {
+            // never throw from bind — missing Exit is a no-op
+        }
+    }
 
     internal sealed class Host : IDisposable
     {
@@ -92,7 +158,9 @@ public static class VestigiumLogger
         private readonly int _pid = Environment.ProcessId;
         private int _accepting = 1;
         private int _disposed;
+        private int _flushed;
 
+        internal bool IsAccepting => Volatile.Read(ref _accepting) == 1;
 
         public Host(VestigiumLoggerOptions options)
         {
@@ -216,10 +284,50 @@ public static class VestigiumLogger
         public void Flush()
         {
             Volatile.Write(ref _accepting, 0);
-            Drain();
-            (_log as IDisposable)?.Dispose();
-            Channel.Writer.TryComplete();
-            Subject.Complete();
+            if (Interlocked.Exchange(ref _flushed, 1) == 1)
+                return;
+
+            var timeout = Options.FlushTimeout;
+            if (timeout < TimeSpan.Zero)
+                timeout = TimeSpan.Zero;
+
+            void Body()
+            {
+                try
+                {
+                    Drain();
+                    (_log as IDisposable)?.Dispose();
+                }
+                catch
+                {
+                    // never throw from flush
+                }
+            }
+
+            if (timeout == TimeSpan.Zero)
+            {
+                Body();
+            }
+            else
+            {
+                var thread = new Thread(Body)
+                {
+                    IsBackground = true,
+                    Name = "Vestigium.Flush"
+                };
+                thread.Start();
+                thread.Join(timeout);
+            }
+
+            try
+            {
+                Channel.Writer.TryComplete();
+                Subject.Complete();
+            }
+            catch
+            {
+                // never throw from flush
+            }
         }
 
         public void Dispose()
@@ -230,7 +338,6 @@ public static class VestigiumLogger
             Disk.Dispose();
             Flush();
         }
-
 
         private static LogEventLevel MapLevel(VestigiumLogLevel level) => level switch
         {
