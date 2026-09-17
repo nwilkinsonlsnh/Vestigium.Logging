@@ -72,10 +72,7 @@ internal sealed class DiskSpaceMonitor : IDisposable
     private static DriveQuery QueryPhysicalDrive(string dir)
     {
         var root = Path.GetPathRoot(Path.GetFullPath(dir));
-        if (string.IsNullOrEmpty(root))
-            return new DriveQuery(root, IsReady: false, TotalSize: 0, AvailableFreeSpace: 0, Name: "");
-
-        var drive = new DriveInfo(root);
+        var drive = new DriveInfo(root!);
         return new DriveQuery(root, drive.IsReady, drive.TotalSize, drive.AvailableFreeSpace, drive.Name);
     }
 
