@@ -43,12 +43,16 @@ public sealed class VestigiumLoggerOptions
 
     public VestigiumTaxonomy Taxonomy { get; } = new();
 
+    /// <summary>Test seam. Production reads CommonApplicationData.</summary>
+    internal Func<string> GetCommonApplicationData { get; set; } =
+        static () => Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+
     public string ResolveLogDirectory()
     {
         if (!string.IsNullOrWhiteSpace(LogDirectory))
             return LogDirectory;
 
-        var root = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
+        var root = GetCommonApplicationData();
         if (string.IsNullOrWhiteSpace(root))
             root = Path.Combine(Path.GetTempPath(), "Vestigium");
 
