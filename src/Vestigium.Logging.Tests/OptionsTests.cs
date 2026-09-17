@@ -11,6 +11,18 @@ public sealed class OptionsTests
         Assert.Equal(8192, options.ExceptionMaxChars);
         Assert.True(options.DiskBytesFloorEnabled);
         Assert.Equal(FloodTracker.DefaultIdentityCap, options.FloodIdentityCap);
+        Assert.Equal(10_000, options.DiskQueueCapacity);
+    }
+
+    [Fact]
+    public void SerilogAsyncBufferAliasesDiskQueueCapacity()
+    {
+#pragma warning disable CS0618
+        var options = new VestigiumLoggerOptions { SerilogAsyncBuffer = 32 };
+        Assert.Equal(32, options.DiskQueueCapacity);
+        options.DiskQueueCapacity = 64;
+        Assert.Equal(64, options.SerilogAsyncBuffer);
+#pragma warning restore CS0618
     }
 
     [Fact]

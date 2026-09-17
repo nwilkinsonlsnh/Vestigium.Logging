@@ -47,7 +47,19 @@ public sealed class VestigiumLoggerOptions
 
     public VestigiumLogLevel MinimumDiskLevel { get; set; } = VestigiumLogLevel.Information;
 
-    public int SerilogAsyncBuffer { get; set; } = 10_000;
+    /// <summary>
+    /// Bounded disk-queue capacity. Drop-oldest when full. Default 10,000.
+    /// Used by the Serilog async sink until S2, then by <c>VestigiumJsonlWriter</c>.
+    /// </summary>
+    public int DiskQueueCapacity { get; set; } = 10_000;
+
+    /// <summary>Obsolete alias for <see cref="DiskQueueCapacity"/>. Removed in 1.3.</summary>
+    [Obsolete("Use DiskQueueCapacity. Will be removed in 1.3.")]
+    public int SerilogAsyncBuffer
+    {
+        get => DiskQueueCapacity;
+        set => DiskQueueCapacity = value;
+    }
 
     public int RecentJsonLineCap { get; set; } = 200;
 
