@@ -54,6 +54,16 @@ VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP",
 VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
 ```
 
+Subscribers (SRS §3.9) — `VestigiumLog` and `VestigiumLogger` expose the **same** instances:
+
+```csharp
+ChannelReader<VestigiumLogEvent> reader = VestigiumLog.EventReader;
+IObservable<VestigiumLogEvent>   live   = VestigiumLog.Events;
+// identical to VestigiumLogger.EventReader / VestigiumLogger.Events
+```
+
+Drain `EventReader` off the UI thread. Do not subscribe `Events` on a View.
+
 ## Defaults (SRS v1.3)
 
 | Setting | Value |
