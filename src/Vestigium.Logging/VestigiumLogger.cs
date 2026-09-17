@@ -168,7 +168,7 @@ public static class VestigiumLogger
                 .MinimumLevel.Verbose()
                 .WriteTo.Async(
                     a => a.Sink(new CompletingSink(fileLogger, _gate)),
-                    bufferSize: options.SerilogAsyncBuffer,
+                    bufferSize: Math.Max(1, options.DiskQueueCapacity),
                     blockWhenFull: false)
                 .CreateLogger();
 
