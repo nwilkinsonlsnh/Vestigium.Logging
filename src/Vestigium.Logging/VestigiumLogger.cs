@@ -33,6 +33,15 @@ public static class VestigiumLogger
 
     public static int SuppressedCount => _host?.Flood.PendingSuppressed ?? 0;
 
+    /// <summary>Emits rejected because Flush already ran. Reset on Initialize.</summary>
+    public static int RejectedAfterFlush => _host?.RejectedAfterFlush ?? 0;
+
+    /// <summary>Verbose/Debug dropped while the disk tripwire is active. Reset on Initialize.</summary>
+    public static int DroppedDebugUnderPressure => _host?.DroppedDebugUnderPressure ?? 0;
+
+    /// <summary>Sum of <see cref="RejectedAfterFlush"/> and <see cref="DroppedDebugUnderPressure"/>. Channel DropOldest is not included (not observable).</summary>
+    public static int DroppedCount => RejectedAfterFlush + DroppedDebugUnderPressure;
+
     public static void Initialize(Action<VestigiumLoggerOptions> configure)
     {
         ArgumentNullException.ThrowIfNull(configure);
@@ -151,6 +160,8 @@ public static class VestigiumLogger
         public LogEventSubject Subject { get; } = new();
         public Channel<VestigiumLogEvent> Channel { get; }
         public int WrittenCount;
+        public int RejectedAfterFlush;
+        public int DroppedDebugUnderPressure;
 
         private readonly ILogger _log;
         private readonly Timer _drainTimer;
@@ -208,7 +219,10 @@ public static class VestigiumLogger
             string? appId)
         {
             if (Volatile.Read(ref _accepting) == 0)
+            {
+                Interlocked.Increment(ref RejectedAfterFlush);
                 return;
+            }
 
             var now = DateTimeOffset.UtcNow;
             var app = string.IsNullOrWhiteSpace(appId) ? Options.AppId : appId;
@@ -229,7 +243,10 @@ public static class VestigiumLogger
             }
 
             if (Disk.IsTripped && level <= VestigiumLogLevel.Debug)
+            {
+                Interlocked.Increment(ref DroppedDebugUnderPressure);
                 return;
+            }
 
             var identity = new FloodIdentity(app, cat, level.ToString(), message);
             var (writeFull, flushCount) = Flood.Observe(identity, now, sub);
