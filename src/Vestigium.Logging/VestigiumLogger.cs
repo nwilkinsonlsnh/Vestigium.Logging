@@ -1,7 +1,5 @@
 using System.Collections.Concurrent;
 using System.Threading.Channels;
-using Serilog;
-using Serilog.Events;
 
 namespace Vestigium.Logging;
 
@@ -62,7 +60,7 @@ public static class VestigiumLogger
         }
     }
 
-    /// <summary>Drain flood summaries and wait for the async file sink. Does not stop writes.</summary>
+    /// <summary>Drain flood summaries and wait for the disk queue. Does not stop writes.</summary>
     public static void Flush() => _host?.Flush();
 
     /// <summary>Same as <see cref="Flush()"/>, waiting at most <paramref name="timeout"/>.</summary>
@@ -70,7 +68,7 @@ public static class VestigiumLogger
 
     /// <summary>
     /// Hook process-exit, Ctrl+C, and (when supplied) a WPF-style <c>Exit</c> event via reflection.
-    /// Exit paths call <see cref="Shutdown"/> so the Serilog buffer is persisted.
+    /// Exit paths call <see cref="Shutdown"/> so the disk queue is persisted.
     /// </summary>
     public static void BindLifetime(object? wpfApplication)
     {
@@ -122,16 +120,13 @@ public static class VestigiumLogger
         public Channel<VestigiumLogEvent> Channel { get; }
         public int WrittenCount;
 
-        private readonly ILogger _log;
-        private readonly IDisposable _fileLogger;
-        private readonly FlushGate _gate = new();
+        private readonly VestigiumJsonlWriter _disk;
         private readonly Timer _drainTimer;
         private readonly ConcurrentQueue<string> _recent = new();
         private readonly int _pid = Environment.ProcessId;
         private int _accepting = 1;
         private int _disposed;
         private int _closed;
-
 
         public Host(VestigiumLoggerOptions options)
         {
@@ -145,33 +140,7 @@ public static class VestigiumLogger
                 FullMode = BoundedChannelFullMode.DropOldest
             });
 
-            var directory = options.ResolveLogDirectory();
-            Directory.CreateDirectory(directory);
-            var path = Path.Combine(directory, $"vestigium-{options.AppId}-.json");
-
-            var fileLogger = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.File(
-                    new VestigiumSerilogFormatter(),
-                    path,
-                    rollingInterval: RollingInterval.Day,
-                    fileSizeLimitBytes: options.FileSizeLimitBytes,
-                    rollOnFileSizeLimit: true,
-                    retainedFileCountLimit: options.RetainedFileCountLimit,
-                    retainedFileTimeLimit: options.RetainedFileTimeLimit,
-                    shared: true,
-                    encoding: new System.Text.UTF8Encoding(encoderShouldEmitUTF8Identifier: false))
-                .CreateLogger();
-            _fileLogger = fileLogger;
-
-            _log = new LoggerConfiguration()
-                .MinimumLevel.Verbose()
-                .WriteTo.Async(
-                    a => a.Sink(new CompletingSink(fileLogger, _gate)),
-                    bufferSize: Math.Max(1, options.DiskQueueCapacity),
-                    blockWhenFull: false)
-                .CreateLogger();
-
+            _disk = new VestigiumJsonlWriter(options);
             _drainTimer = new Timer(static s => ((Host)s!).Drain(), this, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         }
 
@@ -243,18 +212,7 @@ public static class VestigiumLogger
             Interlocked.Increment(ref WrittenCount);
 
             if (evt.Level >= Options.MinimumDiskLevel)
-            {
-                _gate.Issued();
-                try
-                {
-                    _log.Write(MapLevel(evt.Level), "{VestigiumJson}", json);
-                }
-                catch
-                {
-                    _gate.Completed();
-                    throw;
-                }
-            }
+                _disk.Enqueue(json);
 
             Subject.Publish(evt);
             Channel.Writer.TryWrite(evt);
@@ -289,21 +247,22 @@ public static class VestigiumLogger
 
         private void Persist(bool stopAccepting, TimeSpan timeout)
         {
+            var wait = timeout < TimeSpan.Zero ? TimeSpan.Zero : timeout;
             if (stopAccepting)
                 Volatile.Write(ref _accepting, 0);
 
             Drain();
-            _gate.Wait(timeout < TimeSpan.Zero ? TimeSpan.Zero : timeout);
 
             if (!stopAccepting)
+            {
+                _disk.Flush(wait);
                 return;
+            }
 
             if (Interlocked.Exchange(ref _closed, 1) == 1)
                 return;
 
-            (_log as IDisposable)?.Dispose();
-            _fileLogger.Dispose();
-            _gate.Dispose();
+            _disk.Complete();
             Channel.Writer.TryComplete();
             Subject.Complete();
         }
@@ -316,17 +275,5 @@ public static class VestigiumLogger
             Disk.Dispose();
             Close();
         }
-
-
-        private static LogEventLevel MapLevel(VestigiumLogLevel level) => level switch
-        {
-            VestigiumLogLevel.Verbose => LogEventLevel.Verbose,
-            VestigiumLogLevel.Debug => LogEventLevel.Debug,
-            VestigiumLogLevel.Information => LogEventLevel.Information,
-            VestigiumLogLevel.Warning => LogEventLevel.Warning,
-            VestigiumLogLevel.Error => LogEventLevel.Error,
-            VestigiumLogLevel.Fatal => LogEventLevel.Fatal,
-            _ => LogEventLevel.Information
-        };
     }
 }
