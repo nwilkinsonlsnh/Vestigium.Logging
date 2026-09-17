@@ -22,7 +22,8 @@ public sealed class HostBranchTests
             FloodThresholdCount = 2,
             FloodWindow = TimeSpan.FromMilliseconds(40),
             MinimumDiskLevel = VestigiumLogLevel.Verbose,
-            RecentJsonLineCap = 50
+            RecentJsonLineCap = 50,
+            FlushTimeout = TimeSpan.Zero
         };
         extra?.Invoke(options);
         return options;
@@ -82,12 +83,15 @@ public sealed class HostBranchTests
         using var host = new VestigiumLogger.Host(Options(dir, o => o.FloodWindow = TimeSpan.FromMilliseconds(20)));
         var key = new FloodIdentity("PingIQ", "Network", "NotALevel", "orphan");
         var start = DateTimeOffset.UtcNow;
-        host.Flood.Observe(key, start);
-        host.Flood.Observe(key, start);
-        host.Flood.Observe(key, start);
+        host.Flood.Observe(key, start, "ICMP");
+        host.Flood.Observe(key, start, "ICMP");
+        host.Flood.Observe(key, start, "ICMP");
         Thread.Sleep(40);
         host.Drain();
-        Assert.Contains(host.RecentSnapshot(), l => l.Contains("[Aggregated]") && l.Contains("\"LEVEL\":\"Information\""));
+        var line = Assert.Single(host.RecentSnapshot().Where(l => l.Contains("[Aggregated]")));
+        Assert.Contains("\"LEVEL\":\"Information\"", line);
+        Assert.Contains("\"CATEGORY\":\"Network\"", line);
+        Assert.Contains("\"SUBCATEGORY\":\"ICMP\"", line);
     }
 
     [Fact]
