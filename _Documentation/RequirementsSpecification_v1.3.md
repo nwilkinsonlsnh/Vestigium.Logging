@@ -76,17 +76,27 @@ Every public log call returns after enqueue. Disk I/O runs on Serilog’s Async 
 | Identity | `(APPID, CATEGORY, LEVEL, MESSAGE)` ordinal, case-sensitive. STATUS and SUBCATEGORY are not part of identity. |
 | FloodThresholdCount | 5 |
 | FloodWindowMs | 30,000 |
+| FloodIdentityCap | 4,096 distinct identities. Expired keys are removed. Idle keys evicted first; pending suppressed is flushed then dropped. |
 | Suppression start | Event 6 and later of the same identity inside the window |
 | Summary line | `[Aggregated] Previous message repeated {X} additional times` |
 | Summary LEVEL | Same as the suppressed identity |
 | Summary STATUS | None |
+| Summary SUBCATEGORY | Last subcategory observed for that identity |
 | Reset | Window expiry (`DrainExpired` every 1 second) or next observe after expiry |
 
 Worked example: 22 identical PingIQ Information events in 8 seconds produce 5 full lines. Events 6–22 are suppressed (X = 17). A simultaneous TraceIQ “Timeout” does not increment this counter.
 
 ### 3.5 Guaranteed flush
 
-Subscribe to `Application.Current.Exit` when running under WPF, `AppDomain.CurrentDomain.ProcessExit` for all hosts, and `Console.CancelKeyPress` when a console host is detected. FlushTimeout = 5 seconds.
+Subscribe to `Application.Current.Exit` when running under WPF (`VestigiumLogger.BindLifetime` uses reflection on an `Exit` event so the engine stays `net10.0`), `AppDomain.CurrentDomain.ProcessExit` for all hosts, and `Console.CancelKeyPress` when a console host is detected.
+
+| Method | Behavior |
+|---|---|
+| `Flush()` / `Flush(timeout)` | Drain flood summaries and wait up to `FlushTimeout` (default 5 seconds) for the async file sink. **Writes keep being accepted.** |
+| `Shutdown()` | Stop accepting writes, drain, wait, dispose Serilog, complete subscribers. |
+| ProcessExit / Ctrl+C / WPF `Exit` | Call `Shutdown()`. |
+
+`FlushTimeout` = 5 seconds. A timeout returns without throwing.
 
 ### 3.6 Disk space tripwire
 
@@ -133,7 +143,7 @@ VestigiumLog.Write(
 3. PingIQ Timeout and TraceIQ Timeout maintain independent flood counters.
 4. 22 identical PingIQ events in 8 seconds produce 5 full lines; suppressed count is 17.
 5. A 10,000-event/second background loop leaves the WPF UI responsive; dispatcher receives at most one batch every 100 ms.
-6. Normal process exit flushes the Serilog buffer.
+6. Normal process exit calls `Shutdown`, which flushes the Serilog buffer.
 7. A 20 MB file rolls; files older than 14 days or beyond the 90-file cap are deleted.
 8. When free space is 4 GB on a 40 GB volume, the 5 GB floor trips; Verbose/Debug stop; Information still writes.
 9. An unknown category stores `CATEGORY=Uncategorized` and emits the internal configuration warning.
@@ -153,3 +163,4 @@ VestigiumLog.Write(
 | 1.1 | Conversation captured | Grok |
 | 1.2 | Placeholders filled | Grok, 6 Sep 2026 |
 | 1.3 | Rolling files: 20 MB, 14-day retention, 90-file cap | Stakeholder request, 6 Sep 2026 |
+| 1.4 | P0: Flush ≠ Shutdown; WPF Exit via reflection; flood identity cap 4096 | Implementation plan P0, 17 Sep 2026 |

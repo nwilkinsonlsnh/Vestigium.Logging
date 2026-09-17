@@ -477,10 +477,10 @@ New tests listed under each slice. Keep the test project serial if any test uses
 
 **P0**
 
-- [ ] P0.1 Flush vs Shutdown + FlushTimeout wait
-- [ ] P0.2 BindLifetime WPF Exit via reflection
-- [ ] P0.3 Flood evict + cap + LastSubcategory storage
-- [ ] P0 tests green; existing flood tests green
+- [x] P0.1 Flush vs Shutdown + FlushTimeout wait
+- [x] P0.2 BindLifetime WPF Exit via reflection
+- [x] P0.3 Flood evict + cap + LastSubcategory storage
+- [x] P0 tests green; existing flood tests green
 
 **P1**
 

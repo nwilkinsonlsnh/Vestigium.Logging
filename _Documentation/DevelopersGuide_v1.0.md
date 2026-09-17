@@ -17,6 +17,8 @@ VestigiumLogger.Initialize(cfg =>
 VestigiumLogger.BindLifetime(Application.Current);
 ```
 
+`Flush()` drains flood summaries and waits for the file sink; it does **not** stop further writes. Call `Shutdown()` (or rely on `BindLifetime`) at process exit.
+
 3. Log with an explicit status:
 
 ```csharp
@@ -38,7 +40,7 @@ Unknown pairs are rewritten. Do not catch that as an exception — it is a Warni
 
 ## Flood
 
-Retries with the same message are collapsed after five hits in 30 seconds. If you need every attempt (for example a per-target ping result), include the target in MESSAGE so the identity differs.
+Retries with the same message are collapsed after five hits in 30 seconds. Distinct identities are capped at 4,096; expired keys are dropped. If you need every attempt (for example a per-target ping result), include the target in MESSAGE so the identity differs.
 
 ## Files
 

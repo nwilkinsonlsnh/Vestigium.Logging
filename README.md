@@ -45,6 +45,8 @@ VestigiumLogger.Initialize(cfg =>
 VestigiumLogger.BindLifetime(Application.Current);
 ```
 
+`Flush()` persists buffers and keeps accepting writes. `Shutdown()` (also hooked by `BindLifetime`) is process-exit.
+
 Call sites always pass STATUS:
 
 ```csharp
@@ -63,9 +65,11 @@ VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open datab
 | File cap | 90 per APPID |
 | FloodThresholdCount | 5 |
 | FloodWindowMs | 30,000 |
+| FloodIdentityCap | 4,096 |
 | Disk tripwire | 10% free **or** 5 GB |
 | Subscriber channel | 10,000, DropOldest |
 | UI batch | 50 events / 100 ms |
+| FlushTimeout | 5 s (`Flush` does not stop writes) |
 
 Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)` — a value tuple, never a concatenated string.
 
@@ -82,5 +86,5 @@ Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)` — a value tuple, never a c
 - Flat JSON Lines. No CSV / pipe / tab output path.
 - LEVEL is never Success / Failed / Timeout.
 - Unregistered taxonomy becomes `Uncategorized` / `Unregistered` plus an internal Warning.
-- Process exit flushes the async buffer.
+- Process exit calls `Shutdown`, which flushes the async buffer.
 - Subscribers receive the structured `VestigiumLogEvent`, not a pre-rendered string.

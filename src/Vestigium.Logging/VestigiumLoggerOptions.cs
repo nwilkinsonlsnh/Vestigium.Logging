@@ -21,6 +21,9 @@ public sealed class VestigiumLoggerOptions
 
     public TimeSpan FloodWindow { get; set; } = TimeSpan.FromMilliseconds(30_000);
 
+    /// <summary>Hard cap on distinct flood identities. Idle/expired keys are evicted first. Default 4096.</summary>
+    public int FloodIdentityCap { get; set; } = FloodTracker.DefaultIdentityCap;
+
     public int DiskFreePercentThreshold { get; set; } = 10;
 
     public long DiskFreeBytesFloor { get; set; } = 5L * 1024 * 1024 * 1024;
@@ -33,6 +36,7 @@ public sealed class VestigiumLoggerOptions
 
     public int UiBatchSize { get; set; } = 50;
 
+    /// <summary>Maximum wait for the async file sink on <see cref="VestigiumLogger.Flush()"/> and shutdown.</summary>
     public TimeSpan FlushTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
     public VestigiumLogLevel MinimumDiskLevel { get; set; } = VestigiumLogLevel.Information;

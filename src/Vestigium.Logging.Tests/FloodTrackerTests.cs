@@ -63,4 +63,66 @@ public sealed class FloodTrackerTests
         Assert.Equal(a, b);
         Assert.NotEqual(a, c);
     }
+
+    [Fact]
+    public void ExpiredKeysAreRemoved()
+    {
+        var tracker = new FloodTracker(5, TimeSpan.FromSeconds(1));
+        var key = new FloodIdentity("PingIQ", "Network", "Information", "echo");
+        var start = DateTimeOffset.UtcNow;
+        tracker.Observe(key, start, "ICMP");
+        Assert.Equal(1, tracker.TrackedIdentityCount);
+
+        tracker.DrainExpired(start.AddSeconds(2));
+        Assert.Equal(0, tracker.TrackedIdentityCount);
+    }
+
+    [Fact]
+    public void CapEvictsOldestIdle()
+    {
+        var tracker = new FloodTracker(5, TimeSpan.FromMinutes(1), identityCap: 3);
+        var now = DateTimeOffset.Parse("2026-09-06T20:20:00Z");
+        for (var i = 0; i < 4; i++)
+        {
+            var key = new FloodIdentity("PingIQ", "Network", "Information", $"msg-{i}");
+            tracker.Observe(key, now.AddSeconds(i), "ICMP");
+        }
+
+        Assert.True(tracker.TrackedIdentityCount <= 3);
+        var dumped = tracker.DrainExpired(now.AddMinutes(2));
+        Assert.Equal(0, tracker.TrackedIdentityCount);
+        Assert.Empty(dumped);
+    }
+
+    [Fact]
+    public void PendingSuppressedFlushedBeforeEvict()
+    {
+        var tracker = new FloodTracker(5, TimeSpan.FromMinutes(1), identityCap: 1);
+        var a = new FloodIdentity("PingIQ", "Network", "Information", "alpha");
+        var b = new FloodIdentity("PingIQ", "Network", "Information", "beta");
+        var t0 = DateTimeOffset.Parse("2026-09-06T20:20:00Z");
+        for (var i = 0; i < 8; i++)
+            tracker.Observe(a, t0, "ICMP");
+        for (var i = 0; i < 8; i++)
+            tracker.Observe(b, t0.AddSeconds(1), "ICMP");
+
+        var dumped = tracker.TakeEvictedSummaries();
+        Assert.Contains(dumped, x => x.Key == a && x.Suppressed == 3 && x.Subcategory == "ICMP");
+        Assert.True(tracker.TrackedIdentityCount <= 1);
+    }
+
+    [Fact]
+    public void DrainExpiredUsesLastSubcategory()
+    {
+        var tracker = new FloodTracker(5, TimeSpan.FromSeconds(1));
+        var key = new FloodIdentity("PingIQ", "Network", "Information", "echo");
+        var start = DateTimeOffset.UtcNow;
+        for (var i = 0; i < 8; i++)
+            tracker.Observe(key, start, "ICMP");
+
+        var dumped = tracker.DrainExpired(start.AddSeconds(2));
+        Assert.Single(dumped);
+        Assert.Equal(3, dumped[0].Suppressed);
+        Assert.Equal("ICMP", dumped[0].Subcategory);
+    }
 }

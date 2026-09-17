@@ -1,8 +1,8 @@
 # Vestigium.Logging — Design Document
 
-**Version:** 1.0  
-**Date:** 6 September 2026  
-**Companion:** Requirements Specification v1.3
+**Version:** 1.1  
+**Date:** 17 September 2026  
+**Companion:** Requirements Specification v1.3 (P0 updates in §3.4–3.5)
 
 ## 1. Intent
 
@@ -61,8 +61,9 @@ Copied from the accepted Gemini follow-up:
 1. Identity is a record, never `"A|B|C|D"`.
 2. First `FloodThresholdCount` (5) observations in the window emit full lines.
 3. Further observations increment `Suppressed` and return `writeFull = false`.
-4. A 1-second timer calls `DrainExpired`. If the window elapsed and `Suppressed > 0`, emit `[Aggregated] Previous message repeated X additional times` with `STATUS=None` and the original LEVEL / APPID / CATEGORY.
+4. A 1-second timer calls `DrainExpired`. If the window elapsed and `Suppressed > 0`, emit `[Aggregated] Previous message repeated X additional times` with `STATUS=None`, the original LEVEL / APPID / CATEGORY, and the last observed SUBCATEGORY. Expired keys are **removed** from the map.
 5. `Observe` after expiry with pending suppressed also flushes then starts a new window with count 1.
+6. Distinct identities are capped (`FloodIdentityCap`, default 4096). Overflow drops expired, then oldest idle, then flushes-and-drops oldest pending suppressed.
 
 PingIQ and TraceIQ with the same MESSAGE are different keys because APPID differs.
 
@@ -104,6 +105,8 @@ Configuration Apply tears down the host and calls `Initialize` again so sliders 
 - Channel full → DropOldest.
 - Serilog async full → drop (`blockWhenFull: false`).
 - Convert/log never throws on the calling diagnostic thread except the initialize guard.
+- `Flush` wait timeout returns without throwing; writes stay accepted.
+- ProcessExit / Ctrl+C / WPF `Exit` call `Shutdown`, not `Flush`.
 
 ## 10. Test plan
 
@@ -112,7 +115,13 @@ Configuration Apply tears down the host and calls `Initialize` again so sliders 
 | `FloodTrackerTests.FirstFiveAreWritten_ThenSuppressed` | 22 events → 5 full, 17 suppressed |
 | `DifferentAppIdsDoNotShareCounters` | Ping vs Trace |
 | `WindowExpiryFlushesAggregationCount` | DrainExpired returns 3 after 8 writes at threshold 5 |
+| `ExpiredKeysAreRemoved` | Tracked count 0 after window |
+| `CapEvictsOldestIdle` | Distinct keys over cap |
+| `PendingSuppressedFlushedBeforeEvict` | Summary enqueued before drop |
 | `JsonPreservesMultilineAndPipes` | One JSON object, MESSAGE intact |
 | `UnregisteredCategoryFallsBack` | Widgets → Uncategorized |
 | `InitializeRequiredBeforeWrite` | InvalidOperationException |
 | `FloodBurstWritesFivePlusAggregation` | Host integration |
+| `FlushDoesNotStopWrites` | Write after Flush |
+| `ShutdownStopsWrites` | Write throws after Shutdown |
+| `BindLifetimeExitShutsDown` | Dummy `Exit` event |
