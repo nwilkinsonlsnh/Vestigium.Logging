@@ -5,6 +5,14 @@ namespace Vestigium.Logging.Tests;
 
 public sealed class OptionsTaxonomyAndDiskTests
 {
+    private static VestigiumTaxonomy CloneDefaults()
+    {
+        var t = new VestigiumTaxonomy();
+        foreach (var pair in VestigiumTaxonomy.Defaults.Snapshot)
+            t.Register(pair.Key, pair.Value.ToArray());
+        return t;
+    }
+
     [Fact]
     public void ResolveLogDirectoryUsesExplicitThenFallback()
     {
@@ -42,7 +50,7 @@ public sealed class OptionsTaxonomyAndDiskTests
     [Fact]
     public void TaxonomyNormalizesEmptyAndPartial()
     {
-        var t = VestigiumTaxonomy.Defaults;
+        var t = CloneDefaults();
         Assert.True(t.IsCategoryRegistered("Network"));
         Assert.True(t.IsSubcategoryRegistered("Network", "ICMP"));
         Assert.False(t.IsCategoryRegistered("Widgets"));
@@ -64,6 +72,7 @@ public sealed class OptionsTaxonomyAndDiskTests
         t.Register("Custom", " ", "Alpha");
         Assert.True(t.IsSubcategoryRegistered("Custom", "Alpha"));
         Assert.False(t.IsSubcategoryRegistered("Custom", " "));
+        Assert.False(VestigiumTaxonomy.Defaults.IsCategoryRegistered("Custom"));
     }
 
     [Fact]
