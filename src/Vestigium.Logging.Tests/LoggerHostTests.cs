@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Vestigium.Logging.Tests;
 
 [Collection("VestigiumLogger")]
@@ -59,6 +61,27 @@ public sealed class LoggerHostTests : IDisposable
         Start();
         VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "second-host");
         Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("second-host"));
+    }
+
+    [Fact]
+    public void ProcessExitAndCancelHandlersFlush()
+    {
+        Start();
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "before-exit");
+        VestigiumLogger.OnProcessExit(null, EventArgs.Empty);
+        Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("before-exit"));
+
+        Start();
+        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "before-cancel");
+        var ctor = typeof(ConsoleCancelEventArgs).GetConstructor(
+            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public,
+            binder: null,
+            types: [typeof(ConsoleSpecialKey)],
+            modifiers: null);
+        Assert.NotNull(ctor);
+        var args = (ConsoleCancelEventArgs)ctor.Invoke([ConsoleSpecialKey.ControlC]);
+        VestigiumLogger.OnCancel(null, args);
+        Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("before-cancel"));
     }
 
     [Fact]
