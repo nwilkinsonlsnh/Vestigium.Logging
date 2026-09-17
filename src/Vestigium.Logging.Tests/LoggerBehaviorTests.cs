@@ -167,7 +167,7 @@ public sealed class LoggerBehaviorTests : IDisposable
 
         var files = Directory.GetFiles(_dir, "*.json");
         Assert.NotEmpty(files);
-        var contents = string.Join('\n', files.Select(File.ReadAllText));
+        var contents = string.Join('\n', files.Select(ReadShared));
         Assert.Contains("persist-me", contents);
     }
 
@@ -207,7 +207,7 @@ public sealed class LoggerBehaviorTests : IDisposable
         VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "memory-only");
         Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("memory-only"));
         VestigiumLogger.Flush();
-        var contents = string.Join('\n', Directory.GetFiles(_dir, "*.json").Select(File.ReadAllText));
+        var contents = string.Join('\n', Directory.GetFiles(_dir, "*.json").Select(ReadShared));
         Assert.DoesNotContain("memory-only", contents);
     }
 
@@ -231,6 +231,17 @@ public sealed class LoggerBehaviorTests : IDisposable
     {
         VestigiumLogger.Shutdown();
         try { Directory.Delete(_dir, true); } catch { /* ignore */ }
+    }
+
+    /// <summary>
+    /// Serilog keeps the rolling file open with shared: true. Exclusive
+    /// File.ReadAllText fails on Windows.
+    /// </summary>
+    private static string ReadShared(string path)
+    {
+        using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+        using var reader = new StreamReader(stream);
+        return reader.ReadToEnd();
     }
 
     private void Init(Action<VestigiumLoggerOptions>? extra = null)
