@@ -123,6 +123,7 @@ VestigiumLog.Write(
 
 - `IObservable<VestigiumLogEvent> VestigiumLog.Events`
 - `ChannelReader<VestigiumLogEvent> VestigiumLog.EventReader`
+- `VestigiumLogger.Events` and `VestigiumLogger.EventReader` are the **same instances** (aliases). Either type is valid.
 - Structured object, never a pre-rendered string only
 - WPF ViewModels subscribe with `WeakReferenceMessenger` after draining the channel on a background Task
 
@@ -153,3 +154,4 @@ VestigiumLog.Write(
 | 1.1 | Conversation captured | Grok |
 | 1.2 | Placeholders filled | Grok, 6 Sep 2026 |
 | 1.3 | Rolling files: 20 MB, 14-day retention, 90-file cap | Stakeholder request, 6 Sep 2026 |
+| 1.3.1 | §3.9: `VestigiumLogger` subscriber members are aliases of `VestigiumLog` | Wave 2 |
