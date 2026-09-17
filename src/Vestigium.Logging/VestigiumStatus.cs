@@ -7,5 +7,6 @@ public enum VestigiumStatus
     Pending = 1,
     Success = 2,
     Timeout = 3,
-    Failed = 4
+    Failed = 4,
+    Warning = 5
 }
