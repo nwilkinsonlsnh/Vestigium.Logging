@@ -7,7 +7,7 @@ public sealed class JsonSchemaTests
 {
     private static readonly string[] Required =
     [
-        "DateTime", "PID", "TID", "LEVEL", "STATUS", "APPID",
+        "DateTime", "EVENTID", "EVENTNAME", "PID", "TID", "LEVEL", "STATUS", "APPID",
         "CATEGORY", "SUBCATEGORY", "MESSAGE", "EXCEPTION", "CORRELATIONID", "PROPERTIES"
     ];
 
@@ -19,6 +19,35 @@ public sealed class JsonSchemaTests
         foreach (var name in Required)
             Assert.True(doc.RootElement.TryGetProperty(name, out _), name);
         Assert.Equal(Required.Length, doc.RootElement.EnumerateObject().Count());
+    }
+
+    [Fact]
+    public void EventIdIsNumberAndNameFollowsDateTime()
+    {
+        var json = Event().ToJsonLine();
+        using var doc = JsonDocument.Parse(json);
+        Assert.Equal(JsonValueKind.Number, doc.RootElement.GetProperty("EVENTID").ValueKind);
+        Assert.Equal(0, doc.RootElement.GetProperty("EVENTID").GetInt32());
+        Assert.Equal(JsonValueKind.Null, doc.RootElement.GetProperty("EVENTNAME").ValueKind);
+
+        var names = doc.RootElement.EnumerateObject().Select(p => p.Name).ToArray();
+        Assert.Equal("DateTime", names[0]);
+        Assert.Equal("EVENTID", names[1]);
+        Assert.Equal("EVENTNAME", names[2]);
+        Assert.Equal("PID", names[3]);
+    }
+
+    [Fact]
+    public void EventIdAndNameRoundTrip()
+    {
+        var json = new VestigiumLogEvent(
+            DateTimeOffset.Parse("2026-09-17T00:00:00.000Z"),
+            10, 20, VestigiumLogLevel.Information, VestigiumStatus.Success,
+            "PingIQ", "System", "Lifecycle", "up", null, null, null,
+            EventId: 5, EventName: "General.Start").ToJsonLine();
+        using var doc = JsonDocument.Parse(json);
+        Assert.Equal(5, doc.RootElement.GetProperty("EVENTID").GetInt32());
+        Assert.Equal("General.Start", doc.RootElement.GetProperty("EVENTNAME").GetString());
     }
 
     [Fact]
