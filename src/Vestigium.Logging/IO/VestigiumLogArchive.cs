@@ -10,12 +10,16 @@ public static class VestigiumLogArchive
     public static VestigiumArchiveResult ArchiveHostLogs(TimeSpan age)
     {
         var options = VestigiumLogger.Options;
+        if (!options.ArchiveEnabled)
+            throw new InvalidOperationException("Host archiving is disabled. Set ArchiveEnabled and ArchiveDirectory.");
         return ArchiveOlderThan(age, options.ResolveArchiveDirectory(), options.ResolveLogDirectory(), options.AppId);
     }
 
     public static VestigiumArchiveResult ArchiveOperationsLogs(TimeSpan age)
     {
         var options = VestigiumLogger.Options;
+        if (!options.OperationsArchiveEnabled)
+            throw new InvalidOperationException("Operations archiving is disabled. Set OperationsArchiveEnabled and OperationsArchiveDirectory.");
         return ArchiveOlderThan(age, options.ResolveOperationsArchiveDirectory(),
             options.ResolveOperationsLogDirectory(), VestigiumLoggerOptions.OperationsAppId);
     }
