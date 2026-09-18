@@ -61,7 +61,7 @@ public sealed class EventCatalogTests
         var rows = VestigiumEventCatalog.SeedGeneral().Append(
             new VestigiumEventDefinition(VestigiumEventCatalog.CustomMin, "TooHigh", "Temp.TooHigh", "System", "Core", "Error", "Exception", true));
         var ex = Assert.Throws<InvalidOperationException>(() => new VestigiumEventCatalog(rows, allowCustom: false));
-        Assert.Contains("5000", ex.Message);
+        Assert.Contains("10000", ex.Message);
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public sealed class EventCatalogTests
         var rows = VestigiumEventCatalog.SeedGeneral().Append(
             new VestigiumEventDefinition(2110, "HostEvent", "App.HostEvent", "Network", "ICMP", "Error", "Custom", true));
         var ex = Assert.Throws<InvalidOperationException>(() => new VestigiumEventCatalog(rows, allowCustom: true));
-        Assert.Contains("5000", ex.Message);
+        Assert.Contains("10000", ex.Message);
     }
 
     [Fact]
