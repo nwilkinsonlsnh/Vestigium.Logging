@@ -7,6 +7,8 @@ public sealed record VestigiumArchiveResult(int Archived, int Deleted, int Faile
 
 public static class VestigiumLogArchive
 {
+    internal static Func<string, string>? HashOverride;
+
     public static VestigiumArchiveResult ArchiveHostLogs(TimeSpan age)
     {
         var options = VestigiumLogger.Options;
@@ -95,6 +97,8 @@ public static class VestigiumLogArchive
 
     internal static string HashFile(string path)
     {
+        if (HashOverride is not null)
+            return HashOverride(path);
         using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         return Convert.ToHexString(SHA256.HashData(stream));
     }
