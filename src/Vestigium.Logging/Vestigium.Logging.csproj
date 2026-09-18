@@ -8,11 +8,11 @@
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 		<IsPackable>true</IsPackable>
 		<PackageId>Vestigium.Logging</PackageId>
-		<Version>1.7.0</Version>
+		<Version>1.7.1</Version>
 		<Authors>Vestigium</Authors>
 		<Company>Wilkinson Business</Company>
 		<Copyright>Copyright (c) 2026 Nathaniel Wilkinson / LSNH</Copyright>
-		<Description>Owned JSON Lines logger for Vestigium and other hosts — required EVENTID, flood protection, optional HMAC seal, WPF-safe subscribers. No Serilog runtime dependency.</Description>
+		<Description>Owned JSON Lines logger for Vestigium and other hosts — required EVENTID, flood protection, optional HMAC seal, WPF-safe subscribers.</Description>
 		<PackageTags>logging;wpf;mvvm;powerbi;vestigium;jsonl</PackageTags>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/nwilkinsonlsnh/Vestigium.Logging</PackageProjectUrl>
