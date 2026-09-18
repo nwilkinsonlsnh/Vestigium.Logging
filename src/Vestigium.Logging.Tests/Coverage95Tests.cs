@@ -64,7 +64,11 @@ public sealed class Coverage95Tests : IDisposable
         File.WriteAllText(missing, "{}");
         Assert.Throws<InvalidOperationException>(() => VestigiumSealKeyRing.Open(missing));
         var noAlg = Path.Combine(_dir, "noalg.json");
-        File.WriteAllText(noAlg, """{\"keyId\":\"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\"material\":\"AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA=\"}""");
+        File.WriteAllText(noAlg, System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, string>
+        {
+            ["keyId"] = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+            ["material"] = "AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA="
+        }));
         var loaded = VestigiumSealKeyRing.Open(noAlg);
         Assert.Equal(VestigiumSealKeyRing.Algorithm, loaded.Alg);
         var options = new VestigiumLoggerOptions { AppId = "PingIQ" };
