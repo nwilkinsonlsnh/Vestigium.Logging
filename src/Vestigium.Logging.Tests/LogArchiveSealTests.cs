@@ -46,13 +46,13 @@ public sealed class LogArchiveSealTests : IDisposable
         });
         var result = VestigiumLogArchive.ArchiveOlderThan(TimeSpan.FromDays(14), _arc, _logs, "PingIQ");
         VestigiumLogger.Flush();
+        VestigiumLogger.Shutdown();
         Assert.Equal(0, result.Archived);
         Assert.True(result.Failed >= 1);
         Assert.True(File.Exists(old));
         Assert.False(File.Exists(Path.Combine(_arc, "vestigium-PingIQ-20200101.json")));
         var ops = string.Join('\n', Directory.EnumerateFiles(_ops, "*.json").Select(File.ReadAllText));
         Assert.Contains("\"EVENTID\":5035", ops);
-        VestigiumLogger.Shutdown();
     }
 
     public void Dispose()
