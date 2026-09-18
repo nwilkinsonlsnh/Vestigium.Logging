@@ -20,6 +20,7 @@ public static partial class VestigiumLogger
     public static int WrittenCount => _host?.WrittenCount ?? 0;
     public static int SuppressedCount => _host?.Flood.PendingSuppressed ?? 0;
     public static VestigiumEventCatalog Catalog => Require().Catalog;
+    public static string? ActiveOperationsLogPath => _host?.ActiveOpsLogPath;
 
     public static void Initialize(Action<VestigiumLoggerOptions> configure)
     {
@@ -83,6 +84,7 @@ public static partial class VestigiumLogger
         public Channel<VestigiumLogEvent> Channel { get; }
         public int WrittenCount;
         private readonly VestigiumJsonlWriter _disk;
+        private readonly VestigiumJsonlWriter? _ops;
         private readonly Timer _drainTimer;
         private readonly ConcurrentQueue<string> _recent = new();
         private readonly int _pid = Environment.ProcessId;
@@ -109,6 +111,15 @@ public static partial class VestigiumLogger
                 SingleReader = false, SingleWriter = false, FullMode = BoundedChannelFullMode.DropOldest
             });
             _disk = new VestigiumJsonlWriter(options);
+            _ops = options.OperationsLogEnabled
+                ? new VestigiumJsonlWriter(
+                    options.ResolveOperationsLogDirectory(),
+                    VestigiumLoggerOptions.OperationsAppId,
+                    options.FileSizeLimitBytes,
+                    options.RetainedFileTimeLimit,
+                    options.RetainedFileCountLimit,
+                    options.DiskQueueCapacity)
+                : null;
             _drainTimer = new Timer(static s => ((Host)s!).Drain(), this, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         }
 
@@ -184,9 +195,15 @@ public static partial class VestigiumLogger
             var wait = timeout < TimeSpan.Zero ? TimeSpan.Zero : timeout;
             if (stopAccepting) Volatile.Write(ref _accepting, 0);
             Drain();
-            if (!stopAccepting) { _disk.Flush(wait); return; }
+            if (!stopAccepting)
+            {
+                _disk.Flush(wait);
+                _ops?.Flush(wait);
+                return;
+            }
             if (Interlocked.Exchange(ref _closed, 1) == 1) return;
             _disk.Complete();
+            _ops?.Complete();
             Channel.Writer.TryComplete();
             Subject.Complete();
         }
