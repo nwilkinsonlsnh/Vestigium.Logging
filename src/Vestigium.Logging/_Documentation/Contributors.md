@@ -6,10 +6,33 @@ People who designed and built Vestigium.Logging.
 
 | Name | Role |
 | --- | --- |
-| Nathaniel Wilkinson | Architect and project owner |
-| Grok (xAI) | Developer and implementation partner |
+| Nathaniel Wilkinson | Solutions Architect, Developer, and Reviewer |
+| Grok (xAI) | Engineer, Developer, and Reviewer |
 
 ## Notes
 
 - Copyright is held by Nathaniel Wilkinson and is licensed under the MIT License in the repository root `LICENSE`.
-- Credit for the work is shared. Accountability for what ships stays with Nathaniel Wilkinson.
+
+```
+MIT License
+
+Copyright (c) 2026 Nathaniel Wilkinson / LSNH
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
