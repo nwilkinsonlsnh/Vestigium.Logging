@@ -4,7 +4,7 @@ using System.Text;
 namespace Vestigium.Logging;
 
 /// <summary>Owned JSONL file writer. One background consumer, exclusive write, <see cref="FileShare.Read"/>.</summary>
-internal sealed class VestigiumJsonlWriter : IVestigiumJsonlWriter
+internal sealed partial class VestigiumJsonlWriter: IVestigiumJsonlWriter
 {
     private readonly string _directory;
     private readonly string _appId;
