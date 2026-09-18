@@ -3,10 +3,17 @@ using System.Text.Json;
 
 namespace Vestigium.Logging;
 
+/// <summary>0–4999 embedded catalog, 5000–9999 engine operations, 10000+ host custom.</summary>
 public sealed class VestigiumEventCatalog
 {
     public const int ReservedMax = 4999;
-    public const int CustomMin = 5000;
+    public const int OpsMin = 5000;
+    public const int OpsMax = 9999;
+    public const int CustomMin = 10000;
+
+    public static bool IsOpsId(int eventId) => eventId is >= OpsMin and <= OpsMax;
+    public static bool IsCustomId(int eventId) => eventId >= CustomMin;
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -219,9 +226,17 @@ public sealed class VestigiumEventCatalog
     private static void ValidateRange(VestigiumEventDefinition row, bool allowCustom)
     {
         if (row.EventId < 0) throw new InvalidOperationException($"EventId {row.EventId} is invalid.");
-        if (!allowCustom && row.EventId >= CustomMin)
-            throw new InvalidOperationException($"Embedded catalog EventId {row.EventId} ({row.FullName}) is >= {CustomMin}. Reserved range is 0–{ReservedMax}.");
-        if (allowCustom && row.Kind.Equals("Custom", StringComparison.OrdinalIgnoreCase) && row.EventId < CustomMin)
+        if (IsOpsId(row.EventId))
+        {
+            if (allowCustom)
+                throw new InvalidOperationException($"EventId {row.EventId} ({row.FullName}) is reserved for the operations log (5000–9999). Custom ids start at {CustomMin}.");
+            if (!row.Kind.Equals("Engine", StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException($"EventId {row.EventId} ({row.FullName}) is in the operations band and must have Kind Engine.");
+            return;
+        }
+        if (!allowCustom && row.EventId > ReservedMax)
+            throw new InvalidOperationException($"Embedded catalog EventId {row.EventId} ({row.FullName}) must be 0–{ReservedMax} or {OpsMin}–{OpsMax} (Engine).");
+        if (allowCustom && row.EventId < CustomMin)
             throw new InvalidOperationException($"Custom EventId {row.EventId} ({row.FullName}) must be >= {CustomMin}.");
     }
 
