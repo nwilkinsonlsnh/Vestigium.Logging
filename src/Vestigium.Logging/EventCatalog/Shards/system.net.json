@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1130,
+        "EventId":  1230,
         "EventName":  "CookieException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -12,7 +12,19 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1135,
+        "EventId":  1235,
+        "EventName":  "HttpRequestException",
+        "Category":  "Network",
+        "Subcategory":  "Communications",
+        "FullName":  "System.Net.Http.HttpRequestException",
+        "Namespace":  "System.Net.Http",
+        "Description":  "Exception type System.Net.Http.HttpRequestException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1240,
         "EventName":  "HttpListenerException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -24,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1140,
+        "EventId":  1245,
         "EventName":  "SmtpException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -36,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1145,
+        "EventId":  1250,
         "EventName":  "SmtpFailedRecipientException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -48,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1150,
+        "EventId":  1255,
         "EventName":  "SmtpFailedRecipientsException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -60,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1155,
+        "EventId":  1260,
         "EventName":  "NetworkInformationException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -72,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1160,
+        "EventId":  1265,
         "EventName":  "PingException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -84,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1165,
+        "EventId":  1270,
         "EventName":  "PeerToPeerException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -96,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1170,
+        "EventId":  1275,
         "EventName":  "ProtocolViolationException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -108,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1175,
+        "EventId":  1280,
         "EventName":  "SocketException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -120,7 +132,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1180,
+        "EventId":  1285,
         "EventName":  "WebException",
         "Category":  "Network",
         "Subcategory":  "Communications",
@@ -132,7 +144,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1185,
+        "EventId":  1290,
         "EventName":  "WebSocketException",
         "Category":  "Network",
         "Subcategory":  "Communications",

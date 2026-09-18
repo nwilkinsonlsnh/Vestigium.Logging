@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1415,
+        "EventId":  1520,
         "EventName":  "PrivilegeNotHeldException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1420,
+        "EventId":  1525,
         "EventName":  "AuthenticationException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1425,
+        "EventId":  1530,
         "EventName":  "InvalidCredentialException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1430,
+        "EventId":  1535,
         "EventName":  "CryptographicException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1435,
+        "EventId":  1540,
         "EventName":  "CryptographicUnexpectedOperationException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1440,
+        "EventId":  1545,
         "EventName":  "HostProtectionException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1445,
+        "EventId":  1550,
         "EventName":  "PolicyException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1450,
+        "EventId":  1555,
         "EventName":  "IdentityNotMappedException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1455,
+        "EventId":  1560,
         "EventName":  "RightsManagementException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1460,
+        "EventId":  1565,
         "EventName":  "SecurityException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1465,
+        "EventId":  1570,
         "EventName":  "VerificationException",
         "Category":  "System",
         "Subcategory":  "Security",
@@ -132,7 +132,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1470,
+        "EventId":  1575,
         "EventName":  "XmlSyntaxException",
         "Category":  "System",
         "Subcategory":  "Security",

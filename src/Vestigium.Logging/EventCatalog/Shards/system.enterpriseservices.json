@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  500,
+        "EventId":  600,
         "EventName":  "RegistrationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  505,
+        "EventId":  605,
         "EventName":  "ServicedComponentException",
         "Category":  "System",
         "Subcategory":  "Core",

@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1740,
+        "EventId":  1845,
         "EventName":  "TransactionAbortedException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1745,
+        "EventId":  1850,
         "EventName":  "TransactionException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1750,
+        "EventId":  1855,
         "EventName":  "TransactionInDoubtException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1755,
+        "EventId":  1860,
         "EventName":  "TransactionManagerCommunicationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1760,
+        "EventId":  1865,
         "EventName":  "TransactionPromotionException",
         "Category":  "System",
         "Subcategory":  "Core",

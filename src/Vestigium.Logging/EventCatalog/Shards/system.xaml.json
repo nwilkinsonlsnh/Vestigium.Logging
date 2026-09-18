@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1920,
+        "EventId":  2035,
         "EventName":  "XamlDuplicateMemberException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1925,
+        "EventId":  2040,
         "EventName":  "XamlException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1930,
+        "EventId":  2045,
         "EventName":  "XamlInternalException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1935,
+        "EventId":  2050,
         "EventName":  "XamlObjectReaderException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1940,
+        "EventId":  2055,
         "EventName":  "XamlObjectWriterException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1945,
+        "EventId":  2060,
         "EventName":  "XamlParseException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1950,
+        "EventId":  2065,
         "EventName":  "XamlSchemaException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1955,
+        "EventId":  2070,
         "EventName":  "XamlXmlWriterException",
         "Category":  "System",
         "Subcategory":  "Core",

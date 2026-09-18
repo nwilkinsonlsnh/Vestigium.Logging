@@ -1,0 +1,12 @@
+{
+    "EventId":  100,
+    "EventName":  "LoggerException",
+    "Category":  "System",
+    "Subcategory":  "Microsoft",
+    "FullName":  "Microsoft.Build.Framework.LoggerException",
+    "Namespace":  "Microsoft.Build.Framework",
+    "Description":  "Exception type Microsoft.Build.Framework.LoggerException.",
+    "Severity":  "Error",
+    "Enabled":  true,
+    "Kind":  "Exception"
+}

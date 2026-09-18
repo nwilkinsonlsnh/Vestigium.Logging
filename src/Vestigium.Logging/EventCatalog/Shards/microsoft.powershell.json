@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  20,
+        "EventId":  120,
         "EventName":  "CimJobException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  25,
+        "EventId":  125,
         "EventName":  "CertificateNotFoundException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  30,
+        "EventId":  130,
         "EventName":  "CertificateProviderItemNotFoundException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  35,
+        "EventId":  135,
         "EventName":  "CertificateStoreLocationNotFoundException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  40,
+        "EventId":  140,
         "EventName":  "CertificateStoreNotFoundException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  45,
+        "EventId":  145,
         "EventName":  "HelpCategoryInvalidException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  50,
+        "EventId":  150,
         "EventName":  "HelpNotFoundException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  55,
+        "EventId":  155,
         "EventName":  "ProcessCommandException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  60,
+        "EventId":  160,
         "EventName":  "RestartComputerTimeoutException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  65,
+        "EventId":  165,
         "EventName":  "ServiceCommandException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  70,
+        "EventId":  170,
         "EventName":  "ProgramNotFoundException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -132,7 +132,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  75,
+        "EventId":  175,
         "EventName":  "ResultNotFoundException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -144,7 +144,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  80,
+        "EventId":  180,
         "EventName":  "TemplateParsingException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -156,7 +156,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  85,
+        "EventId":  185,
         "EventName":  "WriteErrorException",
         "Category":  "System",
         "Subcategory":  "Microsoft",

@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  180,
+        "EventId":  280,
         "EventName":  "ChangeRejectedException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  185,
+        "EventId":  285,
         "EventName":  "CompositionContractMismatchException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  190,
+        "EventId":  290,
         "EventName":  "CompositionException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  195,
+        "EventId":  295,
         "EventName":  "ImportCardinalityMismatchException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  200,
+        "EventId":  300,
         "EventName":  "ComposablePartException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  205,
+        "EventId":  305,
         "EventName":  "ValidationException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  210,
+        "EventId":  310,
         "EventName":  "CheckoutException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  215,
+        "EventId":  315,
         "EventName":  "InvalidAsynchronousStateException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  220,
+        "EventId":  320,
         "EventName":  "InvalidEnumArgumentException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  225,
+        "EventId":  325,
         "EventName":  "LicenseException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  230,
+        "EventId":  330,
         "EventName":  "WarningException",
         "Category":  "System",
         "Subcategory":  "ComponentModel",
@@ -132,7 +132,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  235,
+        "EventId":  335,
         "EventName":  "Win32Exception",
         "Category":  "System",
         "Subcategory":  "ComponentModel",

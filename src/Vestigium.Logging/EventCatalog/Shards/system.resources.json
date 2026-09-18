@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1275,
+        "EventId":  1380,
         "EventName":  "MissingManifestResourceException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1280,
+        "EventId":  1385,
         "EventName":  "MissingSatelliteAssemblyException",
         "Category":  "System",
         "Subcategory":  "Core",

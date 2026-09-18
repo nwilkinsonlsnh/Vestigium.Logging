@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1800,
+        "EventId":  1905,
         "EventName":  "DatabaseNotEnabledForNotificationException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1805,
+        "EventId":  1910,
         "EventName":  "TableNotEnabledForNotificationException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1810,
+        "EventId":  1915,
         "EventName":  "HttpCompileException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1815,
+        "EventId":  1920,
         "EventName":  "HttpException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1820,
+        "EventId":  1925,
         "EventName":  "HttpParseException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1825,
+        "EventId":  1930,
         "EventName":  "HttpRequestValidationException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1830,
+        "EventId":  1935,
         "EventName":  "HttpUnhandledException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1835,
+        "EventId":  1940,
         "EventName":  "SqlExecutionException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1840,
+        "EventId":  1945,
         "EventName":  "ParseException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1845,
+        "EventId":  1950,
         "EventName":  "MembershipCreateUserException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1850,
+        "EventId":  1955,
         "EventName":  "MembershipPasswordException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -132,7 +132,31 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1855,
+        "EventId":  1960,
+        "EventName":  "SoapException",
+        "Category":  "Network",
+        "Subcategory":  "HTTP",
+        "FullName":  "System.Web.Services.Protocols.SoapException",
+        "Namespace":  "System.Web.Services.Protocols",
+        "Description":  "Exception type System.Web.Services.Protocols.SoapException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1965,
+        "EventName":  "SoapHeaderException",
+        "Category":  "Network",
+        "Subcategory":  "HTTP",
+        "FullName":  "System.Web.Services.Protocols.SoapHeaderException",
+        "Namespace":  "System.Web.Services.Protocols",
+        "Description":  "Exception type System.Web.Services.Protocols.SoapHeaderException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1970,
         "EventName":  "ViewStateException",
         "Category":  "Network",
         "Subcategory":  "HTTP",
@@ -144,7 +168,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1860,
+        "EventId":  1975,
         "EventName":  "LinqDataSourceValidationException",
         "Category":  "Network",
         "Subcategory":  "HTTP",

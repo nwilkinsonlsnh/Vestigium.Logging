@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  240,
+        "EventId":  340,
         "EventName":  "ConfigurationErrorsException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  245,
+        "EventId":  345,
         "EventName":  "ConfigurationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  250,
+        "EventId":  350,
         "EventName":  "InstallException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  255,
+        "EventId":  355,
         "EventName":  "ProviderException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  260,
+        "EventId":  360,
         "EventName":  "SettingsPropertyIsReadOnlyException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  265,
+        "EventId":  365,
         "EventName":  "SettingsPropertyNotFoundException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  270,
+        "EventId":  370,
         "EventName":  "SettingsPropertyWrongTypeException",
         "Category":  "System",
         "Subcategory":  "Core",

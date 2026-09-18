@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  5,
+        "EventId":  105,
         "EventName":  "RuntimeBinderException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  10,
+        "EventId":  110,
         "EventName":  "RuntimeBinderInternalCompilerException",
         "Category":  "System",
         "Subcategory":  "Microsoft",

@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  415,
+        "EventId":  515,
         "EventName":  "EventLogException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  420,
+        "EventId":  520,
         "EventName":  "EventLogInvalidDataException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  425,
+        "EventId":  525,
         "EventName":  "EventLogNotFoundException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  430,
+        "EventId":  530,
         "EventName":  "EventLogProviderDisabledException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  435,
+        "EventId":  535,
         "EventName":  "EventLogReadingException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  440,
+        "EventId":  540,
         "EventName":  "EventSourceException",
         "Category":  "System",
         "Subcategory":  "Core",

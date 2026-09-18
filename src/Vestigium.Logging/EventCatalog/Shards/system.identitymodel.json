@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  540,
+        "EventId":  640,
         "EventName":  "AsynchronousOperationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  545,
+        "EventId":  645,
         "EventName":  "BadRequestException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  550,
+        "EventId":  650,
         "EventName":  "LimitExceededException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  555,
+        "EventId":  655,
         "EventName":  "MetadataSerializationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  560,
+        "EventId":  660,
         "EventName":  "InvalidRequestException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  565,
+        "EventId":  665,
         "EventName":  "WSTrustSerializationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  570,
+        "EventId":  670,
         "EventName":  "RequestFailedException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  575,
+        "EventId":  675,
         "EventName":  "SecurityMessageSerializationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  580,
+        "EventId":  680,
         "EventName":  "SignatureVerificationFailedException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  585,
+        "EventId":  685,
         "EventName":  "AudienceUriValidationFailedException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  590,
+        "EventId":  690,
         "EventName":  "EncryptedTokenDecryptionFailedException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -132,7 +132,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  595,
+        "EventId":  695,
         "EventName":  "SecurityTokenException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -144,7 +144,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  600,
+        "EventId":  700,
         "EventName":  "SecurityTokenExpiredException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -156,7 +156,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  605,
+        "EventId":  705,
         "EventName":  "SecurityTokenNotYetValidException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -168,7 +168,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  610,
+        "EventId":  710,
         "EventName":  "SecurityTokenReplayDetectedException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -180,7 +180,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  615,
+        "EventId":  715,
         "EventName":  "SecurityTokenValidationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -192,7 +192,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  620,
+        "EventId":  720,
         "EventName":  "UnsupportedTokenTypeBadRequestException",
         "Category":  "System",
         "Subcategory":  "Core",

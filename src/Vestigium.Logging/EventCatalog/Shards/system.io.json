@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  660,
+        "EventId":  760,
         "EventName":  "DirectoryNotFoundException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  665,
+        "EventId":  765,
         "EventName":  "DriveNotFoundException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  670,
+        "EventId":  770,
         "EventName":  "EndOfStreamException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  675,
+        "EventId":  775,
         "EventName":  "FileFormatException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  680,
+        "EventId":  780,
         "EventName":  "FileLoadException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  685,
+        "EventId":  785,
         "EventName":  "FileNotFoundException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  690,
+        "EventId":  790,
         "EventName":  "InternalBufferOverflowException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  695,
+        "EventId":  795,
         "EventName":  "InvalidDataException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  700,
+        "EventId":  800,
         "EventName":  "IOException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  705,
+        "EventId":  805,
         "EventName":  "IsolatedStorageException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  710,
+        "EventId":  810,
         "EventName":  "PathTooLongException",
         "Category":  "System",
         "Subcategory":  "IO",
@@ -132,7 +132,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  715,
+        "EventId":  815,
         "EventName":  "PipeException",
         "Category":  "System",
         "Subcategory":  "IO",

@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  95,
+        "EventId":  195,
         "EventName":  "CantStartSingleInstanceException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  100,
+        "EventId":  200,
         "EventName":  "NoStartupFormException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  105,
+        "EventId":  205,
         "EventName":  "IncompleteInitialization",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  110,
+        "EventId":  210,
         "EventName":  "InternalErrorException",
         "Category":  "System",
         "Subcategory":  "Microsoft",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  115,
+        "EventId":  215,
         "EventName":  "MalformedLineException",
         "Category":  "System",
         "Subcategory":  "Microsoft",

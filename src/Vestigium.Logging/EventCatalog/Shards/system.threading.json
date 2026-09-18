@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1670,
+        "EventId":  1775,
         "EventName":  "AbandonedMutexException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1675,
+        "EventId":  1780,
         "EventName":  "BarrierPostPhaseException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1680,
+        "EventId":  1785,
         "EventName":  "LockRecursionException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1685,
+        "EventId":  1790,
         "EventName":  "SemaphoreFullException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1690,
+        "EventId":  1795,
         "EventName":  "SynchronizationLockException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1695,
+        "EventId":  1800,
         "EventName":  "TaskCanceledException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1700,
+        "EventId":  1805,
         "EventName":  "TaskSchedulerException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1705,
+        "EventId":  1810,
         "EventName":  "ThreadAbortException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1710,
+        "EventId":  1815,
         "EventName":  "ThreadInterruptedException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1715,
+        "EventId":  1820,
         "EventName":  "ThreadStartException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1720,
+        "EventId":  1825,
         "EventName":  "ThreadStateException",
         "Category":  "System",
         "Subcategory":  "Threading",
@@ -132,7 +132,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1725,
+        "EventId":  1830,
         "EventName":  "WaitHandleCannotBeOpenedException",
         "Category":  "System",
         "Subcategory":  "Threading",

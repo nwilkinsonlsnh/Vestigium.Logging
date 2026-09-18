@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1865,
+        "EventId":  1980,
         "EventName":  "ElementNotAvailableException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1870,
+        "EventId":  1985,
         "EventName":  "ElementNotEnabledException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1875,
+        "EventId":  1990,
         "EventName":  "NoClickablePointException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1880,
+        "EventId":  1995,
         "EventName":  "ProxyAssemblyNotLoadedException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1885,
+        "EventId":  2000,
         "EventName":  "PrintDialogException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1890,
+        "EventId":  2005,
         "EventName":  "ValueUnavailableException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1895,
+        "EventId":  2010,
         "EventName":  "InvalidActiveXStateException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -84,7 +84,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1900,
+        "EventId":  2015,
         "EventName":  "XamlParseException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -96,7 +96,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1905,
+        "EventId":  2020,
         "EventName":  "AnimationException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -108,7 +108,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1910,
+        "EventId":  2025,
         "EventName":  "InvalidWmpVersionException",
         "Category":  "System",
         "Subcategory":  "Core",
@@ -120,7 +120,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1915,
+        "EventId":  2030,
         "EventName":  "ResourceReferenceKeyNotFoundException",
         "Category":  "System",
         "Subcategory":  "Core",

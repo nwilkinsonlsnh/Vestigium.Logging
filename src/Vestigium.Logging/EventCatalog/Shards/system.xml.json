@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1960,
+        "EventId":  2075,
         "EventName":  "XmlSchemaException",
         "Category":  "System",
         "Subcategory":  "Serialization",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1965,
+        "EventId":  2080,
         "EventName":  "XmlSchemaInferenceException",
         "Category":  "System",
         "Subcategory":  "Serialization",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1970,
+        "EventId":  2085,
         "EventName":  "XmlSchemaValidationException",
         "Category":  "System",
         "Subcategory":  "Serialization",
@@ -36,7 +36,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1975,
+        "EventId":  2090,
         "EventName":  "XmlException",
         "Category":  "System",
         "Subcategory":  "Serialization",
@@ -48,7 +48,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1980,
+        "EventId":  2095,
         "EventName":  "XPathException",
         "Category":  "System",
         "Subcategory":  "Serialization",
@@ -60,7 +60,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1985,
+        "EventId":  2100,
         "EventName":  "XsltCompileException",
         "Category":  "System",
         "Subcategory":  "Serialization",
@@ -72,7 +72,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1990,
+        "EventId":  2105,
         "EventName":  "XsltException",
         "Category":  "System",
         "Subcategory":  "Serialization",

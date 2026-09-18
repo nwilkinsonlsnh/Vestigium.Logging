@@ -1,6 +1,6 @@
 [
     {
-        "EventId":  1655,
+        "EventId":  1760,
         "EventName":  "DecoderFallbackException",
         "Category":  "System",
         "Subcategory":  "Text",
@@ -12,7 +12,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1660,
+        "EventId":  1765,
         "EventName":  "EncoderFallbackException",
         "Category":  "System",
         "Subcategory":  "Text",
@@ -24,7 +24,7 @@
         "Kind":  "Exception"
     },
     {
-        "EventId":  1665,
+        "EventId":  1770,
         "EventName":  "RegexMatchTimeoutException",
         "Category":  "System",
         "Subcategory":  "Text",
