@@ -187,12 +187,10 @@ internal sealed partial class VestigiumJsonlWriter : IVestigiumJsonlWriter
         try
         {
             if (!Directory.Exists(_directory)) return;
-            var cutoff = _clock().Add(-_retainTime);
             var files = Directory.GetFiles(_directory, $"vestigium-{_appId}-*.json")
                 .Select(p => new FileInfo(p))
                 .Where(f => !string.Equals(f.FullName, ActivePath, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(f => f.LastWriteTimeUtc).ToList();
-            foreach (var file in files.Where(f => f.LastWriteTimeUtc < cutoff).ToArray()) { TryDelete(file); files.Remove(file); }
             while (files.Count > _retainCount) { TryDelete(files[0]); files.RemoveAt(0); }
         }
         catch { Interlocked.Increment(ref _ioFaults); }
