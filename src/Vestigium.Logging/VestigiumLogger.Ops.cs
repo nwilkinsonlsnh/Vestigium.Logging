@@ -2,6 +2,13 @@ namespace Vestigium.Logging;
 
 public static partial class VestigiumLogger
 {
+    internal static void WriteOps(
+        int eventId,
+        VestigiumStatus status,
+        string message,
+        IReadOnlyDictionary<string, string?>? properties = null)
+        => _host?.EmitOps(eventId, status, message, properties);
+
     internal sealed partial class Host
     {
         internal void BindOpsHooks()
