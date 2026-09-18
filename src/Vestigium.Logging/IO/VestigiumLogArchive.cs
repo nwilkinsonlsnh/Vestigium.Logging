@@ -7,6 +7,19 @@ public sealed record VestigiumArchiveResult(int Archived, int Deleted, int Faile
 
 public static class VestigiumLogArchive
 {
+    public static VestigiumArchiveResult ArchiveHostLogs(TimeSpan age)
+    {
+        var options = VestigiumLogger.Options;
+        return ArchiveOlderThan(age, options.ResolveArchiveDirectory(), options.ResolveLogDirectory(), options.AppId);
+    }
+
+    public static VestigiumArchiveResult ArchiveOperationsLogs(TimeSpan age)
+    {
+        var options = VestigiumLogger.Options;
+        return ArchiveOlderThan(age, options.ResolveOperationsArchiveDirectory(),
+            options.ResolveOperationsLogDirectory(), VestigiumLoggerOptions.OperationsAppId);
+    }
+
     public static VestigiumArchiveResult ArchiveOlderThan(
         TimeSpan age, string archiveDirectory, string? directory = null, string? appId = null)
     {
