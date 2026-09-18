@@ -17,13 +17,13 @@ public sealed class VestigiumEventCatalog
 
     private readonly Dictionary<int, VestigiumEventDefinition> _byId;
     private readonly Dictionary<string, VestigiumEventDefinition> _byFullName;
+    private bool _frozen;
 
     public VestigiumEventCatalog(IEnumerable<VestigiumEventDefinition> rows, bool allowCustom = false)
     {
         _byId = new Dictionary<int, VestigiumEventDefinition>();
         _byFullName = new Dictionary<string, VestigiumEventDefinition>(StringComparer.Ordinal);
-        foreach (var row in rows)
-            Add(row, allowCustom);
+        foreach (var row in rows) Add(row, allowCustom);
         var maxReserved = _byId.Keys.Where(id => id >= 100 && id <= ReservedMax).DefaultIfEmpty(95).Max();
         NextReservedId = maxReserved < 100 ? 100 : maxReserved + 5;
         if (NextReservedId > ReservedMax) NextReservedId = ReservedMax + 1;
@@ -33,7 +33,7 @@ public sealed class VestigiumEventCatalog
 
     public int Count => _byId.Count;
     public int NextReservedId { get; }
-    public int NextCustomId { get; }
+    public int NextCustomId { get; private set; }
     public IReadOnlyCollection<VestigiumEventDefinition> All => _byId.Values;
 
     public bool TryGetById(int eventId, out VestigiumEventDefinition definition)
@@ -50,10 +50,14 @@ public sealed class VestigiumEventCatalog
         return false;
     }
 
-    public bool TryResolve(int? eventId, Exception? exception, VestigiumLogLevel level, out VestigiumEventDefinition definition)
+    public VestigiumEventDefinition Resolve(int? eventId, Exception? exception, VestigiumLogLevel level)
     {
-        if (eventId is int id && TryGetById(id, out definition)) return true;
-        if (TryGetByException(exception, out definition)) return true;
+        if (eventId is int id)
+        {
+            if (TryGetById(id, out var byId)) return byId;
+            throw new InvalidOperationException($"EVENTID {id} is not in the catalog or is disabled.");
+        }
+        if (TryGetByException(exception, out var byEx)) return byEx;
         var general = level switch
         {
             VestigiumLogLevel.Verbose or VestigiumLogLevel.Debug => 0,
@@ -63,7 +67,14 @@ public sealed class VestigiumEventCatalog
             VestigiumLogLevel.Fatal => 4,
             _ => 1
         };
-        return TryGetById(general, out definition);
+        if (TryGetById(general, out var row)) return row;
+        throw new InvalidOperationException("EVENTID is required.");
+    }
+
+    public bool TryResolve(int? eventId, Exception? exception, VestigiumLogLevel level, out VestigiumEventDefinition definition)
+    {
+        try { definition = Resolve(eventId, exception, level); return true; }
+        catch (InvalidOperationException) { definition = null!; return false; }
     }
 
     public bool TryGetByException(Exception? exception, out VestigiumEventDefinition definition)
@@ -90,13 +101,46 @@ public sealed class VestigiumEventCatalog
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(root);
         var rows = new List<VestigiumEventDefinition>(SeedGeneral());
+        rows.AddRange(ReadDirectoryRows(root));
+        return new VestigiumEventCatalog(rows, allowCustom);
+    }
+
+    public void Freeze() => _frozen = true;
+
+    public void MergeFromDirectory(string root)
+    {
+        if (_frozen) throw new InvalidOperationException("The event catalog is frozen after Initialize.");
+        foreach (var row in ReadDirectoryRows(root))
+        {
+            if (row.EventId < CustomMin)
+                throw new InvalidOperationException($"Overlay EventId {row.EventId} ({row.FullName}) must be >= {CustomMin}.");
+            Add(row, allowCustom: true);
+            if (row.EventId >= NextCustomId) NextCustomId = row.EventId + 5;
+        }
+    }
+
+    public VestigiumEventDefinition RegisterCustom(string eventName, string fullName, string category, string subcategory, int? eventId = null, string severity = "Error", string? description = null)
+    {
+        if (_frozen) throw new InvalidOperationException("The event catalog is frozen after Initialize.");
+        ArgumentException.ThrowIfNullOrWhiteSpace(eventName);
+        ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
+        var id = eventId ?? NextCustomId;
+        if (id < CustomMin) throw new InvalidOperationException($"Custom EventId {id} must be >= {CustomMin}.");
+        var row = new VestigiumEventDefinition(id, eventName, fullName, category, subcategory, severity, "Custom", true, Description: description);
+        Add(row, allowCustom: true);
+        if (id >= NextCustomId) NextCustomId = id + 5;
+        return row;
+    }
+
+    internal static IEnumerable<VestigiumEventDefinition> ReadDirectoryRows(string root)
+    {
         foreach (var dir in new[] { Path.Combine(root, "shards"), Path.Combine(root, "Shards") })
         {
             if (!Directory.Exists(dir)) continue;
             foreach (var file in Directory.EnumerateFiles(dir, "*.json"))
-                rows.AddRange(ReadShardJson(File.ReadAllText(file), file));
+                foreach (var row in ReadShardJson(File.ReadAllText(file), file))
+                    yield return row;
         }
-        return new VestigiumEventCatalog(rows, allowCustom);
     }
 
     internal static IReadOnlyList<VestigiumEventDefinition> SeedGeneral() =>
@@ -148,48 +192,27 @@ public sealed class VestigiumEventCatalog
             using var stream = assembly.GetManifestResourceStream(name);
             if (stream is null) continue;
             using var reader = new StreamReader(stream);
-            foreach (var row in ReadShardJson(reader.ReadToEnd(), name))
-                yield return row;
+            foreach (var row in ReadShardJson(reader.ReadToEnd(), name)) yield return row;
         }
     }
 
     private static IEnumerable<VestigiumEventDefinition> ReadShardJson(string json, string source)
     {
         JsonElement root;
-        try
-        {
-            using var doc = JsonDocument.Parse(json);
-            root = doc.RootElement.Clone();
-        }
-        catch (JsonException ex)
-        {
-            throw new InvalidOperationException($"Event catalog shard '{source}' is not valid JSON.", ex);
-        }
-
+        try { using var doc = JsonDocument.Parse(json); root = doc.RootElement.Clone(); }
+        catch (JsonException ex) { throw new InvalidOperationException($"Event catalog shard '{source}' is not valid JSON.", ex); }
         IEnumerable<Dto> dtos;
-        if (root.ValueKind == JsonValueKind.Array)
-            dtos = root.Deserialize<List<Dto>>(JsonOptions) ?? [];
+        if (root.ValueKind == JsonValueKind.Array) dtos = root.Deserialize<List<Dto>>(JsonOptions) ?? [];
         else if (root.ValueKind == JsonValueKind.Object)
         {
             var one = root.Deserialize<Dto>(JsonOptions);
             dtos = one is null ? [] : [one];
         }
         else yield break;
-
         foreach (var dto in dtos)
         {
             if (dto.EventId is null || string.IsNullOrWhiteSpace(dto.FullName)) continue;
-            yield return new VestigiumEventDefinition(
-                dto.EventId.Value,
-                dto.EventName ?? dto.FullName,
-                dto.FullName,
-                dto.Category ?? "System",
-                dto.Subcategory ?? "Core",
-                dto.Severity ?? "Error",
-                string.IsNullOrWhiteSpace(dto.Kind) ? "Exception" : dto.Kind,
-                dto.Enabled ?? true,
-                dto.Namespace,
-                dto.Description);
+            yield return new VestigiumEventDefinition(dto.EventId.Value, dto.EventName ?? dto.FullName, dto.FullName, dto.Category ?? "System", dto.Subcategory ?? "Core", dto.Severity ?? "Error", string.IsNullOrWhiteSpace(dto.Kind) ? "Exception" : dto.Kind, dto.Enabled ?? true, dto.Namespace, dto.Description);
         }
     }
 
