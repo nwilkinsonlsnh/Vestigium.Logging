@@ -3,7 +3,7 @@ using System.Threading.Channels;
 
 namespace Vestigium.Logging;
 
-public static class VestigiumLogger
+public static partial class VestigiumLogger
 {
     private static readonly object Gate = new();
     private static readonly LifetimeBinder Lifetime = new();
