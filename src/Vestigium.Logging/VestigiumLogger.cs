@@ -73,7 +73,7 @@ public static partial class VestigiumLogger
     private static void OnProcessExit(object? sender, EventArgs e) => Shutdown();
     private static void OnCancel(object? sender, ConsoleCancelEventArgs e) => Shutdown();
 
-    internal sealed class Host : IDisposable
+    internal sealed partial class Host : IDisposable
     {
         public VestigiumLoggerOptions Options { get; }
         public VestigiumEventCatalog Catalog { get; }
