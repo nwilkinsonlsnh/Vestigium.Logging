@@ -8,50 +8,34 @@ public static class VestigiumLogJanitor
     {
         if (age <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(age), "Age must be greater than zero.");
-
-        string dir;
-        string id;
-        if (VestigiumLogger.IsInitialized)
-        {
-            dir = string.IsNullOrWhiteSpace(directory) ? VestigiumLogger.Options.ResolveLogDirectory() : directory;
-            id = string.IsNullOrWhiteSpace(appId) ? VestigiumLogger.Options.AppId : appId;
-        }
-        else
-        {
-            if (string.IsNullOrWhiteSpace(directory) || string.IsNullOrWhiteSpace(appId))
-                throw new InvalidOperationException("directory and appId are required when the logger is not initialized.");
-            dir = directory!;
-            id = appId!;
-        }
-
+        var (dir, id) = VestigiumLogPaths.Resolve(directory, appId);
         if (!Directory.Exists(dir))
             return new VestigiumJanitorResult(0, 0, 0);
-
         var cutoff = DateTime.UtcNow.Date - age;
-        var active = VestigiumLogger.IsInitialized ? VestigiumLogger.ActiveLogPath : null;
+        var active = VestigiumLogPaths.ActivePathOrNull();
         var deleted = 0;
         var bytes = 0L;
         var skipped = 0;
-
         foreach (var file in Directory.GetFiles(dir, $"vestigium-{id}-*.json"))
         {
-            if (active is not null && string.Equals(file, active, StringComparison.OrdinalIgnoreCase))
-            {
-                skipped++;
-                continue;
-            }
-            var stamp = FileDate(file);
-            if (stamp >= cutoff) continue;
-            try
-            {
-                var size = new FileInfo(file).Length;
-                File.Delete(file);
-                deleted++;
-                bytes += size;
-            }
-            catch (IOException) { skipped++; }
+            var outcome = TryDeleteFile(file, cutoff, active);
+            if (outcome.Deleted) { deleted++; bytes += outcome.Bytes; }
+            else if (outcome.Skipped) skipped++;
         }
         return new VestigiumJanitorResult(deleted, bytes, skipped);
+    }
+
+    private static (bool Deleted, bool Skipped, long Bytes) TryDeleteFile(string file, DateTime cutoff, string? active)
+    {
+        if (VestigiumLogPaths.IsLiveFile(file, active)) return (false, true, 0);
+        if (FileDate(file) >= cutoff) return (false, false, 0);
+        try
+        {
+            var size = new FileInfo(file).Length;
+            File.Delete(file);
+            return (true, false, size);
+        }
+        catch (IOException) { return (false, true, 0); }
     }
 
     internal static DateTime FileDate(string path)
