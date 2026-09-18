@@ -29,7 +29,16 @@ public sealed class VestigiumLoggerOptions
     public VestigiumExceptionDetail ExceptionDetail { get; set; } = VestigiumExceptionDetail.Full;
     public int ExceptionMaxChars { get; set; } = 8_192;
     public VestigiumTaxonomy Taxonomy { get; } = new();
+
+    /// <summary>Overlay rows must be EventId >= 10000. 5000–9999 is the operations band.</summary>
     public string? EventCatalogPath { get; set; }
+
+    /// <summary>When true (default), write the engine operations log. Set false to disable it.</summary>
+    public bool OperationsLogEnabled { get; set; } = true;
+
+    /// <summary>Override for %ProgramData%\Vestigium\Logging\. Null uses the default path.</summary>
+    public string? OperationsLogDirectory { get; set; }
+
     internal List<PendingCustomEvent> CustomEvents { get; } = [];
 
     public VestigiumEventDefinition RegisterEvent(string eventName, string fullName, string category, string subcategory,
