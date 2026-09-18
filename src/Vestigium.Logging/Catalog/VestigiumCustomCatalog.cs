@@ -19,7 +19,7 @@ public sealed class VestigiumCustomCatalog
     {
         Root = root;
         ShardsDirectory = Path.Combine(root, "shards");
-        _byId = rows.ToDictionary(r => r.EventId);
+        _byId = rows.GroupBy(r => r.EventId).ToDictionary(g => g.Key, g => g.First());
         _byFullName = rows.Where(r => !string.IsNullOrWhiteSpace(r.FullName))
             .GroupBy(r => r.FullName, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
@@ -38,7 +38,10 @@ public sealed class VestigiumCustomCatalog
         ArgumentException.ThrowIfNullOrWhiteSpace(root);
         Directory.CreateDirectory(root);
         Directory.CreateDirectory(Path.Combine(root, "shards"));
-        var rows = VestigiumEventCatalog.ReadDirectoryRows(root).ToList();
+        var rows = VestigiumEventCatalog.ReadDirectoryRows(root)
+            .GroupBy(r => r.EventId)
+            .Select(g => g.First())
+            .ToList();
         foreach (var row in rows)
         {
             if (row.EventId < CustomMin)
