@@ -134,6 +134,7 @@ internal sealed partial class VestigiumJsonlWriter : IVestigiumJsonlWriter
             _writer!.Write(line);
             if (!line.EndsWith('\n')) _writer.Write('\n');
             _fileLength += Encoding.UTF8.GetByteCount(line) + (line.EndsWith('\n') ? 0 : 1);
+            _lineCount++;
         }
         catch { Interlocked.Increment(ref _ioFaults); CloseStream(); }
     }
@@ -144,7 +145,10 @@ internal sealed partial class VestigiumJsonlWriter : IVestigiumJsonlWriter
         var needNewDate = _writer is null || today != _fileDate;
         var needSizeRoll = _writer is not null && _fileLength > 0 && _fileLength + incomingBytes > _sizeLimit;
         if (!needNewDate && !needSizeRoll && _writer is not null) return;
+        var rolledFrom = ActivePath;
         CloseStream();
+        if (rolledFrom is not null && (needNewDate || needSizeRoll))
+            OpsSink?.Invoke(5010, "Log file rolled.", new Dictionary<string, string?> { ["from"] = rolledFrom });
         RollCounters(today, needNewDate, needSizeRoll);
         OpenAppend(incomingBytes);
     }
@@ -198,10 +202,14 @@ internal sealed partial class VestigiumJsonlWriter : IVestigiumJsonlWriter
 
     private void CloseStream()
     {
+        var path = ActivePath;
+        var lines = _lineCount;
         try { _writer?.Flush(); } catch { }
         try { _stream?.Flush(flushToDisk: true); } catch { }
         try { _writer?.Dispose(); } catch { }
         try { _stream?.Dispose(); } catch { }
         _writer = null; _stream = null; ActivePath = null;
+        TryAppendTrailer(path, lines);
+        _lineCount = 0;
     }
 }
