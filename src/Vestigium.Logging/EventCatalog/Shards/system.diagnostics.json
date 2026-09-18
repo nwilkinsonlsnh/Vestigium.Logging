@@ -1,0 +1,74 @@
+[
+    {
+        "EventId":  415,
+        "EventName":  "EventLogException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Diagnostics.Eventing.Reader.EventLogException",
+        "Namespace":  "System.Diagnostics.Eventing.Reader",
+        "Description":  "Exception type System.Diagnostics.Eventing.Reader.EventLogException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  420,
+        "EventName":  "EventLogInvalidDataException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Diagnostics.Eventing.Reader.EventLogInvalidDataException",
+        "Namespace":  "System.Diagnostics.Eventing.Reader",
+        "Description":  "Exception type System.Diagnostics.Eventing.Reader.EventLogInvalidDataException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  425,
+        "EventName":  "EventLogNotFoundException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Diagnostics.Eventing.Reader.EventLogNotFoundException",
+        "Namespace":  "System.Diagnostics.Eventing.Reader",
+        "Description":  "Exception type System.Diagnostics.Eventing.Reader.EventLogNotFoundException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  430,
+        "EventName":  "EventLogProviderDisabledException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Diagnostics.Eventing.Reader.EventLogProviderDisabledException",
+        "Namespace":  "System.Diagnostics.Eventing.Reader",
+        "Description":  "Exception type System.Diagnostics.Eventing.Reader.EventLogProviderDisabledException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  435,
+        "EventName":  "EventLogReadingException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Diagnostics.Eventing.Reader.EventLogReadingException",
+        "Namespace":  "System.Diagnostics.Eventing.Reader",
+        "Description":  "Exception type System.Diagnostics.Eventing.Reader.EventLogReadingException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  440,
+        "EventName":  "EventSourceException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Diagnostics.Tracing.EventSourceException",
+        "Namespace":  "System.Diagnostics.Tracing",
+        "Description":  "Exception type System.Diagnostics.Tracing.EventSourceException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

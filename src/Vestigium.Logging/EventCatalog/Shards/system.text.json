@@ -1,0 +1,38 @@
+[
+    {
+        "EventId":  1655,
+        "EventName":  "DecoderFallbackException",
+        "Category":  "System",
+        "Subcategory":  "Text",
+        "FullName":  "System.Text.DecoderFallbackException",
+        "Namespace":  "System.Text",
+        "Description":  "Exception type System.Text.DecoderFallbackException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1660,
+        "EventName":  "EncoderFallbackException",
+        "Category":  "System",
+        "Subcategory":  "Text",
+        "FullName":  "System.Text.EncoderFallbackException",
+        "Namespace":  "System.Text",
+        "Description":  "Exception type System.Text.EncoderFallbackException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1665,
+        "EventName":  "RegexMatchTimeoutException",
+        "Category":  "System",
+        "Subcategory":  "Text",
+        "FullName":  "System.Text.RegularExpressions.RegexMatchTimeoutException",
+        "Namespace":  "System.Text.RegularExpressions",
+        "Description":  "Exception type System.Text.RegularExpressions.RegexMatchTimeoutException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

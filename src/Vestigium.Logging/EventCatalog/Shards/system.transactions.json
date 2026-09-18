@@ -1,0 +1,62 @@
+[
+    {
+        "EventId":  1740,
+        "EventName":  "TransactionAbortedException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Transactions.TransactionAbortedException",
+        "Namespace":  "System.Transactions",
+        "Description":  "Exception type System.Transactions.TransactionAbortedException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1745,
+        "EventName":  "TransactionException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Transactions.TransactionException",
+        "Namespace":  "System.Transactions",
+        "Description":  "Exception type System.Transactions.TransactionException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1750,
+        "EventName":  "TransactionInDoubtException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Transactions.TransactionInDoubtException",
+        "Namespace":  "System.Transactions",
+        "Description":  "Exception type System.Transactions.TransactionInDoubtException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1755,
+        "EventName":  "TransactionManagerCommunicationException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Transactions.TransactionManagerCommunicationException",
+        "Namespace":  "System.Transactions",
+        "Description":  "Exception type System.Transactions.TransactionManagerCommunicationException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1760,
+        "EventName":  "TransactionPromotionException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Transactions.TransactionPromotionException",
+        "Namespace":  "System.Transactions",
+        "Description":  "Exception type System.Transactions.TransactionPromotionException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

@@ -1,0 +1,86 @@
+[
+    {
+        "EventId":  1240,
+        "EventName":  "AmbiguousMatchException",
+        "Category":  "System",
+        "Subcategory":  "Reflection",
+        "FullName":  "System.Reflection.AmbiguousMatchException",
+        "Namespace":  "System.Reflection",
+        "Description":  "Exception type System.Reflection.AmbiguousMatchException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1245,
+        "EventName":  "CustomAttributeFormatException",
+        "Category":  "System",
+        "Subcategory":  "Reflection",
+        "FullName":  "System.Reflection.CustomAttributeFormatException",
+        "Namespace":  "System.Reflection",
+        "Description":  "Exception type System.Reflection.CustomAttributeFormatException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1250,
+        "EventName":  "InvalidFilterCriteriaException",
+        "Category":  "System",
+        "Subcategory":  "Reflection",
+        "FullName":  "System.Reflection.InvalidFilterCriteriaException",
+        "Namespace":  "System.Reflection",
+        "Description":  "Exception type System.Reflection.InvalidFilterCriteriaException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1255,
+        "EventName":  "ReflectionTypeLoadException",
+        "Category":  "System",
+        "Subcategory":  "Reflection",
+        "FullName":  "System.Reflection.ReflectionTypeLoadException",
+        "Namespace":  "System.Reflection",
+        "Description":  "Exception type System.Reflection.ReflectionTypeLoadException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1260,
+        "EventName":  "TargetException",
+        "Category":  "System",
+        "Subcategory":  "Reflection",
+        "FullName":  "System.Reflection.TargetException",
+        "Namespace":  "System.Reflection",
+        "Description":  "Exception type System.Reflection.TargetException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1265,
+        "EventName":  "TargetInvocationException",
+        "Category":  "System",
+        "Subcategory":  "Reflection",
+        "FullName":  "System.Reflection.TargetInvocationException",
+        "Namespace":  "System.Reflection",
+        "Description":  "Exception type System.Reflection.TargetInvocationException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1270,
+        "EventName":  "TargetParameterCountException",
+        "Category":  "System",
+        "Subcategory":  "Reflection",
+        "FullName":  "System.Reflection.TargetParameterCountException",
+        "Namespace":  "System.Reflection",
+        "Description":  "Exception type System.Reflection.TargetParameterCountException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

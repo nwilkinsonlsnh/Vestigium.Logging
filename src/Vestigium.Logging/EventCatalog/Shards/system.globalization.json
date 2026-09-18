@@ -1,0 +1,12 @@
+{
+    "EventId":  535,
+    "EventName":  "CultureNotFoundException",
+    "Category":  "System",
+    "Subcategory":  "Core",
+    "FullName":  "System.Globalization.CultureNotFoundException",
+    "Namespace":  "System.Globalization",
+    "Description":  "Exception type System.Globalization.CultureNotFoundException.",
+    "Severity":  "Error",
+    "Enabled":  true,
+    "Kind":  "Exception"
+}

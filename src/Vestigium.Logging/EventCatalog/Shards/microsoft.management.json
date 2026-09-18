@@ -1,0 +1,12 @@
+{
+    "EventId":  15,
+    "EventName":  "CimException",
+    "Category":  "System",
+    "Subcategory":  "Microsoft",
+    "FullName":  "Microsoft.Management.Infrastructure.CimException",
+    "Namespace":  "Microsoft.Management.Infrastructure",
+    "Description":  "Exception type Microsoft.Management.Infrastructure.CimException.",
+    "Severity":  "Error",
+    "Enabled":  true,
+    "Kind":  "Exception"
+}

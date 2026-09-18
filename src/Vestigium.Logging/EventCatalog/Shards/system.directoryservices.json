@@ -1,0 +1,86 @@
+[
+    {
+        "EventId":  445,
+        "EventName":  "ActiveDirectoryObjectExistsException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectExistsException",
+        "Namespace":  "System.DirectoryServices.ActiveDirectory",
+        "Description":  "Exception type System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectExistsException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  450,
+        "EventName":  "ActiveDirectoryObjectNotFoundException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectNotFoundException",
+        "Namespace":  "System.DirectoryServices.ActiveDirectory",
+        "Description":  "Exception type System.DirectoryServices.ActiveDirectory.ActiveDirectoryObjectNotFoundException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  455,
+        "EventName":  "ActiveDirectoryOperationException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.DirectoryServices.ActiveDirectory.ActiveDirectoryOperationException",
+        "Namespace":  "System.DirectoryServices.ActiveDirectory",
+        "Description":  "Exception type System.DirectoryServices.ActiveDirectory.ActiveDirectoryOperationException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  460,
+        "EventName":  "ActiveDirectoryServerDownException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.DirectoryServices.ActiveDirectory.ActiveDirectoryServerDownException",
+        "Namespace":  "System.DirectoryServices.ActiveDirectory",
+        "Description":  "Exception type System.DirectoryServices.ActiveDirectory.ActiveDirectoryServerDownException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  465,
+        "EventName":  "ForestTrustCollisionException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.DirectoryServices.ActiveDirectory.ForestTrustCollisionException",
+        "Namespace":  "System.DirectoryServices.ActiveDirectory",
+        "Description":  "Exception type System.DirectoryServices.ActiveDirectory.ForestTrustCollisionException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  470,
+        "EventName":  "SyncFromAllServersOperationException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.DirectoryServices.ActiveDirectory.SyncFromAllServersOperationException",
+        "Namespace":  "System.DirectoryServices.ActiveDirectory",
+        "Description":  "Exception type System.DirectoryServices.ActiveDirectory.SyncFromAllServersOperationException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  475,
+        "EventName":  "DirectoryServicesCOMException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.DirectoryServices.DirectoryServicesCOMException",
+        "Namespace":  "System.DirectoryServices",
+        "Description":  "Exception type System.DirectoryServices.DirectoryServicesCOMException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

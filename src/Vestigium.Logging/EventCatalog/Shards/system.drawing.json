@@ -1,0 +1,12 @@
+{
+    "EventId":  490,
+    "EventName":  "InvalidPrinterException",
+    "Category":  "System",
+    "Subcategory":  "Core",
+    "FullName":  "System.Drawing.Printing.InvalidPrinterException",
+    "Namespace":  "System.Drawing.Printing",
+    "Description":  "Exception type System.Drawing.Printing.InvalidPrinterException.",
+    "Severity":  "Error",
+    "Enabled":  true,
+    "Kind":  "Exception"
+}

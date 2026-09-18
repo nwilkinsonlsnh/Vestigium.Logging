@@ -1,0 +1,12 @@
+{
+    "EventId":  90,
+    "EventName":  "InvalidUdtException",
+    "Category":  "System",
+    "Subcategory":  "Microsoft",
+    "FullName":  "Microsoft.SqlServer.Server.InvalidUdtException",
+    "Namespace":  "Microsoft.SqlServer.Server",
+    "Description":  "Exception type Microsoft.SqlServer.Server.InvalidUdtException.",
+    "Severity":  "Error",
+    "Enabled":  true,
+    "Kind":  "Exception"
+}

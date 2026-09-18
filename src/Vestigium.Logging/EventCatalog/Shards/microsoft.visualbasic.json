@@ -1,0 +1,62 @@
+[
+    {
+        "EventId":  95,
+        "EventName":  "CantStartSingleInstanceException",
+        "Category":  "System",
+        "Subcategory":  "Microsoft",
+        "FullName":  "Microsoft.VisualBasic.ApplicationServices.CantStartSingleInstanceException",
+        "Namespace":  "Microsoft.VisualBasic.ApplicationServices",
+        "Description":  "Exception type Microsoft.VisualBasic.ApplicationServices.CantStartSingleInstanceException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  100,
+        "EventName":  "NoStartupFormException",
+        "Category":  "System",
+        "Subcategory":  "Microsoft",
+        "FullName":  "Microsoft.VisualBasic.ApplicationServices.NoStartupFormException",
+        "Namespace":  "Microsoft.VisualBasic.ApplicationServices",
+        "Description":  "Exception type Microsoft.VisualBasic.ApplicationServices.NoStartupFormException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  105,
+        "EventName":  "IncompleteInitialization",
+        "Category":  "System",
+        "Subcategory":  "Microsoft",
+        "FullName":  "Microsoft.VisualBasic.CompilerServices.IncompleteInitialization",
+        "Namespace":  "Microsoft.VisualBasic.CompilerServices",
+        "Description":  "Exception type Microsoft.VisualBasic.CompilerServices.IncompleteInitialization.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  110,
+        "EventName":  "InternalErrorException",
+        "Category":  "System",
+        "Subcategory":  "Microsoft",
+        "FullName":  "Microsoft.VisualBasic.CompilerServices.InternalErrorException",
+        "Namespace":  "Microsoft.VisualBasic.CompilerServices",
+        "Description":  "Exception type Microsoft.VisualBasic.CompilerServices.InternalErrorException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  115,
+        "EventName":  "MalformedLineException",
+        "Category":  "System",
+        "Subcategory":  "Microsoft",
+        "FullName":  "Microsoft.VisualBasic.FileIO.MalformedLineException",
+        "Namespace":  "Microsoft.VisualBasic.FileIO",
+        "Description":  "Exception type Microsoft.VisualBasic.FileIO.MalformedLineException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

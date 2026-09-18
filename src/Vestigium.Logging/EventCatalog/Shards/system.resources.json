@@ -1,0 +1,26 @@
+[
+    {
+        "EventId":  1275,
+        "EventName":  "MissingManifestResourceException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Resources.MissingManifestResourceException",
+        "Namespace":  "System.Resources",
+        "Description":  "Exception type System.Resources.MissingManifestResourceException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1280,
+        "EventName":  "MissingSatelliteAssemblyException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Resources.MissingSatelliteAssemblyException",
+        "Namespace":  "System.Resources",
+        "Description":  "Exception type System.Resources.MissingSatelliteAssemblyException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

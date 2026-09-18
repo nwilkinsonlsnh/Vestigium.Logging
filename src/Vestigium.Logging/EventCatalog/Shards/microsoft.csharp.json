@@ -1,0 +1,26 @@
+[
+    {
+        "EventId":  5,
+        "EventName":  "RuntimeBinderException",
+        "Category":  "System",
+        "Subcategory":  "Microsoft",
+        "FullName":  "Microsoft.CSharp.RuntimeBinder.RuntimeBinderException",
+        "Namespace":  "Microsoft.CSharp.RuntimeBinder",
+        "Description":  "Exception type Microsoft.CSharp.RuntimeBinder.RuntimeBinderException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  10,
+        "EventName":  "RuntimeBinderInternalCompilerException",
+        "Category":  "System",
+        "Subcategory":  "Microsoft",
+        "FullName":  "Microsoft.CSharp.RuntimeBinder.RuntimeBinderInternalCompilerException",
+        "Namespace":  "Microsoft.CSharp.RuntimeBinder",
+        "Description":  "Exception type Microsoft.CSharp.RuntimeBinder.RuntimeBinderInternalCompilerException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

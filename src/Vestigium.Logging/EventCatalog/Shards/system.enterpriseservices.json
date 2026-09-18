@@ -1,0 +1,26 @@
+[
+    {
+        "EventId":  500,
+        "EventName":  "RegistrationException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.EnterpriseServices.RegistrationException",
+        "Namespace":  "System.EnterpriseServices",
+        "Description":  "Exception type System.EnterpriseServices.RegistrationException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  505,
+        "EventName":  "ServicedComponentException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.EnterpriseServices.ServicedComponentException",
+        "Namespace":  "System.EnterpriseServices",
+        "Description":  "Exception type System.EnterpriseServices.ServicedComponentException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

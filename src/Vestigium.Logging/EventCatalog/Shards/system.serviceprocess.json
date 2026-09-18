@@ -1,0 +1,12 @@
+{
+    "EventId":  1640,
+    "EventName":  "TimeoutException",
+    "Category":  "System",
+    "Subcategory":  "Core",
+    "FullName":  "System.ServiceProcess.TimeoutException",
+    "Namespace":  "System.ServiceProcess",
+    "Description":  "Exception type System.ServiceProcess.TimeoutException.",
+    "Severity":  "Error",
+    "Enabled":  true,
+    "Kind":  "Exception"
+}

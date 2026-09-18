@@ -1,0 +1,86 @@
+[
+    {
+        "EventId":  240,
+        "EventName":  "ConfigurationErrorsException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Configuration.ConfigurationErrorsException",
+        "Namespace":  "System.Configuration",
+        "Description":  "Exception type System.Configuration.ConfigurationErrorsException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  245,
+        "EventName":  "ConfigurationException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Configuration.ConfigurationException",
+        "Namespace":  "System.Configuration",
+        "Description":  "Exception type System.Configuration.ConfigurationException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  250,
+        "EventName":  "InstallException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Configuration.Install.InstallException",
+        "Namespace":  "System.Configuration.Install",
+        "Description":  "Exception type System.Configuration.Install.InstallException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  255,
+        "EventName":  "ProviderException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Configuration.Provider.ProviderException",
+        "Namespace":  "System.Configuration.Provider",
+        "Description":  "Exception type System.Configuration.Provider.ProviderException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  260,
+        "EventName":  "SettingsPropertyIsReadOnlyException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Configuration.SettingsPropertyIsReadOnlyException",
+        "Namespace":  "System.Configuration",
+        "Description":  "Exception type System.Configuration.SettingsPropertyIsReadOnlyException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  265,
+        "EventName":  "SettingsPropertyNotFoundException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Configuration.SettingsPropertyNotFoundException",
+        "Namespace":  "System.Configuration",
+        "Description":  "Exception type System.Configuration.SettingsPropertyNotFoundException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  270,
+        "EventName":  "SettingsPropertyWrongTypeException",
+        "Category":  "System",
+        "Subcategory":  "Core",
+        "FullName":  "System.Configuration.SettingsPropertyWrongTypeException",
+        "Namespace":  "System.Configuration",
+        "Description":  "Exception type System.Configuration.SettingsPropertyWrongTypeException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

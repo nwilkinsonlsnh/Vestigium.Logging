@@ -1,0 +1,86 @@
+[
+    {
+        "EventId":  1960,
+        "EventName":  "XmlSchemaException",
+        "Category":  "System",
+        "Subcategory":  "Serialization",
+        "FullName":  "System.Xml.Schema.XmlSchemaException",
+        "Namespace":  "System.Xml.Schema",
+        "Description":  "Exception type System.Xml.Schema.XmlSchemaException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1965,
+        "EventName":  "XmlSchemaInferenceException",
+        "Category":  "System",
+        "Subcategory":  "Serialization",
+        "FullName":  "System.Xml.Schema.XmlSchemaInferenceException",
+        "Namespace":  "System.Xml.Schema",
+        "Description":  "Exception type System.Xml.Schema.XmlSchemaInferenceException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1970,
+        "EventName":  "XmlSchemaValidationException",
+        "Category":  "System",
+        "Subcategory":  "Serialization",
+        "FullName":  "System.Xml.Schema.XmlSchemaValidationException",
+        "Namespace":  "System.Xml.Schema",
+        "Description":  "Exception type System.Xml.Schema.XmlSchemaValidationException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1975,
+        "EventName":  "XmlException",
+        "Category":  "System",
+        "Subcategory":  "Serialization",
+        "FullName":  "System.Xml.XmlException",
+        "Namespace":  "System.Xml",
+        "Description":  "Exception type System.Xml.XmlException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1980,
+        "EventName":  "XPathException",
+        "Category":  "System",
+        "Subcategory":  "Serialization",
+        "FullName":  "System.Xml.XPath.XPathException",
+        "Namespace":  "System.Xml.XPath",
+        "Description":  "Exception type System.Xml.XPath.XPathException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1985,
+        "EventName":  "XsltCompileException",
+        "Category":  "System",
+        "Subcategory":  "Serialization",
+        "FullName":  "System.Xml.Xsl.XsltCompileException",
+        "Namespace":  "System.Xml.Xsl",
+        "Description":  "Exception type System.Xml.Xsl.XsltCompileException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    },
+    {
+        "EventId":  1990,
+        "EventName":  "XsltException",
+        "Category":  "System",
+        "Subcategory":  "Serialization",
+        "FullName":  "System.Xml.Xsl.XsltException",
+        "Namespace":  "System.Xml.Xsl",
+        "Description":  "Exception type System.Xml.Xsl.XsltException.",
+        "Severity":  "Error",
+        "Enabled":  true,
+        "Kind":  "Exception"
+    }
+]

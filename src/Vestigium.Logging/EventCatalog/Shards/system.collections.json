@@ -1,0 +1,12 @@
+{
+    "EventId":  175,
+    "EventName":  "KeyNotFoundException",
+    "Category":  "System",
+    "Subcategory":  "Core",
+    "FullName":  "System.Collections.Generic.KeyNotFoundException",
+    "Namespace":  "System.Collections.Generic",
+    "Description":  "Exception type System.Collections.Generic.KeyNotFoundException.",
+    "Severity":  "Error",
+    "Enabled":  true,
+    "Kind":  "Exception"
+}
