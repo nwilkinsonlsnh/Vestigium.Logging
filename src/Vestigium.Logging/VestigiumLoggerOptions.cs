@@ -36,6 +36,10 @@ public sealed class VestigiumLoggerOptions
     public string? ArchiveDirectory { get; set; }
     public bool OperationsArchiveEnabled { get; set; }
     public string? OperationsArchiveDirectory { get; set; }
+    public bool JanitorEnabled { get; set; }
+    public TimeSpan? JanitorMaxAge { get; set; }
+    public bool OperationsJanitorEnabled { get; set; }
+    public TimeSpan? OperationsJanitorMaxAge { get; set; }
     public const string OperationsAppId = "Vestigium.Logging";
     public bool LogSealEnabled { get; set; }
     public string? LogSealKeyPath { get; set; }
@@ -85,6 +89,10 @@ public sealed class VestigiumLoggerOptions
             throw new ArgumentException("ArchiveDirectory is required when ArchiveEnabled is true.");
         if (OperationsArchiveEnabled && string.IsNullOrWhiteSpace(OperationsArchiveDirectory))
             throw new ArgumentException("OperationsArchiveDirectory is required when OperationsArchiveEnabled is true.");
+        if (JanitorEnabled && (JanitorMaxAge is null || JanitorMaxAge <= TimeSpan.Zero))
+            throw new ArgumentException("JanitorMaxAge is required when JanitorEnabled is true.");
+        if (OperationsJanitorEnabled && (OperationsJanitorMaxAge is null || OperationsJanitorMaxAge <= TimeSpan.Zero))
+            throw new ArgumentException("OperationsJanitorMaxAge is required when OperationsJanitorEnabled is true.");
     }
 
     public void RegisterTaxonomy(VestigiumTaxonomy source)
