@@ -33,7 +33,7 @@ internal sealed partial class VestigiumJsonlWriter : IVestigiumJsonlWriter
         _appId = appId;
         _sizeLimit = fileSizeLimitBytes <= 0 ? 20L * 1024 * 1024 : fileSizeLimitBytes;
         _retainTime = retainedFileTimeLimit is null || retainedFileTimeLimit <= TimeSpan.Zero ? TimeSpan.FromDays(14) : retainedFileTimeLimit.Value;
-        _retainCount = retainedFileCountLimit <= 0 ? 90 : retainedFileCountLimit;
+        _retainCount = retainedFileCountLimit < 0 ? 90 : retainedFileCountLimit;
         _queueCap = queueCapacity <= 0 ? 10_000 : queueCapacity;
         _clock = utcClock ?? (() => DateTime.UtcNow);
         Directory.CreateDirectory(_directory);
