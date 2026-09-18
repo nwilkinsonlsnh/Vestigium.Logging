@@ -2,10 +2,7 @@ namespace Vestigium.Logging;
 
 public sealed class VestigiumLoggerOptions
 {
-    public VestigiumLoggerOptions()
-    {
-        RegisterTaxonomy(VestigiumTaxonomy.Defaults);
-    }
+    public VestigiumLoggerOptions() => RegisterTaxonomy(VestigiumTaxonomy.Defaults);
 
     public string AppId { get; set; } = "Vestigium";
     public string? LogDirectory { get; set; }
@@ -25,46 +22,28 @@ public sealed class VestigiumLoggerOptions
     public TimeSpan FlushTimeout { get; set; } = TimeSpan.FromSeconds(5);
     public VestigiumLogLevel MinimumDiskLevel { get; set; } = VestigiumLogLevel.Information;
     public int DiskQueueCapacity { get; set; } = 10_000;
-
     [Obsolete("Use DiskQueueCapacity. Will be removed in 1.3.")]
-    public int SerilogAsyncBuffer
-    {
-        get => DiskQueueCapacity;
-        set => DiskQueueCapacity = value;
-    }
-
+    public int SerilogAsyncBuffer { get => DiskQueueCapacity; set => DiskQueueCapacity = value; }
     public int RecentJsonLineCap { get; set; } = 200;
+    public int LogReadMaxLines { get; set; } = 1_000;
     public VestigiumExceptionDetail ExceptionDetail { get; set; } = VestigiumExceptionDetail.Full;
     public int ExceptionMaxChars { get; set; } = 8_192;
     public VestigiumTaxonomy Taxonomy { get; } = new();
-
-    /// <summary>Extra catalog root. Overlay rows must use EventId &gt;= 5000.</summary>
     public string? EventCatalogPath { get; set; }
-
     internal List<PendingCustomEvent> CustomEvents { get; } = [];
 
-    public VestigiumEventDefinition RegisterEvent(
-        string eventName,
-        string fullName,
-        string category,
-        string subcategory,
-        int? eventId = null,
-        string severity = "Error",
-        string? description = null)
+    public VestigiumEventDefinition RegisterEvent(string eventName, string fullName, string category, string subcategory,
+        int? eventId = null, string severity = "Error", string? description = null)
     {
         CustomEvents.Add(new PendingCustomEvent(eventName, fullName, category, subcategory, eventId, severity, description));
-        return new VestigiumEventDefinition(
-            eventId ?? VestigiumEventCatalog.CustomMin,
-            eventName, fullName, category, subcategory, severity, "Custom", true, Description: description);
+        return new VestigiumEventDefinition(eventId ?? VestigiumEventCatalog.CustomMin, eventName, fullName, category, subcategory, severity, "Custom", true, Description: description);
     }
 
     public string ResolveLogDirectory()
     {
-        if (!string.IsNullOrWhiteSpace(LogDirectory))
-            return LogDirectory;
+        if (!string.IsNullOrWhiteSpace(LogDirectory)) return LogDirectory;
         var root = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
-        if (string.IsNullOrWhiteSpace(root))
-            root = Path.Combine(Path.GetTempPath(), "Vestigium");
+        if (string.IsNullOrWhiteSpace(root)) root = Path.Combine(Path.GetTempPath(), "Vestigium");
         return Path.Combine(root, "Vestigium", "Logs", AppId);
     }
 
@@ -76,6 +55,4 @@ public sealed class VestigiumLoggerOptions
     }
 }
 
-internal readonly record struct PendingCustomEvent(
-    string EventName, string FullName, string Category, string Subcategory,
-    int? EventId, string Severity, string? Description);
+internal readonly record struct PendingCustomEvent(string EventName, string FullName, string Category, string Subcategory, int? EventId, string Severity, string? Description);
