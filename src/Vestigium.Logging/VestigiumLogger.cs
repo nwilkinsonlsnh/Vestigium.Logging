@@ -59,7 +59,7 @@ public static class VestigiumLogger
     internal static void Emit(
         VestigiumLogLevel level, VestigiumStatus status, string category, string subcategory, string message,
         Exception? exception, string? appId = null, string? correlationId = null,
-        IReadOnlyDictionary<string, string?>? properties = null, int? eventId = null)
+        IReadOnlyDictionary<string, string?>? properties = null, int eventId = 0)
     {
         var host = _host;
         if (host is null)
@@ -114,7 +114,7 @@ public static class VestigiumLogger
 
         public void Emit(VestigiumLogLevel level, VestigiumStatus status, string category, string subcategory, string message,
             Exception? exception, string? appId, string? correlationId = null,
-            IReadOnlyDictionary<string, string?>? properties = null, int? eventId = null)
+            IReadOnlyDictionary<string, string?>? properties = null, int eventId = 0)
         {
             if (Volatile.Read(ref _accepting) == 0) return;
             var now = DateTimeOffset.UtcNow;
