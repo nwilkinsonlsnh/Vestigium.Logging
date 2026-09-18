@@ -1,20 +1,28 @@
 # Vestigium.Logging
 
 [![build](https://github.com/nwilkinsonlsnh/Vestigium.Logging/actions/workflows/build.yml/badge.svg)](https://github.com/nwilkinsonlsnh/Vestigium.Logging/actions/workflows/build.yml)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-Centralized, subscribable Serilog host for the Vestigium suite (PingIQ, DnsIQ, TraceIQ, HttpIQ).
+Owned JSON Lines logger for the Vestigium suite and for hosts outside it. One JSON object per line for PowerBI, required EVENTID, flood protection, optional HMAC seal, and WPF-safe subscribers.
+
+**Not Serilog.** Disk I/O is `VestigiumJsonlWriter`. There is no Serilog package at runtime.
 
 **Target:** .NET 10 LTS / WPF / Visual Studio 2026  
 **Architecture:** MVVM (`CommunityToolkit.Mvvm`) + bounded `Channel` subscribers  
-**Startup project:** `Vestigium.Logging.Demo` (configuration gallery)
+**License:** MIT
 
-Requirements: [`_Documentation/RequirementsSpecification_v1.3.md`](_Documentation/RequirementsSpecification_v1.3.md)  
-Design: [`_Documentation/DesignDocument_v1.0.md`](_Documentation/DesignDocument_v1.0.md)  
-Implementation notes: [`_Documentation/DevelopersGuide_v1.0.md`](_Documentation/DevelopersGuide_v1.0.md)
+Current documents (in the library project):
+
+- Requirements: [`src/Vestigium.Logging/_Documentation/RequirementsSpecification_v2.3.md`](src/Vestigium.Logging/_Documentation/RequirementsSpecification_v2.3.md)
+- Design: [`src/Vestigium.Logging/_Documentation/DesignDocument_v2.2.md`](src/Vestigium.Logging/_Documentation/DesignDocument_v2.2.md)
+- Developers guide: [`src/Vestigium.Logging/_Documentation/DevelopersGuide_v2.2.md`](src/Vestigium.Logging/_Documentation/DevelopersGuide_v2.2.md)
+- Collaboration: [`src/Vestigium.Logging/_Documentation/Contributors.md`](src/Vestigium.Logging/_Documentation/Contributors.md)
+
+Files under repository-root `_Documentation/` are historical PR01 notes.
 
 ## Why this library
 
-Diagnostic modules log stack traces and HTTP bodies. Pipe-delimited lines split those payloads. This module writes **one JSON object per line**, maps **LEVEL** to Serilog severity and **STATUS** to outcome, suppresses retry floods with a four-field identity, and never fires a WPF event per line.
+Diagnostic modules log stack traces and HTTP bodies. Pipe-delimited lines split those payloads. This module writes **one JSON object per line**, keeps **LEVEL** as severity and **STATUS** as outcome, suppresses retry floods with a four-field identity, and never fires a WPF event per line.
 
 ## Open in Visual Studio
 
@@ -23,87 +31,66 @@ Diagnostic modules log stack traces and HTTP bodies. Pipe-delimited lines split 
 3. Restore NuGet, set **Vestigium.Logging.Demo** as the startup project.
 4. Run on Windows.
 
-The demo is a dark tabbed gallery: Overview, Configuration, Flood, Live feed, Schema, Taxonomy. Sliders change rolling-file and flood defaults; the live feed is filled from `ChannelReader` in 50-event / 100 ms batches via `WeakReferenceMessenger`.
-
 ## Host at startup
 
 ```csharp
 VestigiumLogger.Initialize(cfg =>
 {
-    cfg.AppId                    = "PingIQ";
-    cfg.LogDirectory             = Path.Combine(
+    cfg.AppId = "PingIQ";
+    cfg.LogDirectory = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
         "Vestigium", "Logs", "PingIQ");
-    cfg.FileSizeLimitBytes       = 20L * 1024 * 1024;
-    cfg.RetainedFileTimeLimit    = TimeSpan.FromDays(14);
-    cfg.RetainedFileCountLimit   = 90;
-    cfg.FloodThresholdCount      = 5;
-    cfg.FloodWindow              = TimeSpan.FromMilliseconds(30_000);
-    cfg.MinimumDiskLevel         = VestigiumLogLevel.Information;
-    cfg.RegisterTaxonomy(VestigiumTaxonomy.Defaults);
+    cfg.MinimumDiskLevel = VestigiumLogLevel.Information;
 });
 VestigiumLogger.BindLifetime(Application.Current);
 ```
 
-`Flush()` persists buffers and keeps accepting writes. `Shutdown()` (also hooked by `BindLifetime`) is process-exit.
+Operations logging is **on** by default (`APPID=Vestigium.Logging`, EVENTID 5000–9999). Set `OperationsLogEnabled = false` to turn it off.
 
-Call sites always pass STATUS:
+`Flush()` persists the disk queue and keeps accepting writes. `Shutdown()` (also hooked by `BindLifetime`) is process-exit.
 
-```csharp
-VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP",
-    "Echo request timed out",
-    correlationId: probeId,
-    properties: new Dictionary<string, string?> { ["host"] = host, ["rttMs"] = ms.ToString() });
-
-VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
-```
-
-Keep MESSAGE stable so flood aggregation still works. Put varying values in `PROPERTIES`. In Power BI, expand the `PROPERTIES` record after the JSON folder source.
-
-Exception text:
+EVENTID is required:
 
 ```csharp
-cfg.ExceptionDetail = VestigiumExceptionDetail.TypeAndMessage; // no stacks
-cfg.ExceptionMaxChars = 4096;
+VestigiumLog.Information(1, VestigiumStatus.None, "System", "Lifecycle", "Started");
+VestigiumLog.Warning(2, VestigiumStatus.Timeout, "Network", "ICMP", "Echo timed out");
+VestigiumLog.Error(3, VestigiumStatus.Failed, "System", "IO", "Failed to open database", ex);
+VestigiumLog.Thrown(ex, VestigiumStatus.Failed);
 ```
 
-Libraries that must compile without a host:
+Keep MESSAGE stable so flood aggregation still works. Put varying values in `PROPERTIES`.
 
-```csharp
-VestigiumLogger.UninitializedBehavior = VestigiumUninitializedBehavior.NoOp;
-```
+Custom application events use EVENTID **10000+** via `VestigiumCustomCatalog` and `LoadCustomCatalog`.
 
-`Events` / `EventReader` still require `Initialize`. UI hosts drain `VestigiumLogger.EventReader` with `VestigiumLogPump`; `IObservable` is for tests and tools.
-
-## Defaults (SRS v1.3)
+## Defaults (SRS 2.3)
 
 | Setting | Value |
 |---|---|
 | File size cap | 20 MB |
-| Time retention | 14 days |
-| File cap | 90 per APPID |
-| FloodThresholdCount | 5 |
-| FloodWindowMs | 30,000 |
-| FloodIdentityCap | 4,096 |
-| Disk tripwire | 10% free **or** 5 GB (`DiskBytesFloorEnabled`) |
+| Count retain | 90 inactive files (`0` keeps none) |
+| Age delete | Off unless janitor is opted in |
+| Flood | 5 hits / 30 s / cap 4,096 |
+| Disk tripwire | 10% free **or** 5 GB |
 | Subscriber channel | 10,000, DropOldest |
 | UI batch | 50 events / 100 ms |
-| FlushTimeout | 5 s (`Flush` does not stop writes) |
+| Operations log | On |
+| Seal / archive / janitor | Off until the host opts in |
 
-Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)` — a value tuple, never a concatenated string. `CORRELATIONID` and `PROPERTIES` are extras.
+Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)`.
 
 ## Projects
 
 | Project | Role |
 |---|---|
-| `Vestigium.Logging` | Engine (Serilog JSON Lines, flood, disk, subscribers) |
-| `Vestigium.Logging.Tests` | Flood, schema, taxonomy, initialize-guard |
+| `Vestigium.Logging` | Engine (JSONL writer, catalog, flood, disk, seal, subscribers) |
+| `Vestigium.Logging.Tests` | Behavior and coverage |
 | `Vestigium.Logging.Demo` | MVVM configuration gallery |
 
 ## Contracts that do not move
 
 - Flat JSON Lines. No CSV / pipe / tab output path.
+- No Serilog runtime dependency.
 - LEVEL is never Success / Failed / Timeout.
+- EVENTID 0–4999 library, 5000–9999 operations, ≥ 10000 custom.
 - Unregistered taxonomy becomes `Uncategorized` / `Unregistered` plus an internal Warning.
-- Process exit calls `Shutdown`, which flushes the async buffer.
-- Subscribers receive the structured `VestigiumLogEvent` (`VestigiumLogger.Events` / `EventReader`), not a pre-rendered string.
+- Subscribers receive `VestigiumLogEvent`, not a pre-rendered string.
