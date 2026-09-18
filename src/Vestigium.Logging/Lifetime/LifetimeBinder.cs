@@ -3,10 +3,6 @@ using System.Reflection;
 
 namespace Vestigium.Logging;
 
-/// <summary>
-/// Subscribes to an instance event named <c>Exit</c> without referencing WPF.
-/// Compatible with <c>EventHandler</c> and WPF <c>ExitEventHandler</c>.
-/// </summary>
 internal sealed class LifetimeBinder
 {
     private readonly object _gate = new();
@@ -27,10 +23,7 @@ internal sealed class LifetimeBinder
             if (evt?.EventHandlerType is null)
                 return;
 
-            var invoke = evt.EventHandlerType.GetMethod("Invoke");
-            if (invoke is null)
-                return;
-
+            var invoke = evt.EventHandlerType.GetMethod("Invoke")!;
             var parameters = invoke.GetParameters();
             if (parameters.Length != 2)
                 return;
