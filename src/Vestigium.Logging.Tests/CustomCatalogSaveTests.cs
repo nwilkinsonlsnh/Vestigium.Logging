@@ -14,7 +14,7 @@ public sealed class CustomCatalogSaveTests
         Assert.True(File.Exists(Path.Combine(root, "index.json")));
         var reload = VestigiumCustomCatalog.Open(root);
         Assert.Equal(1, reload.Count);
-        Assert.Equal(5005, reload.NextCustomId);
-        Assert.Equal("PingIQ.ProbeTimeoutException", reload.Get(5000).FullName);
+        Assert.Equal(10005, reload.NextCustomId);
+        Assert.Equal("PingIQ.ProbeTimeoutException", reload.Get(10000).FullName);
     }
 }

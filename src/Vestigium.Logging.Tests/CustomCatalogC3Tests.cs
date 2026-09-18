@@ -25,7 +25,7 @@ public sealed class CustomCatalogC3Tests : IDisposable
                 cfg.LogDirectory = _logs;
                 cfg.EventCatalogPath = _catalog;
             }));
-        Assert.Contains("5000", ex.Message);
+        Assert.Contains("10000", ex.Message);
     }
 
     public void Dispose()

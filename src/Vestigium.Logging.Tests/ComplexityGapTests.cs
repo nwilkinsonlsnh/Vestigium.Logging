@@ -24,8 +24,8 @@ public sealed class ComplexityGapTests
         _ = VestigiumEventCatalog.LoadFromDirectory(root, allowCustom: true);
 
         File.WriteAllText(Path.Combine(shards, "one.json"),
-            "{\"EventId\":5000,\"FullName\":\"App.One\",\"EventName\":\"One\",\"Category\":\"Network\",\"Subcategory\":\"ICMP\"}");
-        Assert.True(VestigiumEventCatalog.LoadFromDirectory(root, allowCustom: true).TryGetById(5000, out _));
+            "{\"EventId\":10000,\"FullName\":\"App.One\",\"EventName\":\"One\",\"Category\":\"Network\",\"Subcategory\":\"ICMP\",\"Kind\":\"Custom\"}");
+        Assert.True(VestigiumEventCatalog.LoadFromDirectory(root, allowCustom: true).TryGetById(10000, out _));
     }
 
     [Fact]
