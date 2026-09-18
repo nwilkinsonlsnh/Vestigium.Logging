@@ -5,6 +5,8 @@ namespace Vestigium.Logging;
 internal sealed class VestigiumJsonRecord
 {
     public string DateTime { get; set; } = "";
+    public int EVENTID { get; set; }
+    public string? EVENTNAME { get; set; }
     public int PID { get; set; }
     public int TID { get; set; }
     public string LEVEL { get; set; } = "";
@@ -31,6 +33,8 @@ public static class VestigiumJsonFormatter
         var record = new VestigiumJsonRecord
         {
             DateTime = e.Timestamp.UtcDateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"),
+            EVENTID = e.EventId,
+            EVENTNAME = e.EventName,
             PID = e.Pid,
             TID = e.Tid,
             LEVEL = e.Level.ToString(),
