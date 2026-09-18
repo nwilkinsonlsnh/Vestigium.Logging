@@ -33,6 +33,9 @@ public sealed class VestigiumLoggerOptions
     public bool OperationsLogEnabled { get; set; } = true;
     public string? OperationsLogDirectory { get; set; }
     public const string OperationsAppId = "Vestigium.Logging";
+    public bool LogSealEnabled { get; set; }
+    public string? LogSealKeyPath { get; set; }
+    public string? LogSealKeyId { get; set; }
     internal List<PendingCustomEvent> CustomEvents { get; } = [];
 
     public VestigiumEventDefinition RegisterEvent(string eventName, string fullName, string category, string subcategory,
