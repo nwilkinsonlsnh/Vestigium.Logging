@@ -3,27 +3,34 @@ namespace Vestigium.Logging.Tests;
 public sealed class ArchivePathTests
 {
     [Fact]
+    public void ArchiveFlagsDefaultOff()
+    {
+        var options = new VestigiumLoggerOptions();
+        Assert.False(options.ArchiveEnabled);
+        Assert.False(options.OperationsArchiveEnabled);
+    }
+
+    [Fact]
+    public void EnabledWithoutDestinationThrows()
+    {
+        Assert.Throws<ArgumentException>(() => new VestigiumLoggerOptions { ArchiveEnabled = true }.ValidateArchiveOptions());
+        Assert.Throws<ArgumentException>(() => new VestigiumLoggerOptions { OperationsArchiveEnabled = true }.ValidateArchiveOptions());
+    }
+
+    [Fact]
     public void OperationsArchiveDoesNotInheritHostArchive()
     {
         var options = new VestigiumLoggerOptions
         {
             AppId = "PingIQ",
-            LogDirectory = Path.Combine("C:", "logs", "PingIQ"),
+            ArchiveEnabled = true,
             ArchiveDirectory = Path.Combine("D:", "offload", "PingIQ"),
-            OperationsLogDirectory = Path.Combine("C:", "logs", "engine"),
+            OperationsArchiveEnabled = true,
             OperationsArchiveDirectory = Path.Combine("E:", "audit", "engine")
         };
+        options.ValidateArchiveOptions();
         Assert.Equal(options.ArchiveDirectory, options.ResolveArchiveDirectory());
         Assert.Equal(options.OperationsArchiveDirectory, options.ResolveOperationsArchiveDirectory());
-        Assert.NotEqual(options.ResolveArchiveDirectory(), options.ResolveOperationsArchiveDirectory());
-    }
-
-    [Fact]
-    public void DefaultsKeepArchiveBesideEachLiveFolder()
-    {
-        var options = new VestigiumLoggerOptions { AppId = "PingIQ" };
-        Assert.Equal(Path.Combine(options.ResolveLogDirectory(), "Archive"), options.ResolveArchiveDirectory());
-        Assert.Equal(Path.Combine(options.ResolveOperationsLogDirectory(), "Archive"), options.ResolveOperationsArchiveDirectory());
         Assert.NotEqual(options.ResolveArchiveDirectory(), options.ResolveOperationsArchiveDirectory());
     }
 }
