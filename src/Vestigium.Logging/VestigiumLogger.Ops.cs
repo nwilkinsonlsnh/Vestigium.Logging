@@ -15,6 +15,18 @@ public static partial class VestigiumLogger
                         ["drive"] = status.Drive,
                         ["availableBytes"] = status.AvailableBytes?.ToString()
                     });
+            AttachSealWriters();
+        }
+
+        internal void AttachSealWriters()
+        {
+            if (!Options.LogSealEnabled)
+                return;
+            var ring = VestigiumSealKeyRing.OpenOrCreate(Options);
+            void Sink(int id, string message, IReadOnlyDictionary<string, string?>? properties) =>
+                EmitOps(id, id == 5020 ? VestigiumStatus.Failed : VestigiumStatus.Success, message, properties);
+            _disk.AttachSeal(ring, Sink);
+            _ops?.AttachSeal(ring, Sink);
         }
 
         internal void EmitOps(
@@ -27,7 +39,6 @@ public static partial class VestigiumLogger
                 return;
             if (!Catalog.TryGetById(eventId, out var row))
                 return;
-
             var level = row.Severity switch
             {
                 "Debug" => VestigiumLogLevel.Debug,
@@ -35,22 +46,11 @@ public static partial class VestigiumLogger
                 "Error" or "Fatal" or "Critical" => VestigiumLogLevel.Error,
                 _ => VestigiumLogLevel.Information
             };
-
             var evt = new VestigiumLogEvent(
-                DateTimeOffset.UtcNow,
-                _pid,
-                Environment.CurrentManagedThreadId,
-                level,
-                status,
-                VestigiumLoggerOptions.OperationsAppId,
-                row.Category,
-                row.Subcategory,
-                message,
-                Exception: null,
-                CorrelationId: null,
-                VestigiumPropertyBag.Sanitize(properties),
-                row.EventId,
-                row.EventName);
+                DateTimeOffset.UtcNow, _pid, Environment.CurrentManagedThreadId, level, status,
+                VestigiumLoggerOptions.OperationsAppId, row.Category, row.Subcategory, message,
+                Exception: null, CorrelationId: null, VestigiumPropertyBag.Sanitize(properties),
+                row.EventId, row.EventName);
             _ops.Enqueue(evt.ToJsonLine());
         }
     }
