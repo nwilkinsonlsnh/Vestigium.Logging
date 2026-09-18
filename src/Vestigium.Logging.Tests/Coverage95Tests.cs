@@ -16,37 +16,30 @@ public sealed class Coverage95Tests : IDisposable
         var ring = VestigiumSealKeyRing.Open(key);
         Assert.Throws<ArgumentException>(() => VestigiumLogSeal.Verify(" ", ring));
         Assert.Throws<ArgumentNullException>(() => VestigiumLogSeal.Verify(Path.Combine(_dir, "x"), null!));
-
         var empty = Path.Combine(_dir, "empty.json");
         File.WriteAllText(empty, "");
         Assert.Equal(VestigiumSealVerifyResult.NoTrailer, VestigiumLogSeal.Verify(empty, ring).Result);
-
         var torn = Path.Combine(_dir, "torn.json");
         File.WriteAllText(torn, "{\"EVENTID\":1}\n{VESTIGIUM_TRAILER\n");
         Assert.Equal(VestigiumSealVerifyResult.Torn, VestigiumLogSeal.Verify(torn, ring).Result);
-
         var mismatch = Path.Combine(_dir, "key.json");
         File.WriteAllText(mismatch,
             "{\"EVENTID\":1}\n{\"VESTIGIUM_TRAILER\":1,\"KeyId\":\"other\",\"ContentSha256\":\"00\",\"Sig\":\"YQ==\"}\n");
         Assert.Equal(VestigiumSealVerifyResult.KeyMismatch, VestigiumLogSeal.Verify(mismatch, ring).Result);
-
         var noSig = Path.Combine(_dir, "nosig.json");
         var content = "{\"EVENTID\":1}\n"u8.ToArray();
         var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(content));
         File.WriteAllText(noSig,
             "{\"EVENTID\":1}\n{\"VESTIGIUM_TRAILER\":1,\"KeyId\":\"" + ring.KeyId + "\",\"ContentSha256\":\"" + hash + "\"}\n");
         Assert.Equal(VestigiumSealVerifyResult.BadSignature, VestigiumLogSeal.Verify(noSig, ring).Result);
-
         var badB64 = Path.Combine(_dir, "b64.json");
         File.WriteAllText(badB64,
             "{\"EVENTID\":1}\n{\"VESTIGIUM_TRAILER\":1,\"KeyId\":\"" + ring.KeyId + "\",\"ContentSha256\":\"" + hash + "\",\"Sig\":\"%%%\"}\n");
         Assert.Equal(VestigiumSealVerifyResult.BadSignature, VestigiumLogSeal.Verify(badB64, ring).Result);
-
         Assert.False(VestigiumLogSeal.TryPeelTrailer("{}"u8.ToArray(), out _, out _));
         Assert.True(VestigiumLogSeal.TryPeelTrailer("x\n{\"VESTIGIUM_TRAILER\":1}"u8.ToArray(), out var peeled, out var json));
         Assert.True(peeled.Length > 0);
         Assert.Contains("VESTIGIUM_TRAILER", json);
-
         var report = new VestigiumSealVerifyReport(VestigiumSealVerifyResult.Valid, "p", "k", "h", 1);
         Assert.Equal("p", report.Path);
         Assert.Equal("k", report.KeyId);
@@ -64,7 +57,6 @@ public sealed class Coverage95Tests : IDisposable
         Assert.Throws<ArgumentNullException>(() => ring.Sign(null!));
         Assert.Throws<ArgumentNullException>(() => ring.Verify(null!, [1]));
         Assert.Throws<ArgumentNullException>(() => ring.Verify([1], null!));
-
         var empty = Path.Combine(_dir, "empty-ring.json");
         File.WriteAllText(empty, "null");
         Assert.Throws<InvalidOperationException>(() => VestigiumSealKeyRing.Open(empty));
@@ -75,7 +67,6 @@ public sealed class Coverage95Tests : IDisposable
         File.WriteAllText(noAlg, """{\"keyId\":\"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa\",\"material\":\"AQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyA=\"}""");
         var loaded = VestigiumSealKeyRing.Open(noAlg);
         Assert.Equal(VestigiumSealKeyRing.Algorithm, loaded.Alg);
-
         var options = new VestigiumLoggerOptions { AppId = "PingIQ" };
         var created = VestigiumSealKeyRing.OpenOrCreate(options);
         Assert.True(File.Exists(created.Path));
@@ -97,8 +88,7 @@ public sealed class Coverage95Tests : IDisposable
         monitor.TripwireChanged = (tripped, status) => seen.Add(tripped);
         monitor.Poll();
         Assert.False(VestigiumDiskStatus.Empty.IsTripped);
-        var snap = monitor.Snapshot();
-        Assert.False(snap.IsOverridden);
+        Assert.False(monitor.Snapshot().IsOverridden);
         monitor.Override(true);
         Assert.True(monitor.IsTripped);
         Assert.Contains(true, seen);
@@ -127,12 +117,7 @@ public sealed class Coverage95Tests : IDisposable
         var channel = Channel.CreateUnbounded<VestigiumLogEvent>();
         var n = 0;
         using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
-        var pump = VestigiumLogPump.RunAsync(
-            channel.Reader,
-            batch => n += batch.Count,
-            batchSize: 0,
-            batchInterval: TimeSpan.Zero,
-            cts.Token);
+        var pump = VestigiumLogPump.RunAsync(channel.Reader, batch => n += batch.Count, 0, TimeSpan.Zero, cts.Token);
         await channel.Writer.WriteAsync(new VestigiumLogEvent(
             DateTimeOffset.UtcNow, 1, 1, VestigiumLogLevel.Information, VestigiumStatus.None,
             "PingIQ", "System", "Lifecycle", "p", null));
@@ -192,29 +177,27 @@ public sealed class Coverage95Tests : IDisposable
             cfg.OperationsJanitorEnabled = true;
             cfg.OperationsJanitorMaxAge = TimeSpan.FromDays(90);
         });
-        var host = VestigiumLogArchive.ArchiveHostLogs(TimeSpan.FromDays(14));
-        var ops = VestigiumLogArchive.ArchiveOperationsLogs(TimeSpan.FromDays(14));
-        Assert.True(host.Archived >= 0);
-        Assert.True(ops.Archived >= 0);
+        Assert.True(VestigiumLogArchive.ArchiveHostLogs(TimeSpan.FromDays(14)).Archived >= 0);
+        Assert.True(VestigiumLogArchive.ArchiveOperationsLogs(TimeSpan.FromDays(14)).Archived >= 0);
         _ = VestigiumLogJanitor.DeleteHostLogs();
         _ = VestigiumLogJanitor.DeleteOperationsLogs();
         VestigiumLogger.Shutdown();
 
         var flood = new FloodTracker(2, TimeSpan.FromMilliseconds(20), identityCap: 4);
-        Assert.False(flood.TryMarkNearCapWarning());
         var now = DateTimeOffset.UtcNow;
+        var key = new FloodIdentity("PingIQ", "System", "Information", "repeat");
+        flood.Observe(key, now, "Lifecycle");
+        flood.Observe(key, now, "Lifecycle");
+        flood.Observe(key, now, "Lifecycle");
+        Assert.True(flood.PendingSuppressed >= 1);
         for (var i = 0; i < 6; i++)
-        {
-            var id = new FloodIdentity("PingIQ", "System", "Information", "m" + i);
-            flood.Observe(id, now, "Lifecycle");
-        }
-        _ = flood.TryMarkNearCapWarning();
-        _ = flood.PendingSuppressed;
+            flood.Observe(new FloodIdentity("PingIQ", "System", "Information", "m" + i), now, "Lifecycle");
+        Assert.True(flood.TrackedIdentityCount <= flood.IdentityCap + 2);
         _ = flood.TakeEvictedSummaries();
         var later = now.AddSeconds(1);
-        flood.Observe(new FloodIdentity("PingIQ", "System", "Information", "m0"), later, "Lifecycle");
+        Assert.True(flood.Observe(key, later, "Lifecycle").WriteFull);
         flood.DrainExpired(later.AddSeconds(1));
-        Assert.True(flood.NearCapThreshold >= 1);
+        Assert.True(flood.Threshold >= 1);
     }
 
     public void Dispose()
@@ -223,27 +206,8 @@ public sealed class Coverage95Tests : IDisposable
         try { Directory.Delete(_dir, true); } catch { }
     }
 
-    private sealed class OneArg
-    {
-        public event Action<object>? Exit;
-        public void Raise() => Exit?.Invoke(this);
-    }
-
-    private sealed class ThreeArg
-    {
-        public event Action<object, EventArgs, int>? Exit;
-        public void Raise() => Exit?.Invoke(this, EventArgs.Empty, 0);
-    }
-
-    private sealed class BadSender
-    {
-        public event Action<string, EventArgs>? Exit;
-        public void Raise() => Exit?.Invoke("x", EventArgs.Empty);
-    }
-
-    private sealed class NotEventArgs
-    {
-        public event Action<object, string>? Exit;
-        public void Raise() => Exit?.Invoke(this, "x");
-    }
+    private sealed class OneArg { public event Action<object>? Exit; }
+    private sealed class ThreeArg { public event Action<object, EventArgs, int>? Exit; }
+    private sealed class BadSender { public event Action<string, EventArgs>? Exit; }
+    private sealed class NotEventArgs { public event Action<object, string>? Exit; }
 }
