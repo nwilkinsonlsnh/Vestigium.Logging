@@ -84,6 +84,9 @@ public static class VestigiumLogReader
         var torn = text[^1] is not '\n' and not '\r';
         var lines = text.Split(["\r\n", "\n"], StringSplitOptions.None);
         if (torn && lines.Length > 0) lines = lines[..^1];
-        return lines.Where(static l => l.Length > 0).ToArray();
+        return lines.Where(static l => l.Length > 0 && !IsTrailerLine(l)).ToArray();
     }
+
+    internal static bool IsTrailerLine(string line) =>
+        line.Contains("\"VESTIGIUM_TRAILER\"", StringComparison.Ordinal);
 }
