@@ -2,6 +2,8 @@ namespace Vestigium.Logging;
 
 internal sealed class DiskSpaceMonitor : IDisposable
 {
+    internal static Func<string, bool>? ReadyOverride;
+
     private readonly VestigiumLoggerOptions _options;
     private readonly Timer _timer;
     private readonly object _gate = new();
@@ -74,7 +76,8 @@ internal sealed class DiskSpaceMonitor : IDisposable
                 return;
 
             var drive = new DriveInfo(root);
-            if (!drive.IsReady)
+            var ready = ReadyOverride?.Invoke(root) ?? drive.IsReady;
+            if (!ready)
                 return;
 
             LastDrive = drive.Name;
