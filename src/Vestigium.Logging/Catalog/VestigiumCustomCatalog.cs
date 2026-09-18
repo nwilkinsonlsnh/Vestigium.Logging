@@ -1,8 +1,16 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace Vestigium.Logging;
 
 public sealed class VestigiumCustomCatalog
 {
     public const int CustomMin = VestigiumEventCatalog.CustomMin;
+    private static readonly JsonSerializerOptions JsonWrite = new()
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
 
     private readonly Dictionary<int, VestigiumEventDefinition> _byId;
     private readonly Dictionary<string, VestigiumEventDefinition> _byFullName;
@@ -52,8 +60,7 @@ public sealed class VestigiumCustomCatalog
         return !string.IsNullOrWhiteSpace(fullName) && _byFullName.TryGetValue(fullName, out definition);
     }
 
-    public IReadOnlyList<VestigiumEventDefinition> List() =>
-        _byId.Values.OrderBy(r => r.EventId).ToList();
+    public IReadOnlyList<VestigiumEventDefinition> List() => _byId.Values.OrderBy(r => r.EventId).ToList();
 
     public VestigiumEventDefinition Add(string eventName, string fullName, string category, string subcategory,
         int? eventId = null, string severity = "Error", string? description = null)
@@ -106,5 +113,34 @@ public sealed class VestigiumCustomCatalog
         if (!_byId.Remove(eventId, out var row)) return false;
         _byFullName.Remove(row.FullName);
         return true;
+    }
+
+    public void Save()
+    {
+        Directory.CreateDirectory(ShardsDirectory);
+        var customPath = Path.Combine(ShardsDirectory, "custom.json");
+        var payload = List().Select(r => new
+        {
+            r.EventId, r.EventName, r.FullName, r.Category, r.Subcategory,
+            r.Severity, r.Kind, r.Enabled, r.Namespace, r.Description
+        }).ToList();
+        WriteAtomic(customPath, JsonSerializer.Serialize(payload, JsonWrite));
+        foreach (var extra in Directory.EnumerateFiles(ShardsDirectory, "*.json"))
+        {
+            if (!string.Equals(Path.GetFileName(extra), "custom.json", StringComparison.OrdinalIgnoreCase))
+                File.Delete(extra);
+        }
+        WriteAtomic(Path.Combine(Root, "index.json"), JsonSerializer.Serialize(new
+        {
+            NextCustomId,
+            Shards = new[] { new { Id = "custom", File = "shards/custom.json", Count } }
+        }, JsonWrite));
+    }
+
+    private static void WriteAtomic(string path, string json)
+    {
+        var tmp = path + ".tmp";
+        File.WriteAllText(tmp, json);
+        File.Move(tmp, path, overwrite: true);
     }
 }
