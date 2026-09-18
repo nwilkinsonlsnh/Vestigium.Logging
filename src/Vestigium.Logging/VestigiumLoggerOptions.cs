@@ -32,7 +32,9 @@ public sealed class VestigiumLoggerOptions
     public string? EventCatalogPath { get; set; }
     public bool OperationsLogEnabled { get; set; } = true;
     public string? OperationsLogDirectory { get; set; }
+    public bool ArchiveEnabled { get; set; }
     public string? ArchiveDirectory { get; set; }
+    public bool OperationsArchiveEnabled { get; set; }
     public string? OperationsArchiveDirectory { get; set; }
     public const string OperationsAppId = "Vestigium.Logging";
     public bool LogSealEnabled { get; set; }
@@ -63,13 +65,27 @@ public sealed class VestigiumLoggerOptions
         return Path.Combine(root, "Vestigium", "Logging");
     }
 
-    public string ResolveArchiveDirectory() =>
-        string.IsNullOrWhiteSpace(ArchiveDirectory) ? Path.Combine(ResolveLogDirectory(), "Archive") : ArchiveDirectory;
+    public string ResolveArchiveDirectory()
+    {
+        if (string.IsNullOrWhiteSpace(ArchiveDirectory))
+            throw new InvalidOperationException("ArchiveDirectory is required when host archiving is enabled.");
+        return ArchiveDirectory;
+    }
 
-    public string ResolveOperationsArchiveDirectory() =>
-        string.IsNullOrWhiteSpace(OperationsArchiveDirectory)
-            ? Path.Combine(ResolveOperationsLogDirectory(), "Archive")
-            : OperationsArchiveDirectory;
+    public string ResolveOperationsArchiveDirectory()
+    {
+        if (string.IsNullOrWhiteSpace(OperationsArchiveDirectory))
+            throw new InvalidOperationException("OperationsArchiveDirectory is required when operations archiving is enabled.");
+        return OperationsArchiveDirectory;
+    }
+
+    public void ValidateArchiveOptions()
+    {
+        if (ArchiveEnabled && string.IsNullOrWhiteSpace(ArchiveDirectory))
+            throw new ArgumentException("ArchiveDirectory is required when ArchiveEnabled is true.");
+        if (OperationsArchiveEnabled && string.IsNullOrWhiteSpace(OperationsArchiveDirectory))
+            throw new ArgumentException("OperationsArchiveDirectory is required when OperationsArchiveEnabled is true.");
+    }
 
     public void RegisterTaxonomy(VestigiumTaxonomy source)
     {
