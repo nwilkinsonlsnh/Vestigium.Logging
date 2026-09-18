@@ -13,6 +13,7 @@ public static partial class VestigiumLogger
     {
         internal void BindOpsHooks()
         {
+            Options.ValidateArchiveOptions();
             Disk.TripwireChanged = (tripped, status) =>
                 EmitOps(5060, tripped ? VestigiumStatus.Failed : VestigiumStatus.Success,
                     tripped ? "Disk tripwire on." : "Disk tripwire off.",
