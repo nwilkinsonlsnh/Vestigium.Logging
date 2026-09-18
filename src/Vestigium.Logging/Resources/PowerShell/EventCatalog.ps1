@@ -2,21 +2,13 @@
 <#
   Generic Event ID catalog.
 
-  First run (creates C:\IT\EventCatalog\index.json + shards):
-    .\EventCatalog.ps1
-    .\EventCatalog.ps1 -Action Generate
-
-  Look up:
-    .\EventCatalog.ps1 -Action Get -FullName System.IO.FileNotFoundException
-    .\EventCatalog.ps1 -Action Get -EventName TimeoutException
-    .\EventCatalog.ps1 -Action Get -EventId 1495
-
-  Add your own event:
-    .\EventCatalog.ps1 -Action Add -EventName IcmpEchoTimeout -FullName App.Network.IcmpEchoTimeout -Kind Custom
+  .\EventCatalog.ps1 -Action Generate
+  .\EventCatalog.ps1 -Action Get -EventId 0
+  .\EventCatalog.ps1 -Action Get -FullName System.IO.FileNotFoundException
 #>
 [CmdletBinding()]
 param(
-    [ValidateSet('Generate','Get','Add','Set','Remove','List')]
+    [ValidateSet('Generate','Get','Add','Set','Remove','List','Renumber')]
     [string]$Action = 'Generate',
     [string]$Root = 'C:\IT\EventCatalog',
     [int]$EventId,
@@ -36,18 +28,12 @@ param(
 Import-Module (Join-Path $PSScriptRoot 'EventCatalog.psm1') -Force
 
 switch ($Action) {
-    'Generate' {
-        Write-Host "Generating catalog at $Root ..."
-        $result = Initialize-EventCatalog -Root $Root
-        Write-Host "Types: $($result.TypeCount)  Shards: $($result.ShardCount)  NextEventId: $($result.NextEventId)"
-        Write-Host "Folder: $($result.Root)"
-        $result
-    }
+    'Generate' { Initialize-EventCatalog -Root $Root }
     'Get' {
         if ($EventId)      { Get-EventCatalogEntry -Root $Root -EventId $EventId }
         elseif ($FullName) { Get-EventCatalogEntry -Root $Root -FullName $FullName }
         elseif ($EventName){ Get-EventCatalogEntry -Root $Root -EventName $EventName }
-        else { throw 'Get needs -EventId, -FullName, or -EventName' }
+        else { Get-EventCatalog -Root $Root }
     }
     'Add' {
         Add-EventCatalogEntry -Root $Root -EventName $EventName -FullName $FullName `
@@ -65,5 +51,6 @@ switch ($Action) {
         Set-EventCatalogEntry @argsSet
     }
     'Remove' { Remove-EventCatalogEntry -Root $Root -EventId $EventId -Hard:$Hard }
-    'List'   { Get-EventCatalog -Root $Root -ShardId $ShardId -All:$All }
+    'List'     { Get-EventCatalog -Root $Root -ShardId $ShardId -All:$All }
+    'Renumber' { Update-EventCatalogRanges -Root $Root }
 }
