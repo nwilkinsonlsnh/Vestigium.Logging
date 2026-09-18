@@ -29,7 +29,7 @@ public sealed class CustomCatalogHostTests : IDisposable
 
         VestigiumLog.Thrown(new ProbeTimeoutException(), VestigiumStatus.Timeout);
         var json = VestigiumLogger.RecentJsonLines.Last();
-        Assert.Contains("\"EVENTID\":5000", json);
+        Assert.Contains("\"EVENTID\":10000", json);
         Assert.Contains("\"EVENTNAME\":\"ProbeTimeout\"", json);
         Assert.Contains("\"STATUS\":\"Timeout\"", json);
     }

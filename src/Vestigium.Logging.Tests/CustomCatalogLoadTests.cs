@@ -27,18 +27,18 @@ public sealed class CustomCatalogLoadTests : IDisposable
         });
 
         VestigiumLogger.LoadCustomCatalog(_catalog);
-        Assert.True(VestigiumLogger.Catalog.TryGetById(5000, out _));
+        Assert.True(VestigiumLogger.Catalog.TryGetById(10000, out _));
         VestigiumLog.Thrown(new ProbeTimeoutException(), VestigiumStatus.Timeout);
-        Assert.Contains("\"EVENTID\":5000", VestigiumLogger.RecentJsonLines.Last());
+        Assert.Contains("\"EVENTID\":10000", VestigiumLogger.RecentJsonLines.Last());
 
         VestigiumLogger.UnloadCustomCatalog();
         Assert.Null(VestigiumLogger.CustomCatalogPath);
-        Assert.False(VestigiumLogger.Catalog.TryGetById(5000, out _));
+        Assert.False(VestigiumLogger.Catalog.TryGetById(10000, out _));
 
         offline.Add("Http502", typeof(BadGatewayException).FullName!, "Network", "HTTP");
         offline.Save();
         VestigiumLogger.LoadCustomCatalog(_catalog);
-        Assert.True(VestigiumLogger.Catalog.TryGetById(5005, out _));
+        Assert.True(VestigiumLogger.Catalog.TryGetById(10005, out _));
     }
 
     public void Dispose()
