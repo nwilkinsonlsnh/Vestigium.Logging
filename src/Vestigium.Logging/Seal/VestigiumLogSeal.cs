@@ -58,7 +58,11 @@ public static class VestigiumLogSeal
         var keyId = GetString(trailer, "KeyId");
         var claimed = GetString(trailer, "ContentSha256");
         var sig = GetString(trailer, "Sig");
-        int? lines = trailer.TryGetValue("LineCount", out var nEl) && nEl.TryGetInt32(out var n) ? n : null;
+        int? lines = null;
+        if (trailer.TryGetValue("LineCount", out var nEl)
+            && nEl.ValueKind == JsonValueKind.Number
+            && nEl.TryGetInt32(out var n))
+            lines = n;
 
         if (!string.IsNullOrWhiteSpace(keyId)
             && !string.Equals(keyId, ring.KeyId, StringComparison.OrdinalIgnoreCase))
