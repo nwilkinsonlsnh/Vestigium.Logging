@@ -5,8 +5,6 @@
 
 Owned JSON Lines logger for the Vestigium suite and for hosts outside it. One JSON object per line for PowerBI, required EVENTID, flood protection, optional HMAC seal, and WPF-safe subscribers.
 
-**Not Serilog.** Disk I/O is `VestigiumJsonlWriter`. There is no Serilog package at runtime.
-
 **Target:** .NET 10 LTS / WPF / Visual Studio 2026  
 **Architecture:** MVVM (`CommunityToolkit.Mvvm`) + bounded `Channel` subscribers  
 **License:** MIT
@@ -16,7 +14,7 @@ Current documents (in the library project):
 - Requirements: [`src/Vestigium.Logging/_Documentation/RequirementsSpecification_v2.3.md`](src/Vestigium.Logging/_Documentation/RequirementsSpecification_v2.3.md)
 - Design: [`src/Vestigium.Logging/_Documentation/DesignDocument_v2.2.md`](src/Vestigium.Logging/_Documentation/DesignDocument_v2.2.md)
 - Developers guide: [`src/Vestigium.Logging/_Documentation/DevelopersGuide_v2.2.md`](src/Vestigium.Logging/_Documentation/DevelopersGuide_v2.2.md)
-- Collaboration: [`src/Vestigium.Logging/_Documentation/Contributors.md`](src/Vestigium.Logging/_Documentation/Contributors.md)
+- Contributors: [`src/Vestigium.Logging/_Documentation/Contributors.md`](src/Vestigium.Logging/_Documentation/Contributors.md)
 
 Files under repository-root `_Documentation/` are historical PR01 notes.
 
@@ -89,7 +87,7 @@ Flood identity: `(APPID, CATEGORY, LEVEL, MESSAGE)`.
 ## Contracts that do not move
 
 - Flat JSON Lines. No CSV / pipe / tab output path.
-- No Serilog runtime dependency.
+- Disk I/O is `VestigiumJsonlWriter`.
 - LEVEL is never Success / Failed / Timeout.
 - EVENTID 0–4999 library, 5000–9999 operations, ≥ 10000 custom.
 - Unregistered taxonomy becomes `Uncategorized` / `Unregistered` plus an internal Warning.
