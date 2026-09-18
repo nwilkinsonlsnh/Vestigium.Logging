@@ -3,6 +3,7 @@ namespace Vestigium.Logging;
 public static partial class VestigiumLogger
 {
     public static int PendingDiskCount => _host?.DiskQueueCount ?? 0;
+    public static string? ActiveLogPath => _host?.ActiveLogPath;
 
     public static IReadOnlyList<string> PeekPendingDisk(int count)
     {
