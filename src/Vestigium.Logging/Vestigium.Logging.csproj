@@ -25,78 +25,8 @@
 		<None Include="..\..\README.md" Pack="true" PackagePath="README.md" />
 		<None Include="_Documentation\**\*.md" />
 		<None Include="Resources\PowerShell\**\*" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Remove="EventCatalog\index.json" />
-	  <None Remove="EventCatalog\Shards\microsoft.csharp.json" />
-	  <None Remove="EventCatalog\Shards\microsoft.management.json" />
-	  <None Remove="EventCatalog\Shards\microsoft.powershell.json" />
-	  <None Remove="EventCatalog\Shards\microsoft.sqlserver.json" />
-	  <None Remove="EventCatalog\Shards\microsoft.visualbasic.json" />
-	  <None Remove="EventCatalog\Shards\system.collections.json" />
-	  <None Remove="EventCatalog\Shards\system.componentmodel.json" />
-	  <None Remove="EventCatalog\Shards\system.configuration.json" />
-	  <None Remove="EventCatalog\Shards\system.data.json" />
-	  <None Remove="EventCatalog\Shards\system.diagnostics.json" />
-	  <None Remove="EventCatalog\Shards\system.directoryservices.json" />
-	  <None Remove="EventCatalog\Shards\system.drawing.json" />
-	  <None Remove="EventCatalog\Shards\system.enterpriseservices.json" />
-	  <None Remove="EventCatalog\Shards\system.globalization.json" />
-	  <None Remove="EventCatalog\Shards\system.identitymodel.json" />
-	  <None Remove="EventCatalog\Shards\system.io.json" />
-	  <None Remove="EventCatalog\Shards\system.json" />
-	  <None Remove="EventCatalog\Shards\system.management.json" />
-	  <None Remove="EventCatalog\Shards\system.net.json" />
-	  <None Remove="EventCatalog\Shards\system.reflection.json" />
-	  <None Remove="EventCatalog\Shards\system.resources.json" />
-	  <None Remove="EventCatalog\Shards\system.runtime.json" />
-	  <None Remove="EventCatalog\Shards\system.security.json" />
-	  <None Remove="EventCatalog\Shards\system.servicemodel.json" />
-	  <None Remove="EventCatalog\Shards\system.serviceprocess.json" />
-	  <None Remove="EventCatalog\Shards\system.text.json" />
-	  <None Remove="EventCatalog\Shards\system.threading.json" />
-	  <None Remove="EventCatalog\Shards\system.transactions.json" />
-	  <None Remove="EventCatalog\Shards\system.web.json" />
-	  <None Remove="EventCatalog\Shards\system.windows.json" />
-	  <None Remove="EventCatalog\Shards\system.xaml.json" />
-	  <None Remove="EventCatalog\Shards\system.xml.json" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="EventCatalog\index.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\microsoft.csharp.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\microsoft.management.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\microsoft.powershell.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\microsoft.sqlserver.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\microsoft.visualbasic.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.collections.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.componentmodel.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.configuration.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.data.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.diagnostics.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.directoryservices.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.drawing.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.enterpriseservices.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.globalization.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.identitymodel.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.io.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.management.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.net.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.reflection.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.resources.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.runtime.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.security.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.servicemodel.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.serviceprocess.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.text.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.threading.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.transactions.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.web.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.windows.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.xaml.json" />
-	  <EmbeddedResource Include="EventCatalog\Shards\system.xml.json" />
+		<EmbeddedResource Include="EventCatalog\**\*.json" LogicalName="Vestigium.Logging.EventCatalog.%(Filename)%(Extension)" />
+		<EmbeddedResource Include="Resources\EventCatalog\**\*.json" LogicalName="Vestigium.Logging.EventCatalog.%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<ItemGroup>
