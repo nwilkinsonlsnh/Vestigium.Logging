@@ -4,6 +4,23 @@ public sealed record VestigiumJanitorResult(int Deleted, long Bytes, int Skipped
 
 public static class VestigiumLogJanitor
 {
+    public static VestigiumJanitorResult DeleteHostLogs()
+    {
+        var options = VestigiumLogger.Options;
+        if (!options.JanitorEnabled)
+            throw new InvalidOperationException("Host janitor is disabled. Set JanitorEnabled and JanitorMaxAge.");
+        return DeleteOlderThan(options.JanitorMaxAge!.Value, options.ResolveLogDirectory(), options.AppId);
+    }
+
+    public static VestigiumJanitorResult DeleteOperationsLogs()
+    {
+        var options = VestigiumLogger.Options;
+        if (!options.OperationsJanitorEnabled)
+            throw new InvalidOperationException("Operations janitor is disabled. Set OperationsJanitorEnabled and OperationsJanitorMaxAge.");
+        return DeleteOlderThan(options.OperationsJanitorMaxAge!.Value,
+            options.ResolveOperationsLogDirectory(), VestigiumLoggerOptions.OperationsAppId);
+    }
+
     public static VestigiumJanitorResult DeleteOlderThan(TimeSpan age, string? directory = null, string? appId = null)
     {
         if (age <= TimeSpan.Zero)
