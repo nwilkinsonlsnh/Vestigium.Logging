@@ -50,6 +50,52 @@ public sealed class OperationsLogTests : IDisposable
         Assert.False(Directory.Exists(unused));
     }
 
+    [Fact]
+    public void InitializeAndShutdownWriteOpsEventIds()
+    {
+        VestigiumLogger.Initialize(cfg =>
+        {
+            cfg.AppId = "PingIQ";
+            cfg.LogDirectory = _logs;
+            cfg.OperationsLogDirectory = _ops;
+            cfg.MinimumDiskLevel = VestigiumLogLevel.Verbose;
+        });
+        VestigiumLogger.Shutdown();
+        var text = string.Join('\n', Directory.EnumerateFiles(_ops, "*.json").Select(File.ReadAllText));
+        Assert.Contains("\"EVENTID\":5000", text);
+        Assert.Contains("Engine.Start", text);
+        Assert.Contains("\"EVENTID\":5005", text);
+        Assert.Contains("Engine.Stop", text);
+        Assert.DoesNotContain("\"APPID\":\"PingIQ\"", text);
+    }
+
+    [Fact]
+    public void LoadUnloadAndTripwireWriteOpsEventIds()
+    {
+        var catalog = Path.Combine(Path.GetTempPath(), "vestigium-custom-" + Guid.NewGuid().ToString("N"));
+        var custom = VestigiumCustomCatalog.Open(catalog);
+        custom.Add("ProbeTimeout", "PingIQ.ProbeTimeoutException", "Network", "ICMP");
+        custom.Save();
+        VestigiumLogger.Initialize(cfg =>
+        {
+            cfg.AppId = "PingIQ";
+            cfg.LogDirectory = _logs;
+            cfg.OperationsLogDirectory = _ops;
+            cfg.MinimumDiskLevel = VestigiumLogLevel.Verbose;
+        });
+        VestigiumLogger.LoadCustomCatalog(catalog);
+        VestigiumLogger.UnloadCustomCatalog();
+        VestigiumLogger.OverrideDiskPressure(true);
+        VestigiumLogger.OverrideDiskPressure(false);
+        VestigiumLogger.Flush();
+        VestigiumLogger.Shutdown();
+        var text = string.Join('\n', Directory.EnumerateFiles(_ops, "*.json").Select(File.ReadAllText));
+        Assert.Contains("\"EVENTID\":5065", text);
+        Assert.Contains("\"EVENTID\":5070", text);
+        Assert.Contains("\"EVENTID\":5060", text);
+        try { Directory.Delete(catalog, true); } catch { }
+    }
+
     public void Dispose()
     {
         VestigiumLogger.Shutdown();
