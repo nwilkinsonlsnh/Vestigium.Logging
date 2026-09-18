@@ -228,15 +228,13 @@ public sealed class VestigiumEventCatalog
         if (row.EventId < 0) throw new InvalidOperationException($"EventId {row.EventId} is invalid.");
         if (IsOpsId(row.EventId))
         {
-            if (allowCustom)
+            if (allowCustom || !row.Kind.Equals("Engine", StringComparison.OrdinalIgnoreCase))
                 throw new InvalidOperationException($"EventId {row.EventId} ({row.FullName}) is reserved for the operations log (5000–9999). Custom ids start at {CustomMin}.");
-            if (!row.Kind.Equals("Engine", StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException($"EventId {row.EventId} ({row.FullName}) is in the operations band and must have Kind Engine.");
             return;
         }
         if (!allowCustom && row.EventId > ReservedMax)
             throw new InvalidOperationException($"Embedded catalog EventId {row.EventId} ({row.FullName}) must be 0–{ReservedMax} or {OpsMin}–{OpsMax} (Engine).");
-        if (allowCustom && row.EventId < CustomMin)
+        if (allowCustom && row.Kind.Equals("Custom", StringComparison.OrdinalIgnoreCase) && row.EventId < CustomMin)
             throw new InvalidOperationException($"Custom EventId {row.EventId} ({row.FullName}) must be >= {CustomMin}.");
     }
 
