@@ -56,9 +56,8 @@ public sealed class ArchiveThrownCoverageTests : IDisposable
     {
         var file = Path.Combine(_logs, "vestigium-PingIQ-20200101.json");
         File.WriteAllText(file, "{}\n");
-        VestigiumLogArchive.HashOverride = path => path.EndsWith(".json", StringComparison.OrdinalIgnoreCase) && path.StartsWith(_arc, StringComparison.OrdinalIgnoreCase)
-            ? "DEADBEEF"
-            : Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(path)));
+        VestigiumLogArchive.HashOverride = path =>
+            path.StartsWith(_arc, StringComparison.OrdinalIgnoreCase) ? "DEADBEEF" : "OKHASH";
         try
         {
             var result = VestigiumLogArchive.ArchiveOlderThan(TimeSpan.FromDays(1), _arc, _logs, "PingIQ");
@@ -73,8 +72,8 @@ public sealed class ArchiveThrownCoverageTests : IDisposable
     [Fact]
     public void ThrownUnknownSeverityFallsBackToError()
     {
-        var catalog = VestigiumCustomCatalog.Create(_custom);
-        catalog.Add(10_000, "App.Odd", "ArchiveThrownCoverageTests+OddEx", "System", "Lifecycle", "NotALevel", "x");
+        var catalog = VestigiumCustomCatalog.Open(_custom);
+        catalog.Add("App.Odd", typeof(OddEx).FullName!, "System", "Lifecycle", 10_000, "NotALevel", "x");
         catalog.Save();
         VestigiumLogger.Initialize(cfg =>
         {
