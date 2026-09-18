@@ -24,13 +24,29 @@ internal sealed class DiskSpaceMonitor : IDisposable
     }
 
     public long? LastAvailableBytes { get; private set; }
-
     public string? LastDrive { get; private set; }
+    public Action<bool, VestigiumDiskStatus>? TripwireChanged { get; set; }
 
     public void Override(bool? tripped)
     {
+        bool previous;
+        bool current;
+        VestigiumDiskStatus snapshot;
         lock (_gate)
+        {
+            previous = _override ?? _tripped;
             _override = tripped;
+            current = _override ?? _tripped;
+            snapshot = new VestigiumDiskStatus(
+                IsTripped: current,
+                IsOverridden: _override is not null,
+                Drive: LastDrive,
+                AvailableBytes: LastAvailableBytes,
+                PercentThreshold: _options.DiskFreePercentThreshold,
+                BytesFloor: _options.DiskBytesFloorEnabled ? _options.DiskFreeBytesFloor : 0);
+        }
+        if (previous != current)
+            TripwireChanged?.Invoke(current, snapshot);
     }
 
     public VestigiumDiskStatus Snapshot()
@@ -70,12 +86,20 @@ internal sealed class DiskSpaceMonitor : IDisposable
                           || (_options.DiskBytesFloorEnabled
                               && drive.AvailableFreeSpace < _options.DiskFreeBytesFloor);
 
+            var changed = false;
             lock (_gate)
-                _tripped = tripped;
+            {
+                if (_tripped != tripped)
+                {
+                    _tripped = tripped;
+                    changed = _override is null;
+                }
+            }
+            if (changed)
+                TripwireChanged?.Invoke(tripped, Snapshot());
         }
         catch
         {
-            // Never throw from the poller.
         }
     }
 
