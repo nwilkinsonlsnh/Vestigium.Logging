@@ -1,15 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<!-- Build -->
 		<TargetFramework>net10.0</TargetFramework>
 		<RootNamespace>Vestigium.Logging</RootNamespace>
 		<AssemblyName>Vestigium.Logging</AssemblyName>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 		<IsPackable>true</IsPackable>
-
-		<!-- Package identity -->
 		<PackageId>Vestigium.Logging</PackageId>
 		<Version>1.2.0</Version>
 		<Authors>Vestigium</Authors>
@@ -27,6 +24,7 @@
 	<ItemGroup>
 		<None Include="..\..\README.md" Pack="true" PackagePath="README.md" />
 		<None Include="_Documentation\**\*.md" />
+		<None Include="Resources\PowerShell\**\*" />
 	</ItemGroup>
 
 	<ItemGroup>
