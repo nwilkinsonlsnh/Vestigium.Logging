@@ -11,7 +11,6 @@ public sealed class VestigiumCustomCatalog
         WriteIndented = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     };
-
     private readonly Dictionary<int, VestigiumEventDefinition> _byId;
     private readonly Dictionary<string, VestigiumEventDefinition> _byFullName;
 
@@ -38,10 +37,7 @@ public sealed class VestigiumCustomCatalog
         ArgumentException.ThrowIfNullOrWhiteSpace(root);
         Directory.CreateDirectory(root);
         Directory.CreateDirectory(Path.Combine(root, "shards"));
-        var rows = VestigiumEventCatalog.ReadDirectoryRows(root)
-            .GroupBy(r => r.EventId)
-            .Select(g => g.First())
-            .ToList();
+        var rows = VestigiumEventCatalog.ReadDirectoryRows(root).GroupBy(r => r.EventId).Select(g => g.First()).ToList();
         foreach (var row in rows)
         {
             if (row.EventId < CustomMin)
@@ -50,19 +46,13 @@ public sealed class VestigiumCustomCatalog
         return new VestigiumCustomCatalog(root, rows);
     }
 
-    public bool TryGet(int eventId, out VestigiumEventDefinition definition) =>
-        _byId.TryGetValue(eventId, out definition!);
-
-    public VestigiumEventDefinition Get(int eventId) =>
-        TryGet(eventId, out var row) ? row
-            : throw new InvalidOperationException($"EVENTID {eventId} is not in the custom catalog.");
-
+    public bool TryGet(int eventId, out VestigiumEventDefinition definition) => _byId.TryGetValue(eventId, out definition!);
+    public VestigiumEventDefinition Get(int eventId) => TryGet(eventId, out var row) ? row : throw new InvalidOperationException($"EVENTID {eventId} is not in the custom catalog.");
     public bool TryGetByFullName(string? fullName, out VestigiumEventDefinition definition)
     {
         definition = null!;
         return !string.IsNullOrWhiteSpace(fullName) && _byFullName.TryGetValue(fullName, out definition);
     }
-
     public IReadOnlyList<VestigiumEventDefinition> List() => _byId.Values.OrderBy(r => r.EventId).ToList();
 
     public VestigiumEventDefinition Add(string eventName, string fullName, string category, string subcategory,
@@ -88,10 +78,16 @@ public sealed class VestigiumCustomCatalog
         string? description = null, bool? enabled = null)
     {
         var current = Get(eventId);
+        var row = Patch(current, eventName, fullName, category, subcategory, severity, description, enabled);
+        Reindex(current, row);
+        return row;
+    }
+
+    private static VestigiumEventDefinition Patch(VestigiumEventDefinition current, string? eventName, string? fullName,
+        string? category, string? subcategory, string? severity, string? description, bool? enabled)
+    {
         var nextFull = fullName ?? current.FullName;
-        if (!string.Equals(nextFull, current.FullName, StringComparison.Ordinal) && _byFullName.ContainsKey(nextFull))
-            throw new InvalidOperationException($"FullName '{nextFull}' is already assigned.");
-        var row = current with
+        return current with
         {
             EventName = eventName ?? current.EventName,
             FullName = nextFull,
@@ -101,14 +97,19 @@ public sealed class VestigiumCustomCatalog
             Description = description ?? current.Description,
             Enabled = enabled ?? current.Enabled
         };
-        _byId[eventId] = row;
-        if (!string.Equals(nextFull, current.FullName, StringComparison.Ordinal))
+    }
+
+    private void Reindex(VestigiumEventDefinition current, VestigiumEventDefinition row)
+    {
+        if (!string.Equals(row.FullName, current.FullName, StringComparison.Ordinal) && _byFullName.ContainsKey(row.FullName))
+            throw new InvalidOperationException($"FullName '{row.FullName}' is already assigned.");
+        _byId[row.EventId] = row;
+        if (!string.Equals(row.FullName, current.FullName, StringComparison.Ordinal))
         {
             _byFullName.Remove(current.FullName);
-            _byFullName[nextFull] = row;
+            _byFullName[row.FullName] = row;
         }
         else _byFullName[current.FullName] = row;
-        return row;
     }
 
     public bool Remove(int eventId)
@@ -122,22 +123,14 @@ public sealed class VestigiumCustomCatalog
     {
         Directory.CreateDirectory(ShardsDirectory);
         var customPath = Path.Combine(ShardsDirectory, "custom.json");
-        var payload = List().Select(r => new
-        {
-            r.EventId, r.EventName, r.FullName, r.Category, r.Subcategory,
-            r.Severity, r.Kind, r.Enabled, r.Namespace, r.Description
-        }).ToList();
+        var payload = List().Select(r => new { r.EventId, r.EventName, r.FullName, r.Category, r.Subcategory, r.Severity, r.Kind, r.Enabled, r.Namespace, r.Description }).ToList();
         WriteAtomic(customPath, JsonSerializer.Serialize(payload, JsonWrite));
         foreach (var extra in Directory.EnumerateFiles(ShardsDirectory, "*.json"))
         {
             if (!string.Equals(Path.GetFileName(extra), "custom.json", StringComparison.OrdinalIgnoreCase))
                 File.Delete(extra);
         }
-        WriteAtomic(Path.Combine(Root, "index.json"), JsonSerializer.Serialize(new
-        {
-            NextCustomId,
-            Shards = new[] { new { Id = "custom", File = "shards/custom.json", Count } }
-        }, JsonWrite));
+        WriteAtomic(Path.Combine(Root, "index.json"), JsonSerializer.Serialize(new { NextCustomId, Shards = new[] { new { Id = "custom", File = "shards/custom.json", Count } } }, JsonWrite));
     }
 
     private static void WriteAtomic(string path, string json)
