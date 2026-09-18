@@ -32,6 +32,8 @@ public sealed class VestigiumLoggerOptions
     public string? EventCatalogPath { get; set; }
     public bool OperationsLogEnabled { get; set; } = true;
     public string? OperationsLogDirectory { get; set; }
+    public string? ArchiveDirectory { get; set; }
+    public string? OperationsArchiveDirectory { get; set; }
     public const string OperationsAppId = "Vestigium.Logging";
     public bool LogSealEnabled { get; set; }
     public string? LogSealKeyPath { get; set; }
@@ -60,6 +62,14 @@ public sealed class VestigiumLoggerOptions
         if (string.IsNullOrWhiteSpace(root)) root = Path.Combine(Path.GetTempPath(), "Vestigium");
         return Path.Combine(root, "Vestigium", "Logging");
     }
+
+    public string ResolveArchiveDirectory() =>
+        string.IsNullOrWhiteSpace(ArchiveDirectory) ? Path.Combine(ResolveLogDirectory(), "Archive") : ArchiveDirectory;
+
+    public string ResolveOperationsArchiveDirectory() =>
+        string.IsNullOrWhiteSpace(OperationsArchiveDirectory)
+            ? Path.Combine(ResolveOperationsLogDirectory(), "Archive")
+            : OperationsArchiveDirectory;
 
     public void RegisterTaxonomy(VestigiumTaxonomy source)
     {
