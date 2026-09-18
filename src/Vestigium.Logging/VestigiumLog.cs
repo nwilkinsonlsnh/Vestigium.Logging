@@ -12,8 +12,9 @@ public static class VestigiumLog
         Exception? exception = null,
         string? appId = null,
         string? correlationId = null,
-        IReadOnlyDictionary<string, string?>? properties = null) =>
-        VestigiumLogger.Emit(level, status, category, subcategory, message, exception, appId, correlationId, properties);
+        IReadOnlyDictionary<string, string?>? properties = null,
+        int? eventId = null) =>
+        VestigiumLogger.Emit(level, status, category, subcategory, message, exception, appId, correlationId, properties, eventId);
 
     public static void Verbose(VestigiumStatus status, string category, string subcategory, string message, Exception? exception = null, string? correlationId = null, IReadOnlyDictionary<string, string?>? properties = null) =>
         Write(VestigiumLogLevel.Verbose, status, category, subcategory, message, exception, correlationId: correlationId, properties: properties);
