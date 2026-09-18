@@ -116,6 +116,35 @@ public sealed class VestigiumEventCatalog
 
     public void Freeze() => _frozen = true;
 
+    public void ClearCustom()
+    {
+        foreach (var id in _byId.Keys.Where(k => k >= CustomMin).ToList())
+        {
+            if (_byId.Remove(id, out var row))
+                _byFullName.Remove(row.FullName);
+        }
+        _byFullName.Clear();
+        foreach (var row in _byId.Values)
+        {
+            if (!string.IsNullOrWhiteSpace(row.FullName) && !_byFullName.ContainsKey(row.FullName))
+                _byFullName[row.FullName] = row;
+        }
+        NextCustomId = CustomMin;
+    }
+
+    public void ReplaceCustomFromDirectory(string root)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(root);
+        ClearCustom();
+        foreach (var row in ReadDirectoryRows(root))
+        {
+            if (row.EventId < CustomMin)
+                throw new InvalidOperationException($"Overlay EventId {row.EventId} ({row.FullName}) must be >= {CustomMin}.");
+            Add(row, allowCustom: true);
+            if (row.EventId >= NextCustomId) NextCustomId = row.EventId + 5;
+        }
+    }
+
     public void MergeFromDirectory(string root)
     {
         if (_frozen) throw new InvalidOperationException("The event catalog is frozen after Initialize.");
