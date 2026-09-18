@@ -36,6 +36,9 @@ public static class VestigiumLogger
 
     public static int SuppressedCount => _host?.Flood.PendingSuppressed ?? 0;
 
+    /// <summary>Event ID catalog loaded at <see cref="Initialize"/>.</summary>
+    public static VestigiumEventCatalog Catalog => Require().Catalog;
+
     public static void Initialize(Action<VestigiumLoggerOptions> configure)
     {
         ArgumentNullException.ThrowIfNull(configure);
@@ -114,6 +117,7 @@ public static class VestigiumLogger
     internal sealed class Host : IDisposable
     {
         public VestigiumLoggerOptions Options { get; }
+        public VestigiumEventCatalog Catalog { get; }
         public FloodTracker Flood { get; }
         public DiskSpaceMonitor Disk { get; }
         public LogEventSubject Subject { get; } = new();
@@ -131,6 +135,7 @@ public static class VestigiumLogger
         public Host(VestigiumLoggerOptions options)
         {
             Options = options;
+            Catalog = VestigiumEventCatalog.LoadDefault(typeof(VestigiumLogger).Assembly);
             Flood = new FloodTracker(options.FloodThresholdCount, options.FloodWindow, options.FloodIdentityCap);
             Disk = new DiskSpaceMonitor(options);
             Channel = System.Threading.Channels.Channel.CreateBounded<VestigiumLogEvent>(new BoundedChannelOptions(options.SubscriberChannelCapacity)
