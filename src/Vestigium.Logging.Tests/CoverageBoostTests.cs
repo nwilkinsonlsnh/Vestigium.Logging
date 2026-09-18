@@ -24,7 +24,7 @@ public sealed class CatalogResolveCoverageTests
     {
         var catalog = VestigiumEventCatalog.LoadDefault();
         var row = catalog.RegisterCustom("HostEx", "App.HostEx", "Network", "ICMP");
-        Assert.True(row.EventId >= 5000);
+        Assert.True(row.EventId >= 10000);
         Assert.Throws<InvalidOperationException>(() =>
             catalog.RegisterCustom("Bad", "App.Bad", "Network", "ICMP", eventId: 100));
         catalog.Freeze();
@@ -93,11 +93,11 @@ public sealed class HostCoverageBoostTests : IDisposable
         var catalog = VestigiumCustomCatalog.Open(Path.Combine(_dir, "cat"));
         catalog.Add("A", "App.A", "Network", "ICMP");
         catalog.Add("B", "App.B", "Network", "HTTP");
-        Assert.Throws<InvalidOperationException>(() => catalog.Get(5010));
-        Assert.Throws<InvalidOperationException>(() => catalog.Set(5000, fullName: "App.B"));
-        var updated = catalog.Set(5000, eventName: "A2", category: "System", subcategory: "IO", severity: "Warning", description: "d", enabled: false);
+        Assert.Throws<InvalidOperationException>(() => catalog.Get(10010));
+        Assert.Throws<InvalidOperationException>(() => catalog.Set(10000, fullName: "App.B"));
+        var updated = catalog.Set(10000, eventName: "A2", category: "System", subcategory: "IO", severity: "Warning", description: "d", enabled: false);
         Assert.Equal("A2", updated.EventName);
-        catalog.Set(5000, fullName: "App.A2");
+        catalog.Set(10000, fullName: "App.A2");
         Assert.True(catalog.TryGetByFullName("App.A2", out _));
     }
 
