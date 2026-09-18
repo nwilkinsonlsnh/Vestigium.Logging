@@ -80,10 +80,19 @@ public sealed class VestigiumEventCatalog
     public bool TryGetByException(Exception? exception, out VestigiumEventDefinition definition)
     {
         definition = null!;
-        var type = exception?.GetType();
+        var thrown = exception?.GetType();
+        var type = thrown;
         while (type is not null && type != typeof(object))
         {
-            if (type.FullName is { } name && TryGetByFullName(name, out definition)) return true;
+            if (type.FullName is { } name && TryGetByFullName(name, out definition))
+            {
+                if (type == typeof(Exception) && thrown != typeof(Exception))
+                {
+                    type = type.BaseType;
+                    continue;
+                }
+                return true;
+            }
             type = type.BaseType;
         }
         return false;
@@ -175,7 +184,8 @@ public sealed class VestigiumEventCatalog
             throw new InvalidOperationException($"EventId {row.EventId} is assigned to both '{existing.FullName}' and '{row.FullName}'.");
         }
         _byId[row.EventId] = row;
-        if (!string.IsNullOrWhiteSpace(row.FullName) && !_byFullName.ContainsKey(row.FullName))
+        if (string.IsNullOrWhiteSpace(row.FullName)) return;
+        if (!_byFullName.ContainsKey(row.FullName) || row.EventId >= CustomMin)
             _byFullName[row.FullName] = row;
     }
 
