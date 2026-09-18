@@ -1,29 +1,46 @@
-# Vestigium.Logging — SRS 2.1 (addendum to 2.0)
+# Vestigium.Logging — Software Requirements Specification
 
-**Document ID:** VEST-LOG-SRS-002.1  
-**Package:** 1.6.0  
-**Adds:** unflushed peek, head/tail, janitor, archive.
+**Document ID:** VEST-LOG-SRS-002  
+**Version:** 2.1  
+**Status:** Binding for package 1.6.x  
+**Date:** 18 September 2026  
+**Target:** .NET 10 LTS, Visual Studio 2026  
+**Supersedes:** SRS 2.0 (18 September 2026)
 
-## L0 Unflushed queue
+## Revision history
 
-- `Flush()` / `Flush(timeout)` persist the disk queue and do not stop writes.
-- `PendingDiskCount` is queued, not yet on disk.
-- `PeekPendingDisk(n)` copies n lines (oldest first) and does not dequeue.
-- `n < 1` throws. `n` is capped by `LogReadMaxLines` (default 1000, host-configurable, minimum 1).
-- No live tail.
+| Version | Date | Package | Summary |
+|---|---|---|---|
+| 1.0–1.2 | 2026 | 1.2.x | Initial suite logger: JSONL, flood, taxonomy, disk tripwire, WPF pump. |
+| 1.3 | 2026 | 1.3.0 | Owned VestigiumJsonlWriter. Serilog removed from runtime. |
+| 1.4 | 2026-09-18 | 1.4.0 | Required EVENTID. Thrown. Information has no Exception parameter. |
+| 1.5 / 2.0 | 2026-09-18 | 1.5.0 | Catalog 0–4999 / 5000+. Custom catalog CRUD, Load/Unload. SRS 2.0. |
+| **2.1** | 2026-09-18 | 1.6.0 | Unflushed peek, Head/Tail, janitor, SHA256 archive. This document. |
 
-## L1 Reader
+Sections **1–18** of RequirementsSpecification_v2.0.md remain binding. This revision adds §§19–22 and extends §15, §17, and §18.
 
-`VestigiumLogReader.Head/Tail(n, directory?, appId?)`. Files `vestigium-{APPID}-*.json` in name order. Torn last line skipped. `FileShare.ReadWrite`. Offline requires directory + appId.
+## 19. Unflushed disk queue (L0)
 
-## L2 Janitor
+| ID | Requirement |
+|---|---|
+| R13 | Flush persists the disk queue and does not stop writes. |
+| R14 | PendingDiskCount is queued, not yet on disk. |
+| R15 | PeekPendingDisk(n) copies oldest queued lines and does not dequeue. |
+| R16 | n < 1 throws. Cap is LogReadMaxLines (default 1,000, minimum 1). |
+| R17 | No live follow / tail -f API. |
 
-`VestigiumLogJanitor.DeleteOlderThan(age, directory?, appId?)`. Age > 0. Cutoff is UTC date from the `yyyyMMdd` stamp. Skips `ActiveLogPath` and locked files. Returns Deleted, Bytes, SkippedOpen.
+## 20. Persisted Head / Tail (L1)
 
-## L3 Archive
+VestigiumLogReader.Head/Tail. Files vestigium-{APPID}-*.json. Torn last line dropped. FileShare.ReadWrite. Offline requires directory + appId. Same n rules as R16.
 
-`VestigiumLogArchive.ArchiveOlderThan(age, archiveDirectory, directory?, appId?)`. Copy → SHA256 source and copy (`Convert.ToHexString`, uppercase) → sidecar `{file}.sha256` as `HEX  filename` → delete source. Hash mismatch leaves source and increments Failed. No zip. No live tail.
+## 21. Janitor (L2)
 
-## Bindings carried from 2.0
+DeleteOlderThan(age). age > 0. Cutoff is yyyyMMdd stamp. Skip ActiveLogPath. Return Deleted, Bytes, SkippedOpen.
 
-Schema, catalog 0–4999 / 5000+, Thrown, custom catalog CRUD + Load/Unload remain as in SRS 2.0.
+## 22. Archive (L3)
+
+ArchiveOlderThan(age, archiveDirectory). Copy → uppercase SHA256 both files → sidecar `HEX  filename` → delete source on match. Mismatch leaves source, Failed++. Flush first to include the queue. No zip.
+
+## 15 / 17 / 18 amendments
+
+LogReadMaxLines default 1,000. Non-goals: live tail, zip archives, automatic janitor on Shutdown. Trace R13–R20 as above.
