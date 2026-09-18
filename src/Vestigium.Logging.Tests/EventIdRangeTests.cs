@@ -46,4 +46,17 @@ public sealed class EventIdRangeTests
         options.OperationsLogEnabled = false;
         Assert.False(options.OperationsLogEnabled);
     }
+
+    [Fact]
+    public void LoadDefaultIncludesOpsBand()
+    {
+        var catalog = VestigiumEventCatalog.LoadDefault();
+        Assert.True(catalog.TryGetById(5000, out var start));
+        Assert.Equal("Engine.Start", start.EventName);
+        Assert.Equal("Engine", start.Kind);
+        Assert.True(catalog.TryGetById(5070, out var unload));
+        Assert.Equal("Engine.CatalogUnload", unload.EventName);
+        Assert.True(catalog.TryGetByFullName("Vestigium.Logging.Engine.ArchiveOk", out var ok));
+        Assert.Equal(5030, ok.EventId);
+    }
 }
