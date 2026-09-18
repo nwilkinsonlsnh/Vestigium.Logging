@@ -33,12 +33,18 @@ public static partial class VestigiumLogger
         {
             _host?.Dispose();
             _host = new Host(options);
+            _host.EmitOps(5000, VestigiumStatus.Success, "Logger initialized.");
         }
     }
 
     public static void Shutdown()
     {
-        lock (Gate) { _host?.Dispose(); _host = null; }
+        lock (Gate)
+        {
+            _host?.EmitOps(5005, VestigiumStatus.Success, "Logger shut down.");
+            _host?.Dispose();
+            _host = null;
+        }
     }
 
     public static void Flush() => _host?.Flush();
@@ -120,6 +126,7 @@ public static partial class VestigiumLogger
                     options.RetainedFileCountLimit,
                     options.DiskQueueCapacity)
                 : null;
+            BindOpsHooks();
             _drainTimer = new Timer(static s => ((Host)s!).Drain(), this, TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1));
         }
 
