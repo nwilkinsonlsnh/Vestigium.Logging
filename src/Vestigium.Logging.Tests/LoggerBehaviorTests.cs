@@ -25,7 +25,7 @@ public sealed class LoggerBehaviorTests : IDisposable
     public void ReinitializeResetsHost()
     {
         Init();
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "first-host");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "first-host");
         Assert.True(VestigiumLogger.WrittenCount >= 1);
 
         VestigiumLogger.Initialize(cfg =>
@@ -38,7 +38,7 @@ public sealed class LoggerBehaviorTests : IDisposable
 
         Assert.Equal(0, VestigiumLogger.WrittenCount);
         Assert.Equal("TraceIQ", VestigiumLogger.Options.AppId);
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "second-host");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "second-host");
         Assert.Equal(1, VestigiumLogger.WrittenCount);
         Assert.Contains("TraceIQ", VestigiumLogger.RecentJsonLines.Last());
     }
@@ -78,10 +78,10 @@ public sealed class LoggerBehaviorTests : IDisposable
     {
         Init();
         VestigiumLogger.OverrideDiskPressure(true);
-        VestigiumLog.Verbose(VestigiumStatus.None, "Network", "ICMP", "v");
-        VestigiumLog.Debug(VestigiumStatus.None, "Network", "ICMP", "d");
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "i");
-        VestigiumLog.Warning(VestigiumStatus.Warning, "Network", "ICMP", "w");
+        VestigiumLog.Verbose(0, VestigiumStatus.None, "Network", "ICMP", "v");
+        VestigiumLog.Debug(0, VestigiumStatus.None, "Network", "ICMP", "d");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "i");
+        VestigiumLog.Warning(2, VestigiumStatus.Warning, "Network", "ICMP", "w");
 
         var lines = VestigiumLogger.RecentJsonLines;
         Assert.DoesNotContain(lines, l => l.Contains("\"MESSAGE\":\"v\""));
@@ -97,7 +97,7 @@ public sealed class LoggerBehaviorTests : IDisposable
         var received = new List<VestigiumLogEvent>();
         using var sub = VestigiumLogger.Events.Subscribe(new RecordingObserver(received));
 
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "piped");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "piped");
         Assert.Single(received);
         Assert.Equal("piped", received[0].Message);
         Assert.True(VestigiumLogger.EventReader.TryRead(out var evt));
@@ -109,7 +109,7 @@ public sealed class LoggerBehaviorTests : IDisposable
     {
         Init();
         using var sub = VestigiumLogger.Events.Subscribe(new ThrowingObserver());
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "still-ok");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "still-ok");
         Assert.Equal(1, VestigiumLogger.WrittenCount);
     }
 
@@ -127,7 +127,7 @@ public sealed class LoggerBehaviorTests : IDisposable
     public void UnknownTaxonomyWritesInternalWarning()
     {
         Init();
-        VestigiumLog.Information(VestigiumStatus.Success, "Widgets", "Thing", "custom");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Widgets", "Thing", "custom");
         Assert.Contains(
             VestigiumLogger.RecentJsonLines,
             l => l.Contains("Unregistered taxonomy used") && l.Contains("Vestigium.Logging"));
@@ -140,13 +140,13 @@ public sealed class LoggerBehaviorTests : IDisposable
     public void WriteHonorsAppIdOverrideAndLevelHelpers()
     {
         Init();
-        VestigiumLog.Verbose(VestigiumStatus.None, "Network", "ICMP", "verbose");
-        VestigiumLog.Debug(VestigiumStatus.Pending, "Network", "TCP", "debug");
-        VestigiumLog.Warning(VestigiumStatus.Warning, "System", "IO", "warn");
-        VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "err");
-        VestigiumLog.Fatal(VestigiumStatus.Failed, "System", "IO", "fatal");
+        VestigiumLog.Verbose(0, VestigiumStatus.None, "Network", "ICMP", "verbose");
+        VestigiumLog.Debug(0, VestigiumStatus.Pending, "Network", "TCP", "debug");
+        VestigiumLog.Warning(2, VestigiumStatus.Warning, "System", "IO", "warn");
+        VestigiumLog.Error(3, VestigiumStatus.Failed, "System", "IO", "err");
+        VestigiumLog.Fatal(4, VestigiumStatus.Failed, "System", "IO", "fatal");
         VestigiumLog.Write(
-            VestigiumLogLevel.Information, VestigiumStatus.Success,
+            1, VestigiumLogLevel.Information, VestigiumStatus.Success,
             "Network", "HTTP", "over", appId: "HttpIQ");
 
         var text = string.Join('\n', VestigiumLogger.RecentJsonLines);
@@ -162,7 +162,7 @@ public sealed class LoggerBehaviorTests : IDisposable
     public void FlushPersistsJsonLineToDisk()
     {
         Init();
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "persist-me");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "persist-me");
         VestigiumLogger.Flush();
 
         var files = Directory.GetFiles(_dir, "*.json");
@@ -176,7 +176,7 @@ public sealed class LoggerBehaviorTests : IDisposable
     {
         Init(cfg => cfg.SubscriberChannelCapacity = 2);
         for (var i = 0; i < 5; i++)
-            VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", $"n{i}");
+            VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", $"n{i}");
 
         var drained = new List<string>();
         while (VestigiumLogger.EventReader.TryRead(out var evt))
@@ -192,7 +192,7 @@ public sealed class LoggerBehaviorTests : IDisposable
     {
         Init(cfg => cfg.RecentJsonLineCap = 3);
         for (var i = 0; i < 5; i++)
-            VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", $"cap{i}");
+            VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", $"cap{i}");
 
         var lines = VestigiumLogger.RecentJsonLines;
         Assert.Equal(3, lines.Count);
@@ -204,7 +204,7 @@ public sealed class LoggerBehaviorTests : IDisposable
     public void MinimumDiskLevelStillCapturesInMemory()
     {
         Init(cfg => cfg.MinimumDiskLevel = VestigiumLogLevel.Error);
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "memory-only");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "memory-only");
         Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("memory-only"));
         VestigiumLogger.Flush();
         var contents = string.Join('\n', Directory.GetFiles(_dir, "*.json").Select(ReadShared));
@@ -217,13 +217,13 @@ public sealed class LoggerBehaviorTests : IDisposable
         Init(cfg => cfg.FloodThresholdCount = 5);
         for (var i = 0; i < 5; i++)
         {
-            VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout", appId: "PingIQ");
-            VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout", appId: "TraceIQ");
+            VestigiumLog.Write(1, VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout", appId: "PingIQ");
+            VestigiumLog.Write(1, VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout", appId: "TraceIQ");
         }
 
         Assert.Equal(10, VestigiumLogger.WrittenCount);
         Assert.Equal(0, VestigiumLogger.SuppressedCount);
-        VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout", appId: "PingIQ");
+        VestigiumLog.Write(1, VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout", appId: "PingIQ");
         Assert.Equal(1, VestigiumLogger.SuppressedCount);
     }
 

@@ -172,7 +172,7 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
     {
         var level = Enum.Parse<VestigiumLogLevel>(SelectedLevel);
         var status = Enum.Parse<VestigiumStatus>(SelectedStatus);
-        VestigiumLog.Write(level, status, SelectedCategory, SelectedSubcategory, MessageText);
+        VestigiumLog.Write(1, level, status, SelectedCategory, SelectedSubcategory, MessageText);
         RefreshCounters();
     }
 
@@ -182,7 +182,7 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
         var level = Enum.Parse<VestigiumLogLevel>(SelectedLevel);
         var status = Enum.Parse<VestigiumStatus>(SelectedStatus);
         for (var i = 0; i < BurstCount; i++)
-            VestigiumLog.Write(level, status, SelectedCategory, SelectedSubcategory, MessageText);
+            VestigiumLog.Write(1, level, status, SelectedCategory, SelectedSubcategory, MessageText);
         StatusText = $"Burst {BurstCount} · first {FloodThreshold} full, remainder suppressed in-window";
         RefreshCounters();
     }
@@ -196,7 +196,7 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
         }
         catch (Exception ex)
         {
-            VestigiumLog.Error(VestigiumStatus.Failed, "Network", "HTTP", "HttpIQ probe threw", ex);
+            VestigiumLog.Error(3, VestigiumStatus.Failed, "Network", "HTTP", "HttpIQ probe threw", ex);
         }
         StatusText = "Wrote multiline stack + pipe/tab payload as one JSON object";
         RefreshCounters();
@@ -205,7 +205,7 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
     [RelayCommand]
     private void WriteUnregistered()
     {
-        VestigiumLog.Warning(VestigiumStatus.None, "Widgets", "Thing", "Operator used an unknown category");
+        VestigiumLog.Warning(2, VestigiumStatus.None, "Widgets", "Thing", "Operator used an unknown category");
         StatusText = "Unregistered Widgets/Thing rewritten to Uncategorized/Unregistered";
         RefreshCounters();
     }
@@ -213,8 +213,8 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
     [RelayCommand]
     private void WritePingAndTraceTimeout()
     {
-        VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout");
-        VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "Routing", "Timeout", appId: "TraceIQ");
+        VestigiumLog.Write(1, VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "ICMP", "Timeout");
+        VestigiumLog.Write(1, VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "Routing", "Timeout", appId: "TraceIQ");
         StatusText = "PingIQ Timeout and TraceIQ Timeout use independent flood keys";
         RefreshCounters();
     }
@@ -237,21 +237,21 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
     [RelayCommand]
     private void RunSuiteTour()
     {
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "Echo reply from 1.1.1.1 in 12 ms");
-        VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP", "Echo request to 8.8.8.8 timed out after 1000 ms");
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "DNS", "edge.vestigium.local resolved to 10.4.12.8");
-        VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "Routing", "Hop 8 timed out", appId: "TraceIQ");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "Echo reply from 1.1.1.1 in 12 ms");
+        VestigiumLog.Information(1, VestigiumStatus.Timeout, "Network", "ICMP", "Echo request to 8.8.8.8 timed out after 1000 ms");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "DNS", "edge.vestigium.local resolved to 10.4.12.8");
+        VestigiumLog.Write(1, VestigiumLogLevel.Information, VestigiumStatus.Timeout, "Network", "Routing", "Hop 8 timed out", appId: "TraceIQ");
         try
         {
             throw new HttpRequestException("502 Bad Gateway from https://edge/api/health");
         }
         catch (Exception ex)
         {
-            VestigiumLog.Error(VestigiumStatus.Failed, "Network", "HTTP", "HttpIQ probe threw", ex);
+            VestigiumLog.Error(3, VestigiumStatus.Failed, "Network", "HTTP", "HttpIQ probe threw", ex);
         }
-        VestigiumLog.Warning(VestigiumStatus.None, "Widgets", "Thing", "Operator used an unknown category");
+        VestigiumLog.Warning(2, VestigiumStatus.None, "Widgets", "Thing", "Operator used an unknown category");
         for (var i = 0; i < 8; i++)
-            VestigiumLog.Information(VestigiumStatus.Timeout, "Network", "ICMP", "Echo request to 8.8.8.8 timed out after 1000 ms");
+            VestigiumLog.Information(1, VestigiumStatus.Timeout, "Network", "ICMP", "Echo request to 8.8.8.8 timed out after 1000 ms");
         StatusText = "Suite tour: PingIQ success + timeout, DNS, TraceIQ hop, HTTP 502, unregistered Widgets, then a flood remainder";
         RefreshCounters();
     }
@@ -259,8 +259,8 @@ public sealed partial class MainViewModel : ObservableRecipient, IDisposable
     private void SeedWelcome()
     {
         if (!VestigiumLogger.IsInitialized) return;
-        VestigiumLog.Information(VestigiumStatus.Success, "UI", "Lifecycle", "Vestigium.Logging.Demo started");
-        VestigiumLog.Information(VestigiumStatus.Success, "System", "Configuration", "Host initialized with APPID PingIQ");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "UI", "Lifecycle", "Vestigium.Logging.Demo started");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "System", "Configuration", "Host initialized with APPID PingIQ");
         RefreshCounters();
     }
 

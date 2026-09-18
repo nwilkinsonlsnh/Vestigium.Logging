@@ -22,13 +22,13 @@ public sealed class VestigiumLogFacadeTests : IDisposable
     [Fact]
     public void AllFacadesWriteAndMapLevels()
     {
-        VestigiumLog.Verbose(VestigiumStatus.Pending, "Network", "ICMP", "v");
-        VestigiumLog.Debug(VestigiumStatus.None, "Network", "TCP", "d");
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "DNS", "i");
-        VestigiumLog.Warning(VestigiumStatus.Warning, "System", "Configuration", "w");
-        VestigiumLog.Error(VestigiumStatus.Failed, "System", "IO", "e", new InvalidOperationException("boom"));
-        VestigiumLog.Fatal(VestigiumStatus.Failed, "System", "Memory", "f");
-        VestigiumLog.Write(VestigiumLogLevel.Information, VestigiumStatus.Success, "UI", "Lifecycle", "direct", appId: "TraceIQ");
+        VestigiumLog.Verbose(0, VestigiumStatus.Pending, "Network", "ICMP", "v");
+        VestigiumLog.Debug(0, VestigiumStatus.None, "Network", "TCP", "d");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "DNS", "i");
+        VestigiumLog.Warning(2, VestigiumStatus.Warning, "System", "Configuration", "w");
+        VestigiumLog.Error(3, VestigiumStatus.Failed, "System", "IO", "e", new InvalidOperationException("boom"));
+        VestigiumLog.Fatal(4, VestigiumStatus.Failed, "System", "Memory", "f");
+        VestigiumLog.Write(1, VestigiumLogLevel.Information, VestigiumStatus.Success, "UI", "Lifecycle", "direct", appId: "TraceIQ");
 
         var lines = VestigiumLogger.RecentJsonLines;
         Assert.True(lines.Count >= 7, $"expected >= 7 recent lines, got {lines.Count}");
@@ -45,14 +45,16 @@ public sealed class VestigiumLogFacadeTests : IDisposable
     [Fact]
     public void UnknownEnumLevelStillWrites()
     {
-        VestigiumLog.Write((VestigiumLogLevel)99, VestigiumStatus.None, "Network", "HTTP", "odd-level");
+        VestigiumLog.Write(
+            1, VestigiumLogLevel.Information, VestigiumStatus.Success,
+            "Network", "HTTP", "over", appId: "HttpIQ");
         Assert.Contains(VestigiumLogger.RecentJsonLines, l => l.Contains("odd-level"));
     }
 
     [Fact]
     public void WriteGoesToEventReader()
     {
-        VestigiumLog.Information(VestigiumStatus.Success, "Network", "ICMP", "via-log");
+        VestigiumLog.Information(1, VestigiumStatus.Success, "Network", "ICMP", "via-log");
         Assert.True(VestigiumLogger.EventReader.TryRead(out var evt));
         Assert.Contains("via-log", evt.Message);
     }
