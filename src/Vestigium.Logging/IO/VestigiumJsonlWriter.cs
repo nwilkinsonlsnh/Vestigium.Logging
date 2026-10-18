@@ -133,6 +133,8 @@ internal sealed partial class VestigiumJsonlWriter : IVestigiumJsonlWriter
             EnsureStream(Encoding.UTF8.GetByteCount(line) + 1);
             _writer!.Write(line);
             if (!line.EndsWith('\n')) _writer.Write('\n');
+            _writer.Flush();
+            _stream?.Flush(flushToDisk: true);
             _fileLength += Encoding.UTF8.GetByteCount(line) + (line.EndsWith('\n') ? 0 : 1);
             _lineCount++;
         }
