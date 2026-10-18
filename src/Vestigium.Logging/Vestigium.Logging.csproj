@@ -8,7 +8,7 @@
 		<NoWarn>$(NoWarn);CS1591</NoWarn>
 		<IsPackable>true</IsPackable>
 		<PackageId>Vestigium.Logging</PackageId>
-		<Version>1.7.2</Version>
+		<Version>2.0.0</Version>
 		<Authors>Vestigium</Authors>
 		<Company>Wilkinson Business</Company>
 		<Copyright>Copyright (c) 2026 Nathaniel Wilkinson / LSNH</Copyright>
@@ -43,4 +43,5 @@
 		<InternalsVisibleTo Include="Vestigium.Logging.Tests" />
 	</ItemGroup>
 
+  <ItemGroup></ItemGroup>
 </Project>
